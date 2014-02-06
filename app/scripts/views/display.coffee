@@ -11,6 +11,7 @@ define [
 		initialize: (options) ->
 			@model = new DisplayModel()
 			@render()
+			@$canvas = this.$('#waveform')
 			new Backbone.Ligaments(model: @model, view: @)
 		log: (options) ->
 			if typeof options is 'string'

@@ -15,7 +15,7 @@ define [
 		template: JST['app/scripts/templates/pad.ejs']
 
 		initialize: (options) ->
-			@model = options.model || new SoundModel(options)
+			@model = options.model
 			@model.view = this
 			@model.set('key', String.fromCharCode(@model.get('keyCode')))
 			@model.set('name', options.name)
@@ -24,23 +24,27 @@ define [
 			@initPlayer()
 			new Backbone.Ligaments(model: @model, view: @)
 
+			@listenTo(@model, 'change', () ->
+				@contextAttached = false
+				@renderEffects()
+			)
+
 		render: () ->
 			@el.innerHTML = @template()
 
 		events:
-			'contextmenu'					: 'editSample'
 			'mousedown .pad'			: 'press'
 			'mouseup .pad'				: 'release'
 			'dragover'						: 'prevent'
 			'dragenter'						: 'prevent'
 			'drop'								: 'loadSample'
+			'contextmenu .pad'		: 'editSample'
 
 		prevent: (e) ->
 			e.preventDefault()
 			e.stopPropagation()
 
 		press: (e) ->
-			# @play()
 			if @loaded
 				@$pad.addClass 'active'
 				@play()
@@ -55,7 +59,10 @@ define [
 				@contextAttached = true
 				@renderEffects().play()
 			else
-				@T.rendered.bang()
+				if @T.rendered.playbackState
+					@T.rendered.currentTime = 0
+				else
+					@T.rendered.bang()
 
 		initPlayer: (objectURL) ->
 			_this = @
@@ -70,17 +77,17 @@ define [
 			Display.log(@model.get('name')+' loaded');
 
 		renderEffects: () ->
-			rendered = null
+			sound = null
 			delete @T.rendered
-			# for effect in @model.get('effects')
+
 			original = @T.raw.clone()
-			rendered = T('reverb', {room: 1.1, damp: 0.4, mix: 0.55}, original)
-			rendered = T('eq', params: 
-					hpf: [50,1], lmf: [828,1.8,18.3], mf: [2400,2.2,-24,5], lpf: [5000,1.1]
-			, rendered)
-			rendered = T('delay', {}, rendered)
+
+			_.each(@model.get('fx'), (params, fx) ->
+				sound = T(fx, params, sound || original)
+			)
+			# rendered = T('delay', {}, sound)
 			@T.rendered = original
-			return rendered || original
+			return sound || original
 
 		loadSample: (e) ->
 			e = e.originalEvent
@@ -88,7 +95,7 @@ define [
 			e.stopPropagation()
 
 			# Code for <AUDIO> element implementation
-			# 
+			#
 			# @sound.onload = (e) =>
 				# URL.revokeObjectURL(@sound.src)
 				# Display.model.set('two', 'New Sample Uploaded and Initialized')
@@ -102,10 +109,12 @@ define [
 
 		editSample: (e) ->
 			e.preventDefault()
+			e.stopPropagation()
 			e.stopImmediatePropagation()
 			if not @editor
 				editor = new SoundEditor(
 					model: @model
+					pad: this
 				)
 				editor.show()
 				@editor = editor;

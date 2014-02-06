@@ -347,6 +347,7 @@ FileETag None
   Options +FollowSymlinks
   RewriteEngine On
 # RewriteBase /
+  RewriteRule ^(.*)$ /$1 [NC,L]
 </IfModule>
 
 

@@ -42,7 +42,7 @@
         if (!this.readOnly) {
           _.extend(this.view.events || (this.view.events = {}), {
             'change *[name]:not([data-bind])': ingest,
-            'input *[name]:not([data]bind])': ingest,
+            'input *[name]:not([data-bind])': ingest,
             'change *[data-bind]': ingest,
             'input *[data-bind]': ingest
           });
@@ -70,6 +70,9 @@
           value = this.getVal($input);
           if ($input.is('select[multiple]')) {
             this.model.unset(key);
+          }
+          if (!isNaN(Number(value))) {
+             value = Number(value);
           }
           (data = {})[key] = value;
           data = this.expand(data);
@@ -161,11 +164,15 @@
         return this.expand(flat);
       },
       getVal: function(input) {
-        var $input;
+        var $input, value;
         $input = $(input);
         if ($input.is(':input')) {
           if ((!$input.is(':checkbox') && !$input.is(':radio')) || $input.prop('checked')) {
-            return $input.val();
+            value = $input.val()
+            if (!isNaN(Number(value))) {
+              value = Number(value);
+            }
+            return value;
           } else {
             return void 0;
           }

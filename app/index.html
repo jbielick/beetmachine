@@ -6,7 +6,7 @@
 	<head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Beetmachine</title>
+	<title>beetmachine</title>
 
 	<meta name="description" content="" />
 
@@ -14,6 +14,7 @@
 	<!-- build:css(.tmp) styles/main.css -->
 	<link rel="stylesheet" href="/styles/foundation.min.css" />
 	<link rel="stylesheet" href="/styles/bootstrap.min.css" />
+	<link rel="stylesheet" href="/styles/bootstrap-theme.min.css" />
 	<link rel="stylesheet" href="styles/main.css">
 	<!-- endbuild -->
 	<!-- build:js scripts/vendor/modernizr.js -->
@@ -28,9 +29,14 @@
 						<ul class="right">
 							<li class="divider"></li>
 							<li class="has-dropdown">
-								<a href="#">Main Item 1</a>
+								<a href="#">File</a>
 								<ul class="dropdown">
-									<li><label>Section Name</label></li>
+									<li>
+										<a href="#">Open</a>
+									</li>
+									<li>
+										<a href="#">Save</a>
+									</li>
 									<li class="has-dropdown">
 										<a class="" href="#">Has Dropdown, Level 1</a>
 										<ul class="dropdown">
@@ -57,9 +63,6 @@
 									<li>
 										<a href="#">Dropdown Option</a>
 									</li>
-									<li>
-										<a href="#">Dropdown Option</a>
-									</li>
 									<li class="divider"></li>
 									<li><label>Section Name</label></li>
 									<li>
@@ -70,10 +73,6 @@
 									</li>
 									<li>
 										<a href="#">Dropdown Option</a>
-									</li>
-									<li class="divider"></li>
-									<li>
-										<a href="#">See all →</a>
 									</li>
 								</ul>
 							</li>
@@ -101,7 +100,7 @@
 								</ul>
 							</li>
 						</ul>
-						<h1 class="title">Beetmachine</h1>
+						<h1 class="title">beetmachine</h1>
 					</section>
 					<section class="right-small">
 						<a class="right-off-canvas-toggle menu-icon" ><span></span></a>
@@ -113,52 +112,54 @@
 					</ul>
 					<br>
 					<div class="row">
-						<div class="columns small-12">
+						<div class="col-xs-12">
 							<input type="search" data-bind="query" placeholder="keywords">
 						</div>
 					</div>
 					<div class="row">
-						<div class="columns small-12">
+						<div class="col-xs-12">
 							<label>BPM</label>
 						</div>
 					</div>
 					<div class="row">
-						<div class="columns small-6">
+						<div class="col-xs-6">
 							<input type="number" data-bind="bpm.from" placeholder="BPM min">
 						</div>
-						<div class="columns small-6">
+						<div class="col-xs-6">
 							<input type="number" data-bind="bpm.to" placeholder="BPM max">
 						</div>
 					</div>
 					<div class="row">
-						<div class="columns small-12">
+						<div class="col-xs-12">
 							<label>Duration</label>
 						</div>
 					</div>
 					<div class="row">
-						<div class="columns small-6">
+						<div class="col-xs-6">
 							<input type="time" data-bind="duration.from" placeholder="duration min">
 						</div>
-						<div class="columns small-6">
+						<div class="col-xs-6">
 							<input type="time" data-bind="duration.to" placeholder="duration max">
 						</div>
 					</div>
 				</aside>
 				<section class="main-section">
-					<div class="row">
-						<div class="medium-12 columns">
-							<div class="row">
-								<div class="medium-4 small-12 columns">
-									<div class="alert-box warning radius display">
-									
-									</div>
-									<div class="transport">
+					<div class="container">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-4 col-xs-12">
+										<div class="alert-box warning radius display">
+										
+										</div>
+										<div class="transport">
 
+										</div>
 									</div>
-								</div>
-								<div class="medium-8 columns">
-									<div class="row pads">
+									<div class="col-sm-8">
+										<div class="row pads">
 
+										</div>
 									</div>
 								</div>
 							</div>

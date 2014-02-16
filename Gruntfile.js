@@ -385,13 +385,11 @@ module.exports = function (grunt) {
 	// When Sails is lifted:
 	grunt.registerTask('default', [
 		'compileAssets',
-		// 'linkAssets',
 		'watch'
 	]);
 
 	grunt.registerTask('compileAssets', [
 		'clean:dev',
-		'jst:dev',
 		'less:dev',
 		'copy:dev',
 		'coffee:dev'

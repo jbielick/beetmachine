@@ -1,7 +1,7 @@
 beetmachine
 ===========
 
-A JavaScript &amp; HTML5 Sampler/Sequencer
+An HTML5 Music Sampler/Sequencer
 
 
 About

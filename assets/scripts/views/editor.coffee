@@ -99,8 +99,9 @@ define [
 			)
 			new Backbone.Ligaments(model: @model, view: @)
 			@$canvas = this.$('.waveform');
-			@pad.T.raw.plot(
-				target: @$canvas.get(0)
-				background: 'rgb(70,70,70)'
-				foreground: '#f08a24'
-			)
+			if @pad.T
+				@pad.T.raw.plot(
+					target: @$canvas.get(0)
+					background: 'rgb(70,70,70)'
+					foreground: '#f08a24'
+				)

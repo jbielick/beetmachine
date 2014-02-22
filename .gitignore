@@ -46,6 +46,6 @@ config/local.js
 
 test/temp
 .sass-cache
-bower_components
+assets/bower_components
 .tmp
 test/bower_components/

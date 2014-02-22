@@ -1,16 +1,11 @@
 define [
 	'underscore'
 	'backbone'
-	'collections/message'
-], (_, Backbone, MessageCollection) ->
+], (_, Backbone) ->
 	'use strict';
 
 	class DisplayModel extends Backbone.Model
 		defaults:
 			one: 'Welcome'
+			time: 0
 		initialize: (options) ->
-			@messages = new MessageCollection()
-		toJSON: () ->
-			data = @attributes
-			data.messages = @messages.toJSON()
-			data

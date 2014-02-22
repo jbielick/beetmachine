@@ -17,8 +17,18 @@ body {
 	overflow:scroll;
 	}
 .waveform {border: 1px solid #f08a24;margin:12px 0;cursor:;}
-.transport {}
 
+/*============
+ * Transport
+ * ==========*/
+.transport {}
+[data-behavior="record"].btn.active {color:#fff;background-color:#f84719;border-color:#f03707}
+[data-behavior="play"].btn.active {color:#fff;background-color:#19ff35;border-color:#00ff1f}
+
+/*============
+ * Sequence
+ * ==========*/
+.sequence {min-height:200px;background-color:#111;}
 
 .pad-container {margin:8px 0 12px;}
 .pad-label {margin-bottom:8px;}

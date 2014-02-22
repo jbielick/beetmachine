@@ -8,19 +8,23 @@ define [
 	'ligaments',
 	'text!/scripts/templates/pad.ejs'
 ], ($, _, Backbone, SoundModel, Display, SoundEditor, ligaments, PadTemplate) ->
+
 	class PadView extends Backbone.View
+
 		attributes:
 			class: 'small-3 columns pad-container'
 
 		template: _.template PadTemplate
 
 		initialize: (options) ->
+			@parent = options.parent
 			@model = options.model
 			@model.view = this
-			@model.set('key', String.fromCharCode(@model.get('keyCode')))
+			# console.log(@model)
+			if @model.get('keyCode')
+				@model.set('key', String.fromCharCode(@model.get('keyCode')))
 			@model.set('name', options.name)
 			@render()
-			@$pad = @$('.pad')
 			@initPlayer()
 			new Backbone.Ligaments(model: @model, view: @)
 
@@ -38,22 +42,23 @@ define [
 			'dragover'						: 'prevent'
 			'dragenter'						: 'prevent'
 			'drop'								: 'loadSample'
-			'contextmenu .pad'		: 'editSample'
+			'contextmenu .pad'		: 'edit'
 
 		prevent: (e) ->
 			e.preventDefault()
 			e.stopPropagation()
 
 		press: (e) ->
+			@parent.record(@)
 			if @loaded
-				@$pad.addClass 'active'
 				@play()
 
 		release: (e) ->
-			@$pad.removeClass 'active'
 
 		play: () ->
 			_this = this
+
+			@$('.pad').addClass 'active'
 
 			if not @contextAttached
 				@contextAttached = true
@@ -64,21 +69,26 @@ define [
 				else
 					@T.rendered.bang()
 
+			setTimeout(() =>
+				@$('.pad').removeClass 'active'
+			, 50)
+
 		initPlayer: (objectURL) ->
 			_this = @
-			delete @players
 			@players = []
-			T('audio').load(objectURL || @model.get('src'), () ->
-				_this.T = raw: @
-				# _this.model.set('T.raw', @) # throws call stack max error for objectURL
-				_this.loaded = true
-			)
-			@$pad.addClass('mapped')
-			Display.log(@model.get('name')+' loaded');
+			if objectURL || @model.get('src')
+				T('audio').load(objectURL || @model.get('src'), () ->
+					_this.T = raw: @
+					# _this.model.set('T.raw', @) # throws call stack max error for objectURL
+					_this.loaded = true
+				)
+				@$('.pad').addClass('mapped')
+				Display.log(@model.get('name')+' loaded');
 
 		renderEffects: () ->
 			sound = null
-			delete @T.rendered
+			if @T
+				delete @T.rendered
 
 			original = @T.raw.clone()
 
@@ -94,20 +104,11 @@ define [
 			e.preventDefault()
 			e.stopPropagation()
 
-			# Code for <AUDIO> element implementation
-			#
-			# @sound.onload = (e) =>
-				# URL.revokeObjectURL(@sound.src)
-				# Display.model.set('two', 'New Sample Uploaded and Initialized')
-				# console.log('loaded')
-			#
-			# /Code for <AUDIO> element implementation
-
 			@model.set('src', URL.createObjectURL(e.dataTransfer.files[0]))
 			@initPlayer(URL.createObjectURL(e.dataTransfer.files[0]))
 			Display.log('New Sample Uploaded on '+@model.get('name')+': '+e.dataTransfer.files[0].name)
 
-		editSample: (e) ->
+		edit: (e) ->
 			e.preventDefault()
 			e.stopPropagation()
 			e.stopImmediatePropagation()

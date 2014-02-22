@@ -36,9 +36,8 @@ require [
 	# 'soundcloud'
 	'backbone'
 	'routes/app'
-	'views/app-ui'
-	'projects/test'
-], ($, foundation, Timbre, Backbone, Router, App, testProject) ->
+	'views/app'
+], ($, foundation, Timbre, Backbone, Router, App) ->
 
 	# window.SC = SoundCloud
 
@@ -46,10 +45,8 @@ require [
 	# 	client_id: '0dee6e7b428540e10373263de1cbf711'
 	# )
 
-	Backbone.history.start({pushState: false})
+	Backbone.history.start({pushState: true})
 
 	$(document).foundation()
 	doc = document.documentElement
 	doc.setAttribute('data-useragent', navigator.userAgent)
-
-	App.open(testProject)

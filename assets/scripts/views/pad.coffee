@@ -3,11 +3,10 @@ define [
 	'underscore'
 	'backbone'
 	'models/sound'
-	'views/display'
-	'views/sound-editor'
+	'views/editor'
 	'ligaments',
 	'text!/scripts/templates/pad.ejs'
-], ($, _, Backbone, SoundModel, Display, SoundEditor, ligaments, PadTemplate) ->
+], ($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) ->
 
 	class PadView extends Backbone.View
 
@@ -18,23 +17,28 @@ define [
 
 		initialize: (options) ->
 			@parent = options.parent
-			@model = options.model
-			@model.view = this
-			# console.log(@model)
+			@name = options.name
+			@render()
+
+		map: (sound) ->
+			if not sound then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
+
+			@model = sound
+			sound.pad = @
+
 			if @model.get('keyCode')
 				@model.set('key', String.fromCharCode(@model.get('keyCode')))
-			@model.set('name', options.name)
-			@render()
-			@initPlayer()
+
 			new Backbone.Ligaments(model: @model, view: @)
 
 			@listenTo(@model, 'change', () ->
 				@contextAttached = false
 				@renderEffects()
 			)
+			@initPlayer()
 
 		render: () ->
-			@el.innerHTML = @template()
+			@el.innerHTML = @template(name: @name)
 
 		events:
 			'mousedown .pad'			: 'press'
@@ -49,16 +53,19 @@ define [
 			e.stopPropagation()
 
 		press: (e) ->
-			@parent.record(@)
+			@$('.pad').addClass 'active'
+			setTimeout(() =>
+				@$('.pad').removeClass 'active'
+			, 50)
+
 			if @loaded
+				@parent.record(@)
 				@play()
 
 		release: (e) ->
 
 		play: () ->
 			_this = this
-
-			@$('.pad').addClass 'active'
 
 			if not @contextAttached
 				@contextAttached = true
@@ -68,10 +75,6 @@ define [
 					@T.rendered.currentTime = 0
 				else
 					@T.rendered.bang()
-
-			setTimeout(() =>
-				@$('.pad').removeClass 'active'
-			, 50)
 
 		initPlayer: (objectURL) ->
 			_this = @
@@ -83,7 +86,7 @@ define [
 					_this.loaded = true
 				)
 				@$('.pad').addClass('mapped')
-				Display.log(@model.get('name')+' loaded');
+				@parent.app.display.log(@model.get('name')+' loaded');
 
 		renderEffects: () ->
 			sound = null
@@ -106,7 +109,7 @@ define [
 
 			@model.set('src', URL.createObjectURL(e.dataTransfer.files[0]))
 			@initPlayer(URL.createObjectURL(e.dataTransfer.files[0]))
-			Display.log('New Sample Uploaded on '+@model.get('name')+': '+e.dataTransfer.files[0].name)
+			@parent.app.display.log('New Sample Uploaded on '+@model.get('name')+': '+e.dataTransfer.files[0].name)
 
 		edit: (e) ->
 			e.preventDefault()

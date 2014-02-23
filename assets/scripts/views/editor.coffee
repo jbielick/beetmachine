@@ -5,10 +5,10 @@ define [
 	'backbone'
 	'ligaments'
 	'views/display'
-	'text!/scripts/templates/sound-editor.ejs'
-], ($, bootstrap, _, Backbone, ligaments, Display, SoundEditorTemplate) ->
-	class SoundEditorView extends Backbone.View
-		template: _.template SoundEditorTemplate
+	'text!/scripts/templates/editor.ejs'
+], ($, bootstrap, _, Backbone, ligaments, Display, EditorTemplate) ->
+	class EditorView extends Backbone.View
+		template: _.template EditorTemplate
 		attributes:
 			'class'					: 'modal fade'
 		initialize: (options) ->

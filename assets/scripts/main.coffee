@@ -35,9 +35,8 @@ require [
 	'timbre'
 	# 'soundcloud'
 	'backbone'
-	'routes/app'
 	'views/app'
-], ($, foundation, Timbre, Backbone, Router, App) ->
+], ($, foundation, Timbre, Backbone, App) ->
 
 	# window.SC = SoundCloud
 

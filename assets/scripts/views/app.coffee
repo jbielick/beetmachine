@@ -7,41 +7,67 @@ define [
 	'views/pads',
 	'views/display',
 	'views/transport'
-], ($, _, Backbone, module, Router, Pads, Display, Transport) ->
+	'views/pattern'
+], ($, _, Backbone, module, Router, Pads, Display, Transport, Pattern) ->
 
-	class AppUiView extends Backbone.View
+	class AppView extends Backbone.View
 
 		el: 'body'
 
 		initialize: () ->
-			@router 				= new AppRouter
+			@router 				= new Router app: @
 			@display 				= new Display parent: @
 			@pads 					= new Pads parent: @
+			@pattern				= new Pattern parent: @
 			@transport 			= new Transport parent: @
 
+			@keyMap = {}
+
+			defaultKeys = '6789yuiohjklnm,.'
+
+			_.each(defaultKeys, (key, i) =>
+				@keyMap[key.charCodeAt(0)] = i
+			)
+
+			@display.log('Ready')
+
 			if not _.isEmpty(module.config().recipe)
-				@open(module.config().recipe)
+				@open(module.config().recipe, parse: true)
 
 		events:
-			'keydown'			: 'keyControllerDown'
-			'keyup'				: 'keyControllerUp'
+			'click [data-behavior]'			: 'delegateBehavior'
+			'keypress'									: 'keyPressDelegate'
+			'keydown'										: 'keyDownDelegate'
+
+		delegateBehavior: (e) ->
+			behavior = $(e.currentTarget).data 'behavior'
+			if behavior? and _.isFunction @[behavior]
+				@[behavior](e)
+
+		selectGroup: (e) ->
+			$target = $(e.currentTarget)
+			@pads.render($target.data 'meta')
 
 		open: (recipe) ->
 			@recipe = recipe
 			if recipe.groups.length > 0
-				@padsUi.collection.reset(recipe.groups[0].sounds)
+				@pads.groups.reset(recipe.groups)
+			if recipe.keyMap
+				@keyMap = _.extend(@keyMap, recipe.keyMap)
 
-		keyControllerDown: (e) ->
-			pad = @padsUi.collection.findWhere(keyCode: e.keyCode)
-			pad.view.press() if pad
-			if String.fromCharCode(e.keyCode) is 'R' && e.ctrlKey
-				Transport.record()
-			else if String.fromCharCode(e.keyCode) is ' '
-				Transport.play()
+		keyDownDelegate: (e) ->
+			key = String.fromCharCode(e.keyCode)
 
-		keyControllerUp: (e) ->
-			pad = @padsUi.collection.findWhere(keyCode: e.keyCode)
-			pad.view.release() if pad
+			if key is 'R' and e.ctrlKey
+				@transport.record()
+			else if key is ' '
+				@transport.play()
+			else if _.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 and e.ctrlKey
+				e.preventDefault()
+				@pads.render(key)
+
+		keyPressDelegate: (e) ->
+			@pads.currentPads[@keyMap[e.charCode]].press() if @keyMap[e.charCode]?
 
 
-	return new AppUiView()
+	return new AppView()

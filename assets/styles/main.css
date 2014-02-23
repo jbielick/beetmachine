@@ -13,8 +13,8 @@ body {
 }
 
 .display {
-	margin:100px 0;height:200px;font-family:monospace;color:#000!important;font-size:12px;
-	overflow:scroll;
+	margin:0 0 20px;height:200px;font-family:monospace;color:#000!important;font-size:12px;
+	overflow:scroll;box-shadow:inset 0 0 7px rgba(0,0,0,0.6);
 	}
 .waveform {border: 1px solid #f08a24;margin:12px 0;cursor:;}
 
@@ -22,18 +22,23 @@ body {
  * Transport
  * ==========*/
 .transport {}
-[data-behavior="record"].btn.active {color:#fff;background-color:#f84719;border-color:#f03707}
-[data-behavior="play"].btn.active {color:#fff;background-color:#19ff35;border-color:#00ff1f}
+/*[data-behavior="record"].btn.active {color:#fff;background-color:#f84719;border-color:#f03707}*/
+/*[data-behavior="play"].btn.active {color:#fff;background-color:#19ff35;border-color:#00ff1f}*/
 
 /*============
  * Sequence
  * ==========*/
-.sequence {min-height:200px;background-color:#111;}
+.sequence {min-height:120px;background-color:#111;}
 
-.pad-container {margin:8px 0 12px;}
-.pad-label {margin-bottom:8px;}
+/*===========
+ * Pads
+ * =========*/
+.pads {margin-top:4px;}
+.pad-container {margin:6px 0 6px;}
+.pad-label {margin-bottom:2px;}
 
 .btn-squishy {
+	color:#000;
 	padding:6px 12px;
 	display:inline-block;
 	-webkit-touch-callout: none;
@@ -43,43 +48,30 @@ body {
 	-ms-user-select: none;
 	user-select: none;
 	background-color:#eee;
-	cursor:pointer;opacity:0.7;
+	cursor:pointer;
+	opacity:0.7;
 	-webkit-transition: background-color 1s ease-out, opacity .22s linear, margin .03s linear, box-shadow: .03s linear;
 	transition: background-color 1s ease-out, opacity .22s linear, margin .03s linear, box-shadow: .03s linear;
-	border-radius:1.5px;border: 1px solid #aaa;
-	box-shadow: -1px -1px 0 1px #aaa,
-							-2px -2px 0 1px #888,
-							0 0 12px rgba(255,255,255,0.7);
+	border-radius:1.5px;
+	border: 1px solid #aaa;
+	box-shadow:	0 0 8px rgba(237,237,237,0.7)
 }
 .btn-squishy:hover {opacity:0.75;}
+
 .btn-squishy:active, .btn-squishy.active {
 	opacity:0.9;
-	margin: -1px 1px 1px -1px;
-	box-shadow: -1px -1px 0 1px #999,
-							0 0 7px rgba(255,255,255,0.9);
-}
-.pad .btn-squishy {
-	box-shadow: -1px -1px 0 1px #aaa,
-							-2px -2px 0 1px #888,
-							-3px -3px 0 1px #333,
-							0 0 3px #eee;
+	box-shadow: 0 0 7px rgba(237,237,237,0.9);
 }
 .pad .btn-squishy:active, .pad .btn-squishy.active {
-	box-shadow: -1px -1px 0 1px #999,
-							-2px -2px 0 1px #333,
-							0 0 12px #fff;
+	box-shadow: 0 0 12px #fff;
 }
 .btn-squishy.mapped {
 	background-color:#C9E5FF;
-		box-shadow: -1px -1px 0 1px #aaa,
-								-2px -2px 0 1px #888,
-								0 0 12px rgba(201,229,255,0.7);
+		box-shadow:	0 0 8px rgba(201,229,255,0.7);
 }
 .btn-squishy.mapped:active, .btn-squishy.mapped.active {
-	background-color:#81C2FF;
-	box-shadow: -1px -1px 0 1px #999,
-							-2px -2px 0 1px #333,
-							-1px -1px 20px rgba(201,229,255,0.9);
+	background-color:#A0D1FF;
+	box-shadow: 0 0 12px rgba(201,229,255,0.9);
 }
 .pad {
 	padding-bottom:90%;height:0;width:100%;display:block;

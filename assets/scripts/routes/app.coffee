@@ -9,7 +9,11 @@ define [
 			''						: 'main'
 			'pad/:num'		: 'soundEditor'
 			'beet/:id'		: 'open'
-		},
+		}
+
+		initialize: (options) ->
+			@app = options.app
+
 		main: ->
 
 		soundEditor: (padNumber) ->

@@ -9,5 +9,4 @@ define([
 	class TransportModel extends Backbone.Model
 		initialize: (options) ->
 
-	TransportModel
 )

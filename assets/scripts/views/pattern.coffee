@@ -2,11 +2,14 @@
 
 define([
 	'backbone',
-	'models/pattern'
-], (Backbone) -> 
+	'collections/pattern'
+], (Backbone, PatternCollection) -> 
 
 	class PatternView extends Backbone.View
 
-	PatternView
+		initialize: (options) ->
+			@app = options.parent
+			@collection = new PatternCollection options.patterns
+			@app.sequence = @collection
 
 )

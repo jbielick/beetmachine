@@ -1,3 +1,9 @@
-'use strict';
+'use strict'
 
-class beetmachine.Models.PatternModel extends Backbone.Model
+define [
+  'underscore'
+  'backbone'
+  'deepmodel'
+], (_, Backbone) ->
+
+  class PatternModel extends Backbone.DeepModel

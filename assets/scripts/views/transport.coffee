@@ -4,8 +4,7 @@ define [
 	'backbone'
 	'models/transport'
 	'text!/scripts/templates/transport.ejs'
-	'views/display'
-], ($, _, Backbone, TransportModel, TransportTemplate, Display) ->
+], ($, _, Backbone, TransportModel, TransportTemplate) ->
 
 	class TransportView extends Backbone.View
 
@@ -14,6 +13,7 @@ define [
 		template: _.template TransportTemplate
 
 		initialize: (options) ->
+			@app = options.parent
 			_.bindAll @, '_start', '_stop', '_tick', 'recalculate'
 			@model = new TransportModel(bpm: 100, interval: @calculateInterval(100))
 			@_currentTime = 0;
@@ -49,7 +49,7 @@ define [
 
 		record: (e) ->
 			if not @_playing then @_start()
-			@_recording = !@_recording;
+			@_recording = !@_recording
 			@$('[data-behavior="record"]').toggleClass('active')
 
 		restart: (e) ->
@@ -74,24 +74,37 @@ define [
 			@_currentTick += 1
 			if @pattern && @pattern[@_currentTick] && @pattern[@_currentTick].length > 0
 				for pad in @pattern[@_currentTick]
-					@pads.pads[pad - 1].play()
-			Display.model.set('time', @getTime() / 1000)
+					@app.pads.currentPads[pad - 1].press()
+			@app.display.model.set('left', @getTime(true))
 
 		getTick: () ->
 			@_currentTick
 
-		getTime: () ->
-			@_currentTime
+		getTime: (readable = false) ->
+			if not readable 
+				@_currentTime
+			else
+				time = (''+(@_currentTime / 1000 * 100)).split('.')[0]
+				formatted = ''
+				while time.length < 8
+					time = '0'+time
+				time = time.split('')
+				while true
+					formatted += time.splice(0, 2).join('')
+					if time.length >= 2
+						formatted += ':'
+					break if not time.length
+				return formatted
 
 		setTime: (value) ->
 			@_currentTime = value
 			@_currentTick = value / @model.get('interval')
-			Display.model.set('time', @getTime() / 1000)
+			@app.display.model.set('left', @getTime() / 1000)
 
 		setTick: (value) ->
 			@_currentTick = value
 			@_currentTime = value * @model.get('interval')
-			Display.model.set('time', @getTime() / 1000)
+			@app.display.model.set('left', @getTime() / 1000)
 
 		timestamp: () ->
 
@@ -101,3 +114,4 @@ define [
 
 			@_stop()
 			@_start()
+

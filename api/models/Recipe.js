@@ -8,11 +8,17 @@
 
 module.exports = {
 
-  attributes: {
-
-  	getGroups: function(req, res) {
-  		
-  	}
-  },
+	attributes: {
+		name: 'string',
+		bpm: 'float',
+		duration: 'float',
+		fx: {
+			type: 'json',
+			defaultsTo: {}
+		},
+		getGroups: function(cb) {
+			
+		}
+	},
 
 };

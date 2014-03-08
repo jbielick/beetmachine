@@ -22,7 +22,7 @@ define [
 
 		initialize: (options) ->
 			@app = options.parent
-			@groups = new GroupCollection {}, view: @
+			@groups = new GroupCollection {position: 1}, view: @
 			@currentGroup = @groups.at(0)
 			@createPads()
 			@mapPads(@currentGroup)
@@ -74,7 +74,12 @@ define [
 			@$('.pad-container').detach()
 			$('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="'+group+'"]').addClass('active');
 			zeroedIndex = group - 1
-			@currentGroup = @groups.findWhere(position: group)
+			active = @groups.findWhere(position: group)
+			
+			if active is 'undefined'
+				active = @groups.create position: group
+
+			@currentGroup = active
 			@currentPads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
 			@app.display.model.set('right', 'Group '+group)
 			@$el.append(_.pluck(@currentPads, 'el'))

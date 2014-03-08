@@ -17,4 +17,7 @@ define [
 		toJSON: () ->
 			shallow = _.extend({}, @attributes)
 			shallow.sounds = @sounds.toJSON()
-			shallow
+			deep = shallow
+			return deep
+
+		url: '/groups'

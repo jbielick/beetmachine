@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'module', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern'], function($, _, Backbone, module, Router, Pads, Display, Transport, Sequence, Pattern) {
+  define(['jquery', 'underscore', 'backbone', 'module', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern', 'models/recipe'], function($, _, Backbone, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) {
     var AppView, _ref;
     AppView = (function(_super) {
       __extends(AppView, _super);
@@ -36,6 +36,7 @@
         this.transport = new Transport({
           parent: this
         });
+        this.recipe = new RecipeModel;
         this.keyMap = {};
         defaultKeys = '6789yuiohjklnm,.';
         _.each(defaultKeys, function(key, i) {
@@ -77,6 +78,11 @@
         if (recipe.keyMap) {
           return this.keyMap = _.extend(this.keyMap, recipe.keyMap);
         }
+      };
+
+      AppView.prototype.save = function(e) {
+        this.recipe.set('groups', this.pads.groups.toJSON());
+        return console.log(this.recipe.toJSON());
       };
 
       AppView.prototype.keyDownDelegate = function(e) {

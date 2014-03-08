@@ -24,11 +24,14 @@
       };
 
       GroupModel.prototype.toJSON = function() {
-        var shallow;
+        var deep, shallow;
         shallow = _.extend({}, this.attributes);
         shallow.sounds = this.sounds.toJSON();
-        return shallow;
+        deep = shallow;
+        return deep;
       };
+
+      GroupModel.prototype.url = '/groups';
 
       return GroupModel;
 

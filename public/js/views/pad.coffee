@@ -81,6 +81,14 @@ define [
 				else
 					#noop
 
+		###
+		 # creates a new model when a pad has a file dropped
+		 # onto it. Add itself to the current group's SoundCollection
+		###
+		createModel: (attrs = {}) ->
+			@model = new SoundModel _.extend({pad: @$el.index()+1}, attrs)
+			@parent.currentGroup.sounds.add @model
+
 		initPlayer: (objectURL) ->
 			_this = @
 			@players = []
@@ -90,7 +98,7 @@ define [
 					_this.loaded = true
 				)
 				@$('.pad').addClass('mapped')
-				@parent.app.display.log(@model.get('name')+' loaded');
+				@parent.app.display.log(@name+' loaded');
 
 		renderEffects: (cb) ->
 			clearTimeout(@timeout)
@@ -113,9 +121,12 @@ define [
 			e.preventDefault()
 			e.stopPropagation()
 
+			if not @model
+				@createModel()
+
 			@model.set('src', URL.createObjectURL(e.dataTransfer.files[0]))
 			@initPlayer(URL.createObjectURL(e.dataTransfer.files[0]))
-			@parent.app.display.log('New Sample Uploaded on '+@model.get('name')+': '+e.dataTransfer.files[0].name)
+			@parent.app.display.log('New Sample Uploaded on '+@name+': '+e.dataTransfer.files[0].name)
 
 		edit: (e) ->
 			e.preventDefault()

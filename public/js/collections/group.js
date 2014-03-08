@@ -17,6 +17,8 @@
 
       GroupCollection.prototype.comparator = 'position';
 
+      GroupCollection.prototype.url = '/groups';
+
       return GroupCollection;
 
     })(Backbone.Collection);

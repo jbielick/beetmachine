@@ -28,15 +28,17 @@ require.config
 		soundcloud			: 'http://connect.soundcloud.com/sdk'
 		bootstrap				: 'vendor/bootstrap.min'
 		timbre 					: 'vendor/timbre.dev'
+		socketio				: 'vendor/socket.io'
 
 require [
 	'jquery'
 	'foundation'
+	'socketio'
 	'timbre'
 	# 'soundcloud'
 	'backbone'
 	'views/app'
-], ($, foundation, Timbre, Backbone, App) ->
+], ($, foundation, io, Timbre, Backbone, App) ->
 
 	# window.SC = SoundCloud
 

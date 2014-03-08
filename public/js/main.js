@@ -29,11 +29,12 @@
       ligaments: 'vendor/ligaments',
       soundcloud: 'http://connect.soundcloud.com/sdk',
       bootstrap: 'vendor/bootstrap.min',
-      timbre: 'vendor/timbre.dev'
+      timbre: 'vendor/timbre.dev',
+      socketio: 'vendor/socket.io'
     }
   });
 
-  require(['jquery', 'foundation', 'timbre', 'backbone', 'views/app'], function($, foundation, Timbre, Backbone, App) {
+  require(['jquery', 'foundation', 'socketio', 'timbre', 'backbone', 'views/app'], function($, foundation, io, Timbre, Backbone, App) {
     var doc;
     Backbone.history.start({
       pushState: true

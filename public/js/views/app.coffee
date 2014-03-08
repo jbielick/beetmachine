@@ -4,12 +4,13 @@ define [
 	'backbone'
 	'module'
 	'routes/app'
-	'views/pads',
-	'views/display',
+	'views/pads'
+	'views/display'
 	'views/transport'
 	'views/sequence'
 	'views/pattern'
-], ($, _, Backbone, module, Router, Pads, Display, Transport, Sequence, Pattern) ->
+	'models/recipe'
+], ($, _, Backbone, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
 
 	class AppView extends Backbone.View
 
@@ -22,6 +23,8 @@ define [
 			@pattern				= new Pattern parent: @
 			@sequence				= new Sequence parent: @
 			@transport 			= new Transport parent: @
+
+			@recipe = new RecipeModel
 
 			@keyMap = {}
 
@@ -56,6 +59,10 @@ define [
 				@pads.groups.reset(recipe.groups)
 			if recipe.keyMap
 				@keyMap = _.extend(@keyMap, recipe.keyMap)
+
+		save: (e) ->
+			@recipe.set('groups', @pads.groups.toJSON())
+			console.log(@recipe.toJSON())
 
 		keyDownDelegate: (e) ->
 			key = String.fromCharCode(e.keyCode)

@@ -28,7 +28,9 @@
       PadsView.prototype.initialize = function(options) {
         var _this = this;
         this.app = options.parent;
-        this.groups = new GroupCollection({}, {
+        this.groups = new GroupCollection({
+          position: 1
+        }, {
           view: this
         });
         this.currentGroup = this.groups.at(0);
@@ -89,16 +91,22 @@
       };
 
       PadsView.prototype.render = function(group) {
-        var zeroedIndex;
+        var active, zeroedIndex;
         if (group == null) {
           group = 1;
         }
         this.$('.pad-container').detach();
         $('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
         zeroedIndex = group - 1;
-        this.currentGroup = this.groups.findWhere({
+        active = this.groups.findWhere({
           position: group
         });
+        if (active === 'undefined') {
+          active = this.groups.create({
+            position: group
+          });
+        }
+        this.currentGroup = active;
         this.currentPads = this.pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
         this.app.display.model.set('right', 'Group ' + group);
         return this.$el.append(_.pluck(this.currentPads, 'el'));

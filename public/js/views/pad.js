@@ -101,6 +101,22 @@
         }
       };
 
+      /*
+      		 # creates a new model when a pad has a file dropped
+      		 # onto it. Add itself to the current group's SoundCollection
+      */
+
+
+      PadView.prototype.createModel = function(attrs) {
+        if (attrs == null) {
+          attrs = {};
+        }
+        this.model = new SoundModel(_.extend({
+          pad: this.$el.index() + 1
+        }, attrs));
+        return this.parent.currentGroup.sounds.add(this.model);
+      };
+
       PadView.prototype.initPlayer = function(objectURL) {
         var _this;
         _this = this;
@@ -113,7 +129,7 @@
             return _this.loaded = true;
           });
           this.$('.pad').addClass('mapped');
-          return this.parent.app.display.log(this.model.get('name') + ' loaded');
+          return this.parent.app.display.log(this.name + ' loaded');
         }
       };
 
@@ -141,9 +157,12 @@
         e = e.originalEvent;
         e.preventDefault();
         e.stopPropagation();
+        if (!this.model) {
+          this.createModel();
+        }
         this.model.set('src', URL.createObjectURL(e.dataTransfer.files[0]));
         this.initPlayer(URL.createObjectURL(e.dataTransfer.files[0]));
-        return this.parent.app.display.log('New Sample Uploaded on ' + this.model.get('name') + ': ' + e.dataTransfer.files[0].name);
+        return this.parent.app.display.log('New Sample Uploaded on ' + this.name + ': ' + e.dataTransfer.files[0].name);
       };
 
       PadView.prototype.edit = function(e) {

@@ -8,14 +8,18 @@ define [
 	'text!/js/templates/editor.ejs'
 ], ($, bootstrap, _, Backbone, ligaments, Display, EditorTemplate) ->
 	class EditorView extends Backbone.View
+
 		template: _.template EditorTemplate
+
 		attributes:
 			'class'					: 'modal fade'
+
 		initialize: (options) ->
 			@viewVars = {}
 			@model = options.model
 			@pad = options.pad
 			@render()
+			new Backbone.Ligaments(model: @model, view: @)
 
 		events:
 			'click [data-behavior]'				: 'delegateBehavior'
@@ -35,14 +39,14 @@ define [
 			console.log(freq)
 
 		tab: (e) ->
-			tab = $(e.currentTarget).data 'tab'
+			tabClass = $(e.currentTarget).data 'tab'
 			$(e.currentTarget).addClass('active').siblings().removeClass('active')
 			this.$('.tab-pane').hide()
-			this.$('.tab-pane'+tab).show()
+			this.$('.tab-pane'+tabClass).show()
 
 		toggleEffect: (e) ->
 			effect = $(e.currentTarget).data('effect')
-			if not @model.get('fx.'+effect)?
+			if not @model.get('fx.'+effect)
 				@viewVars.show = effect
 				@addEffect(effect)
 			else
@@ -93,7 +97,6 @@ define [
 				data: @model.toJSON()
 				view: @viewVars
 			)
-			new Backbone.Ligaments(model: @model, view: @)
 			@$canvas = this.$('.waveform');
 			if @pad.T
 				@pad.T.raw.plot(

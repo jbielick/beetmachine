@@ -18,10 +18,16 @@
 
       PatternView.prototype.initialize = function(options) {
         this.app = options.parent;
-        return this.scaffold();
+        return this.scaffoldGrid();
       };
 
-      PatternView.prototype.scaffold = function() {
+      PatternView.prototype.updatePlayHead = function(percent, cb) {
+        return this.$playHead.animate({
+          left: percent + '%'
+        });
+      };
+
+      PatternView.prototype.scaffoldGrid = function() {
         var cols, html, i, rows, z;
         i = 0;
         cols = [];
@@ -41,10 +47,14 @@
           cols[i].append(rows);
           i++;
         }
-        return this.$el.append(cols);
+        this.$el.append(cols);
+        return this.$playHead = this.$el.append($('<div id="playHead">'));
       };
 
-      PatternView.prototype.render = function() {};
+      PatternView.prototype.render = function() {
+        this.$el.empty();
+        return this.scaffoldGrid();
+      };
 
       return PatternView;
 

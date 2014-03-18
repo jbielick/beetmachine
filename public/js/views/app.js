@@ -86,21 +86,33 @@
       };
 
       AppView.prototype.keyDownDelegate = function(e) {
-        var key;
+        var key, prevent;
         key = String.fromCharCode(e.keyCode);
         if (key === 'R' && e.ctrlKey) {
-          return this.transport.record();
+          this.transport.record();
+          return prevent = true;
         } else if (key === ' ') {
-          return this.transport.play();
+          this.transport.play();
+          return prevent = true;
         } else if (_.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 && e.ctrlKey) {
-          e.preventDefault();
-          return this.pads.render(key);
+          prevent = true;
+          this.pads.render(key);
+          if (prevent) {
+            return e.preventDefault();
+          }
         }
       };
 
       AppView.prototype.keyPressDelegate = function(e) {
+        var sound;
         if (this.keyMap[e.charCode] != null) {
-          return this.pads.currentPads[this.keyMap[e.charCode]].press();
+          debugger;
+          sound = this.pads.currentGroup.sounds.findWhere({
+            pad: this.keyMap[e.charCode] + 1
+          });
+          if (sound) {
+            return sound.trigger('press');
+          }
         }
       };
 

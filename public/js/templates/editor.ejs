@@ -38,10 +38,10 @@
 				<div class="form-group">
 					<div class="col-xs-12">
 						<div class="btn-group btn-group-justified">
-							<a class="btn btn-squishy btn-sm active" href="#eq" data-behavior="tab" data-tab=".eq">EQ</a>
-							<a class="btn btn-squishy btn-sm" href="#reverb" data-behavior="tab" data-tab=".reverb">Reverb</a>
-							<a class="btn btn-squishy btn-sm" href="#delay" data-behavior="tab" data-tab=".delay">Delay</a>
-							<a class="btn btn-squishy btn-sm" href="#chorus" data-behavior="tab" data-tab=".chorus">Chorus</a>
+							<a class="btn btn-squishy btn-sm active" href="#editor/<%= data.pad %>-eq" data-behavior="tab" data-tab=".eq">EQ</a>
+							<a class="btn btn-squishy btn-sm" href="#editor/<%= data.pad %>-reverb" data-behavior="tab" data-tab=".reverb">Reverb</a>
+							<a class="btn btn-squishy btn-sm" href="#editor/<%= data.pad %>-delay" data-behavior="tab" data-tab=".delay">Delay</a>
+							<a class="btn btn-squishy btn-sm" href="#editor/<%= data.pad %>-chorus" data-behavior="tab" data-tab=".chorus">Chorus</a>
 						</div>
 						<div class="tab-content">
 							<div class="tab-pane eq" <%= !view.show ? '' : 'hidden' %>>

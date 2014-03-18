@@ -35,16 +35,16 @@
         });
         this.currentGroup = this.groups.at(0);
         this.createPads();
-        this.mapPads(this.currentGroup);
+        this.bootstrapGroupPads(this.currentGroup);
         this.render();
         this.listenTo(this.groups, 'reset', function(collection) {
           collection.each(function(model) {
-            return _this.mapPads(model);
+            return _this.bootstrapGroupPads(model);
           });
           return _this.render(1);
         });
         return this.listenTo(this.groups, 'add', function(model) {
-          _this.mapPads(model);
+          _this.bootstrapGroupPads(model);
           return _this.render(model.get('position'));
         });
       };
@@ -69,25 +69,30 @@
         return _results;
       };
 
-      PadsView.prototype.mapPads = function(group) {
+      PadsView.prototype.bootstrapGroupPads = function(group) {
         var pads, pos;
         pos = group.get('position') - 1 || 0;
         pads = this.pads.slice(pos * 16, pos * 16 + 16);
         return _.each(pads, function(pad, i) {
           if (group.sounds.at(i) != null) {
-            return pad.map(group.sounds.at(i));
+            return pad.bootstrapWithModel(group.sounds.at(i));
           }
         });
       };
 
       PadsView.prototype.record = function(pad) {
         var tick;
-        if (this.app.transport._recording) {
+        if (this.app.transport._recording && pad.model) {
           tick = this.app.transport.getTick();
+          console.log('recordHit at %s', tick);
           this.app.transport.pattern || (this.app.transport.pattern = {});
           this.app.transport.pattern[tick] || (this.app.transport.pattern[tick] = []);
-          return this.app.transport.pattern[tick].push(pad.model.get('sound'));
+          return this.app.transport.pattern[tick].push(pad.model.get('pad'));
         }
+      };
+
+      PadsView.prototype.toggleGroupSelectButtons = function(group) {
+        return $('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
       };
 
       PadsView.prototype.render = function(group) {
@@ -96,7 +101,7 @@
           group = 1;
         }
         this.$('.pad-container').detach();
-        $('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
+        this.toggleGroupSelectButtons(group);
         zeroedIndex = group - 1;
         active = this.groups.findWhere({
           position: group

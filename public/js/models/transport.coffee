@@ -1,12 +1,9 @@
 'use strict'
 
-define([
+define [
 	'jquery',
 	'underscore'
 	'backbone'
 ], ($, _, Backbone) ->
 
 	class TransportModel extends Backbone.Model
-		initialize: (options) ->
-
-)

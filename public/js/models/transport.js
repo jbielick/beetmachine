@@ -14,8 +14,6 @@
         return _ref;
       }
 
-      TransportModel.prototype.initialize = function(options) {};
-
       return TransportModel;
 
     })(Backbone.Model);

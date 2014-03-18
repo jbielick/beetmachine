@@ -9,3 +9,5 @@ define [
 	class RecipeModel extends Backbone.DeepModel
 		defaults: 
 			name: 'New Recipe'
+
+		url: '/recipes'

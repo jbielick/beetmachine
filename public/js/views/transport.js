@@ -89,25 +89,30 @@
 
       TransportView.prototype._start = function() {
         this._playing = true;
-        this.clock = setInterval(this._tick, this.model.get('interval'));
+        this.clock = setInterval(this._tick, parseInt(this.model.get('interval'), 10));
         return this.$('[data-behavior="play"]').addClass('active');
       };
 
       TransportView.prototype._stop = function() {
         clearInterval(this.clock);
+        this._recording = false;
         this._playing = false;
         return this.$('[data-behavior="play"], [data-behavior="record"]').removeClass('active');
       };
 
       TransportView.prototype._tick = function() {
-        var pad, _i, _len, _ref1;
+        var pad, _i, _len, _ref1, _ref2;
         this._currentTime += this.model.get('interval');
-        this._currentTick += 1;
+        this._currentTick++;
         if (this.pattern && this.pattern[this._currentTick] && this.pattern[this._currentTick].length > 0) {
           _ref1 = this.pattern[this._currentTick];
           for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
             pad = _ref1[_i];
-            this.app.pads.currentPads[pad - 1].press();
+            if ((_ref2 = this.app.pads.currentGroup.sounds.findWhere({
+              pad: pad
+            })) != null) {
+              _ref2.trigger('press');
+            }
           }
         }
         return this.app.display.model.set('left', this.getTime(true));

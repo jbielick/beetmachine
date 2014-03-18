@@ -14,6 +14,8 @@
         return _ref;
       }
 
+      PatternModel.prototype.url = '/patterns';
+
       return PatternModel;
 
     })(Backbone.DeepModel);

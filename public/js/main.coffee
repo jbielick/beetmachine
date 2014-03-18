@@ -12,6 +12,7 @@ require.config
 			]
 			exports: 'Backbone'
 		foundation: ['jquery']
+		bootstrap: ['jquery']
 		soundcloud: 
 			exports: 'SC'
 		timbre:
@@ -19,7 +20,7 @@ require.config
 	paths:
 		jquery					: '/bower_components/jquery/jquery'
 		backbone 				: '/bower_components/backbone/backbone'
-		deepmodel				: '/bower_components/backbone-deep-model/distribution/deep-model.min'
+		deepmodel				: '/bower_components/backbone-deep-model/distribution/deep-model'
 		underscore			: '/bower_components/underscore/underscore'
 		text						: '/bower_components/requirejs-text/text'
 		foundation			: 'vendor/foundation.min'
@@ -46,7 +47,7 @@ require [
 	# 	client_id: '0dee6e7b428540e10373263de1cbf711'
 	# )
 
-	Backbone.history.start({pushState: true})
+	Backbone.history.start()
 
 	$(document).foundation()
 	doc = document.documentElement

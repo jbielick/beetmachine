@@ -18,6 +18,8 @@
         name: 'New Recipe'
       };
 
+      RecipeModel.prototype.url = '/recipes';
+
       return RecipeModel;
 
     })(Backbone.DeepModel);

@@ -15,15 +15,15 @@ define [
 		initialize: (options) ->
 			@app = options.parent
 			_.bindAll @, '_start', '_stop', '_tick', 'recalculate'
-			@model = new TransportModel(bpm: 100, interval: @calculateInterval(100))
-			@_currentTime = 0;
-			@_currentTick = 0;
-			@_playing = false;
-			@_recording = false;
+			@model = new TransportModel bpm: 100, interval: @calculateInterval(100)
+			@_currentTime = 0
+			@_currentTick = 0
+			@_playing = false
+			@_recording = false
 			@render()
 
-			@listenTo(@model, 'change:interval', @recalculate)
-			@listenTo(@model, 'change:bpm', @recalculate)
+			@listenTo @model, 'change:interval', @recalculate
+			@listenTo @model, 'change:bpm', @recalculate
 
 		render: () ->
 			@el.innerHTML = @template()
@@ -50,7 +50,7 @@ define [
 		record: (e) ->
 			if not @_playing then @_start()
 			@_recording = !@_recording
-			@$('[data-behavior="record"]').toggleClass('active')
+			@$('[data-behavior="record"]').toggleClass 'active'
 
 		restart: (e) ->
 			@setTime 0
@@ -61,21 +61,22 @@ define [
 
 		_start: () ->
 			@_playing = true
-			@clock = setInterval(@_tick, @model.get('interval'))
-			@$('[data-behavior="play"]').addClass('active')
+			@clock = setInterval @_tick, parseInt(@model.get('interval'), 10)
+			@$('[data-behavior="play"]').addClass 'active'
 
 		_stop: () ->
 			clearInterval @clock
+			@_recording = false
 			@_playing = false
-			@$('[data-behavior="play"], [data-behavior="record"]').removeClass('active')
+			@$('[data-behavior="play"], [data-behavior="record"]').removeClass 'active'
 
 		_tick: () ->
-			@_currentTime += @model.get('interval')
-			@_currentTick += 1
+			@_currentTime += @model.get 'interval'
+			@_currentTick++
 			if @pattern && @pattern[@_currentTick] && @pattern[@_currentTick].length > 0
 				for pad in @pattern[@_currentTick]
-					@app.pads.currentPads[pad - 1].press()
-			@app.display.model.set('left', @getTime(true))
+					@app.pads.currentGroup.sounds.findWhere(pad: pad)?.trigger 'press'
+			@app.display.model.set 'left', @getTime(true)
 
 		getTick: () ->
 			@_currentTick
@@ -98,19 +99,19 @@ define [
 
 		setTime: (value) ->
 			@_currentTime = value
-			@_currentTick = value / @model.get('interval')
+			@_currentTick = value / @model.get 'interval'
 			@app.display.model.set('left', @getTime() / 1000)
 
 		setTick: (value) ->
 			@_currentTick = value
-			@_currentTime = value * @model.get('interval')
-			@app.display.model.set('left', @getTime() / 1000)
+			@_currentTime = value * @model.get 'interval'
+			@app.display.model.set 'left', (@getTime() / 1000)
 
 		timestamp: () ->
 
 		recalculate: (model, changed) ->
 			if changed.bpm
-				@model.set('interval', @calculateInterval(changed.bpm))
+				@model.set 'interval', @calculateInterval(changed.bpm)
 
 			@_stop()
 			@_start()

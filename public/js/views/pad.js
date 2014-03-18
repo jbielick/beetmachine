@@ -22,15 +22,28 @@
       PadView.prototype.initialize = function(options) {
         this.parent = options.parent;
         this.name = options.name;
+        _.bindAll(this, 'listenToModelChanges', 'press');
+        this.on('modelPresent', this.listenToModelChanges);
         return this.render();
       };
 
-      PadView.prototype.map = function(sound) {
-        if (!sound) {
+      PadView.prototype.listenToModelChanges = function() {
+        var _this = this;
+        this.stopListening(this.model, 'press');
+        this.listenTo(this.model, 'press', this.press);
+        this.stopListening(this.model, 'change:fx.*');
+        return this.listenTo(this.model, 'change:fx.*', function(model, attrs) {
+          _this.timbreContextAttached = false;
+          return _this.rendered = false;
+        });
+      };
+
+      PadView.prototype.bootstrapWithModel = function(sound) {
+        var _this = this;
+        if (!sound && !sound instanceof SoundModel) {
           throw new Error('Must provide a SoundModel instance when mapping a pad.');
         }
-        this.model = sound;
-        sound.pad = this;
+        (this.model = sound).pad = this;
         if (this.model.get('keyCode')) {
           this.model.set('key', String.fromCharCode(this.model.get('keyCode')));
         }
@@ -38,11 +51,9 @@
           model: this.model,
           view: this
         });
-        this.listenTo(this.model, 'change', function() {
-          this.contextAttached = false;
-          return this.renderEffects();
+        return this.loadSrc(this.model.get('src'), function() {
+          return _this.trigger('modelPresent');
         });
-        return this.initPlayer();
       };
 
       PadView.prototype.render = function() {
@@ -57,7 +68,7 @@
         'mouseup .pad': 'release',
         'dragover': 'prevent',
         'dragenter': 'prevent',
-        'drop': 'loadSample'
+        'drop': 'uploadSample'
       };
 
       PadView.prototype.prevent = function(e) {
@@ -75,30 +86,31 @@
           return _this.$('.pad').removeClass('active');
         }, 50);
         if (this.loaded) {
-          this.parent.record(this);
-          return this.play();
+          return this.play().parent.record(this);
         }
       };
 
       PadView.prototype.release = function(e) {};
 
       PadView.prototype.play = function() {
-        var _ref1, _this;
-        _this = this;
-        if (!this.contextAttached) {
-          this.contextAttached = true;
-          return this.renderEffects(function(sound) {
-            return sound.play();
-          });
+        var sound, _ref1, _this;
+        _this = _this;
+        if (!this.rendered) {
+          sound = this.renderEffects();
+          if (!this.timbreContextAttached) {
+            this.timbreContextAttached = true;
+            sound.play();
+          } else {
+            sound.bang();
+          }
         } else {
           if ((_ref1 = this.T.rendered) != null ? _ref1.playbackState : void 0) {
-            return this.T.rendered.currentTime = 0;
-          } else if (this.T.rendered != null) {
-            return this.T.rendered.bang();
+            this.T.rendered.currentTime = 0;
           } else {
-
+            this.T.rendered.bang();
           }
         }
+        return this;
       };
 
       /*
@@ -114,54 +126,59 @@
         this.model = new SoundModel(_.extend({
           pad: this.$el.index() + 1
         }, attrs));
-        return this.parent.currentGroup.sounds.add(this.model);
+        this.parent.currentGroup.sounds.add(this.model);
+        return this.model;
       };
 
-      PadView.prototype.initPlayer = function(objectURL) {
+      PadView.prototype.loadSrc = function(url, cb) {
         var _this;
         _this = this;
-        this.players = [];
-        if (objectURL || this.model.get('src')) {
-          T('audio').load(objectURL || this.model.get('src'), function() {
+        if (url || this.model.get('src')) {
+          return T('audio').load(url || this.model.get('src'), function() {
             _this.T = {
               raw: this
             };
-            return _this.loaded = true;
+            _this.loaded = true;
+            _this.$('.pad').addClass('mapped');
+            _this.parent.app.display.log(_this.name + ' loaded');
+            if (cb) {
+              return cb.call(_this, this);
+            }
           });
-          this.$('.pad').addClass('mapped');
-          return this.parent.app.display.log(this.name + ' loaded');
         }
       };
 
       PadView.prototype.renderEffects = function(cb) {
-        var _this = this;
-        clearTimeout(this.timeout);
-        return this.timeout = setTimeout(function() {
-          var original, sound;
-          sound = null;
-          if (_this.T) {
-            delete _this.T.rendered;
-          }
-          original = _this.T.raw.clone();
-          _.each(_this.model.get('fx'), function(params, fx) {
-            return sound = T(fx, params, sound || original);
-          });
-          _this.T.rendered = original;
-          if (cb) {
-            return cb(sound || original);
-          }
-        }, 200);
+        var sound,
+          _this = this;
+        sound = null;
+        if (this.T) {
+          delete this.T.rendered;
+        }
+        this.T.rendered = this.T.raw.clone();
+        _.each(this.model.get('fx'), function(params, fx) {
+          return sound = T(fx, params, sound || _this.T.rendered);
+        });
+        this.rendered = true;
+        return sound || this.T.rendered;
       };
 
-      PadView.prototype.loadSample = function(e) {
+      PadView.prototype.uploadSample = function(e) {
+        var objectUrl,
+          _this = this;
         e = e.originalEvent;
         e.preventDefault();
         e.stopPropagation();
         if (!this.model) {
           this.createModel();
         }
-        this.model.set('src', URL.createObjectURL(e.dataTransfer.files[0]));
-        this.initPlayer(URL.createObjectURL(e.dataTransfer.files[0]));
+        objectUrl = URL.createObjectURL(e.dataTransfer.files[0]);
+        this.model.set('src', objectUrl, {
+          silent: true
+        });
+        this.loadSrc(objectUrl, function() {
+          return _this.trigger('modelPresent');
+        });
         return this.parent.app.display.log('New Sample Uploaded on ' + this.name + ': ' + e.dataTransfer.files[0].name);
       };
 
@@ -170,7 +187,7 @@
         e.preventDefault();
         if (!this.editor) {
           editor = new SoundEditor({
-            model: this.model,
+            model: this.model || this.createModel(),
             pad: this
           });
           return this.editor = editor;

@@ -11,6 +11,7 @@
         exports: 'Backbone'
       },
       foundation: ['jquery'],
+      bootstrap: ['jquery'],
       soundcloud: {
         exports: 'SC'
       },
@@ -21,7 +22,7 @@
     paths: {
       jquery: '/bower_components/jquery/jquery',
       backbone: '/bower_components/backbone/backbone',
-      deepmodel: '/bower_components/backbone-deep-model/distribution/deep-model.min',
+      deepmodel: '/bower_components/backbone-deep-model/distribution/deep-model',
       underscore: '/bower_components/underscore/underscore',
       text: '/bower_components/requirejs-text/text',
       foundation: 'vendor/foundation.min',
@@ -36,9 +37,7 @@
 
   require(['jquery', 'foundation', 'socketio', 'timbre', 'backbone', 'views/app'], function($, foundation, io, Timbre, Backbone, App) {
     var doc;
-    Backbone.history.start({
-      pushState: true
-    });
+    Backbone.history.start();
     $(document).foundation();
     doc = document.documentElement;
     return doc.setAttribute('data-useragent', navigator.userAgent);

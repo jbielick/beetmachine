@@ -7,3 +7,5 @@ define [
 ], (_, Backbone) ->
 
 	class PatternModel extends Backbone.DeepModel
+
+		url: '/patterns'

@@ -1,7 +1,7 @@
 'use strict';
 
-define([
-	'backbone',
+define [
+	'backbone'
 	'collections/pattern'
 ], (Backbone, PatternCollection) -> 
 
@@ -11,9 +11,12 @@ define([
 
 		initialize: (options) ->
 			@app = options.parent
-			@scaffold()
+			@scaffoldGrid()
 
-		scaffold: () ->
+		updatePlayHead: (percent, cb) ->
+			@$playHead.animate left: percent+'%'
+
+		scaffoldGrid: () ->
 			i = 0
 			cols = []
 			while i < 13
@@ -30,8 +33,8 @@ define([
 				cols[i].append(rows)
 				i++
 			@$el.append(cols)
+			@$playHead = @$el.append $('<div id="playHead">')
 
 		render: () ->
-			
-
-)
+			@$el.empty()
+			@scaffoldGrid()

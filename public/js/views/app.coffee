@@ -69,14 +69,22 @@ define [
 
 			if key is 'R' and e.ctrlKey
 				@transport.record()
+				prevent = true
 			else if key is ' '
 				@transport.play()
+				prevent = true
 			else if _.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 and e.ctrlKey
-				e.preventDefault()
+				prevent = true
 				@pads.render(key)
 
+				if prevent
+					e.preventDefault()
+
 		keyPressDelegate: (e) ->
-			@pads.currentPads[@keyMap[e.charCode]].press() if @keyMap[e.charCode]?
+			if @keyMap[e.charCode]?
+				debugger
+				sound = @pads.currentGroup.sounds.findWhere pad: @keyMap[e.charCode] + 1
+				sound.trigger('press') if sound
 
 
 	return new AppView()

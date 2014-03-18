@@ -18,27 +18,41 @@ define [
 		initialize: (options) ->
 			@parent = options.parent
 			@name = options.name
+
+			_.bindAll @, 'listenToModelChanges', 'press'
+
+			# pad doesn't have a model by default, so when one is created or bootstrapped, 
+			# we emit an event so that we can begin listening for "press" and "change" events to rerender and such
+			@on 'modelPresent', @listenToModelChanges
+
 			@render()
 
-		map: (sound) ->
-			if not sound then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
+		listenToModelChanges: () ->
+			@stopListening @model, 'press'
+			@listenTo @model, 'press', @press
 
-			@model = sound
-			sound.pad = @
+			@stopListening @model, 'change:fx.*'
+			@listenTo @model, 'change:fx.*', (model, attrs) =>
+				@timbreContextAttached = false
+				@rendered = false
 
-			if @model.get('keyCode')
-				@model.set('key', String.fromCharCode(@model.get('keyCode')))
+		bootstrapWithModel: (sound) ->
+			if not sound and
+				not sound instanceof SoundModel 
+				then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
 
-			new Backbone.Ligaments(model: @model, view: @)
+			(@model = sound).pad = @
 
-			@listenTo(@model, 'change', () ->
-				@contextAttached = false
-				@renderEffects()
-			)
-			@initPlayer()
+			if @model.get 'keyCode'
+				@model.set('key', String.fromCharCode @model.get('keyCode'))
+
+			new Backbone.Ligaments model: @model, view: @
+
+			@loadSrc @model.get('src'), () =>
+				@trigger 'modelPresent'
 
 		render: () ->
-			@el.innerHTML = @template(name: @name)
+			@el.innerHTML = @template name: @name
 
 		events:
 			'contextmenu .pad'		: 'edit'
@@ -46,7 +60,7 @@ define [
 			'mouseup .pad'				: 'release'
 			'dragover'						: 'prevent'
 			'dragenter'						: 'prevent'
-			'drop'								: 'loadSample'
+			'drop'								: 'uploadSample'
 
 		prevent: (e) ->
 			e.preventDefault()
@@ -55,68 +69,74 @@ define [
 		press: (e) ->
 			return true if e and e.button is 2
 			@$('.pad').addClass 'active'
+
 			# if e.originalEvent and e.originalEvent not instanceof MouseEvent
 			setTimeout(() =>
 				@$('.pad').removeClass 'active'
 			, 50)
 
 			if @loaded
-				@parent.record(@)
-				@play()
+				@play().parent.record(@)
 
 		release: (e) ->
 			# @$('.pad').removeClass 'active'
 
 		play: () ->
-			_this = this
+			_this = _this
 
-			if not @contextAttached
-				@contextAttached = true
-				@renderEffects((sound) -> sound.play())
+			if not @rendered
+				sound = @renderEffects()
+				if not @timbreContextAttached
+					@timbreContextAttached = true
+					sound.play()
+				else
+					sound.bang()
 			else
 				if @T.rendered?.playbackState
 					@T.rendered.currentTime = 0
-				else if @T.rendered?
-					@T.rendered.bang()
 				else
-					#noop
+					@T.rendered.bang()
+			return @
 
 		###
 		 # creates a new model when a pad has a file dropped
 		 # onto it. Add itself to the current group's SoundCollection
 		###
 		createModel: (attrs = {}) ->
-			@model = new SoundModel _.extend({pad: @$el.index()+1}, attrs)
+			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
 			@parent.currentGroup.sounds.add @model
+			return @model
 
-		initPlayer: (objectURL) ->
+		loadSrc: (url, cb) ->
 			_this = @
-			@players = []
-			if objectURL || @model.get('src')
-				T('audio').load(objectURL || @model.get('src'), () ->
+
+			if url || @model.get('src')
+				T('audio').load(url || @model.get('src'), () ->
 					_this.T = raw: @
 					_this.loaded = true
+					_this.$('.pad').addClass('mapped')
+					
+					_this.parent.app.display.log(_this.name+' loaded')
+					cb.call _this, @ if cb
 				)
-				@$('.pad').addClass('mapped')
-				@parent.app.display.log(@name+' loaded');
 
 		renderEffects: (cb) ->
-			clearTimeout(@timeout)
-			@timeout = setTimeout(() =>
-				sound = null
-				if @T
-					delete @T.rendered
 
-				original = @T.raw.clone()
+			sound = null
 
-				_.each(@model.get('fx'), (params, fx) ->
-					sound = T(fx, params, sound || original)
-				)
-				@T.rendered = original
-				return cb(sound || original) if cb
-			, 200)
+			delete @T.rendered if @T
 
-		loadSample: (e) ->
+			@T.rendered = @T.raw.clone()
+
+			_.each(@model.get('fx'), (params, fx) =>
+				sound = T(fx, params, sound || @T.rendered)
+			)
+
+			@rendered = true
+
+			return sound || @T.rendered
+
+		uploadSample: (e) ->
 			e = e.originalEvent
 			e.preventDefault()
 			e.stopPropagation()
@@ -124,15 +144,19 @@ define [
 			if not @model
 				@createModel()
 
-			@model.set('src', URL.createObjectURL(e.dataTransfer.files[0]))
-			@initPlayer(URL.createObjectURL(e.dataTransfer.files[0]))
-			@parent.app.display.log('New Sample Uploaded on '+@name+': '+e.dataTransfer.files[0].name)
+			objectUrl = URL.createObjectURL(e.dataTransfer.files[0])
+
+			@model.set('src', objectUrl, silent: true)
+			@loadSrc objectUrl, () =>
+				@trigger 'modelPresent'
+
+			@parent.app.display.log('New Sample Uploaded on ' + @name + ': ' + e.dataTransfer.files[0].name)
 
 		edit: (e) ->
 			e.preventDefault()
 			if not @editor
 				editor = new SoundEditor(
-					model: @model
+					model: @model || @createModel()
 					pad: this
 				)
 				@editor = editor;

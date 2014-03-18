@@ -1,7 +1,7 @@
 
 /*
   *  Backbone.Ligaments
-  *     Declarative view-model data binding for Backbone.js
+  * 	  Declarative view-model data binding for Backbone.js
   *  
   *  Author: Josh Bielick
   *  License: GNU GENERAL PUBLIC LICENSE
@@ -88,11 +88,11 @@
       },
       bootstrap: function() {
         return this.inject(this.model, {
-          bootstrap: this.flatten(this.model.toJSON())
+          bootstrap: this.model.toJSON()
         });
       },
       inject: function(model, options) {
-        var $bound, $checkbox, changed, path, value, _results;
+        var $bound, $boundTarget, changed, path, value, _results;
         changed = options.bootstrap || model.changedAttributes();
         if (this.lockBinding) {
           return this;
@@ -107,25 +107,29 @@
           value = changed[path];
           if (!this.binds || _.indexOf(this.binds, path) > -1) {
             $bound = this.getBound(path);
-            if ($bound.is(':input')) {
-              if ($bound.is(':checkbox')) {
-                if ($bound.length > 1) {
-                  $checkbox = $bound.prop('checked', false).filter('[value="' + value + '"]');
+            if ($bound.length) {
+              if ($bound.is(':input')) {
+                if ($bound.is(':checkbox') || $bound.is(':radio')) {
+                  if ($bound.length > 1) {
+                    $boundTarget = $bound.prop('checked', false).filter('[value="' + value + '"]');
+                  } else {
+                    $boundTarget = $bound;
+                  }
+                  _results.push($boundTarget.prop('checked', function() {
+                    return value && value.toString().toLowerCase() !== 'off' && (value.toString().toLowerCase() !== 'false');
+                  }));
+                } else if ($bound.is('select[multiple]')) {
+                  _results.push($bound.val(this.model.get(path)));
                 } else {
-                  $checkbox = $bound;
+                  _results.push($bound.val(value));
                 }
-                _results.push($bound.prop('checked', function() {
-                  return value && value.toString().toLowerCase() !== 'off' && (value.toString().toLowerCase() !== 'false');
-                }));
-              } else if ($bound.is('select[multiple]')) {
-                _results.push($bound.val(this.model.get(path)));
+              } else if ($bound.is('img, svg')) {
+                _results.push($bound.attr('src', value));
               } else {
-                _results.push($bound.val(value));
+                _results.push($bound.html(value));
               }
-            } else if ($bound.is('img, svg')) {
-              _results.push($bound.attr('src', value));
             } else {
-              _results.push($bound.html(value));
+              _results.push(void 0);
             }
           } else {
             _results.push(void 0);
@@ -233,7 +237,7 @@
         path = '';
         stack = [];
         out = {};
-        while ((_.keys(data).length)) {
+        while (_.keys(data).length > 0) {
           if (_.isArray(data) && data.length > 0) {
             key = data.length - 1;
             el = data.pop();
@@ -242,7 +246,7 @@
             el = data[key];
             delete data[key];
           }
-          if ((el == null) || path.split(separator).length === depthLimit || typeof el !== 'object' || el.nodeType || (typeof el === 'object' && (el.constructor === Date || el.constructor === RegExp || el.constructor === Function)) || el.constructor !== Object) {
+          if ((el == null) || path.split(separator).length === depthLimit || typeof el !== 'object' || el.nodeType || (typeof el === 'object' && (el.constructor === Date || el.constructor === RegExp || el.constructor === Function))) {
             out[path + key] = el;
           } else {
             if (_.keys(data).length > 0) {

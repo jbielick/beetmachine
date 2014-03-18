@@ -23,7 +23,11 @@
         this.viewVars = {};
         this.model = options.model;
         this.pad = options.pad;
-        return this.render();
+        this.render();
+        return new Backbone.Ligaments({
+          model: this.model,
+          view: this
+        });
       };
 
       EditorView.prototype.events = {
@@ -50,17 +54,17 @@
       };
 
       EditorView.prototype.tab = function(e) {
-        var tab;
-        tab = $(e.currentTarget).data('tab');
+        var tabClass;
+        tabClass = $(e.currentTarget).data('tab');
         $(e.currentTarget).addClass('active').siblings().removeClass('active');
         this.$('.tab-pane').hide();
-        return this.$('.tab-pane' + tab).show();
+        return this.$('.tab-pane' + tabClass).show();
       };
 
       EditorView.prototype.toggleEffect = function(e) {
         var effect;
         effect = $(e.currentTarget).data('effect');
-        if (this.model.get('fx.' + effect) == null) {
+        if (!this.model.get('fx.' + effect)) {
           this.viewVars.show = effect;
           return this.addEffect(effect);
         } else {
@@ -122,10 +126,6 @@
         this.el.innerHTML = this.template({
           data: this.model.toJSON(),
           view: this.viewVars
-        });
-        new Backbone.Ligaments({
-          model: this.model,
-          view: this
         });
         this.$canvas = this.$('.waveform');
         if (this.pad.T) {

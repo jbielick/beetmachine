@@ -18,38 +18,36 @@ define [
 		initialize: (options) ->
 			@parent = options.parent
 			@name = options.name
+			@number = options.number
 
-			_.bindAll @, 'listenToModelChanges', 'press'
+			_.bindAll @, 'listenToModelEvents', 'press'
 
-			# pad doesn't have a model by default, so when one is created or bootstrapped, 
-			# we emit an event so that we can begin listening for "press" and "change" events to rerender and such
-			@on 'modelPresent', @listenToModelChanges
+			@on 'press', @press
 
 			@render()
 
-		listenToModelChanges: () ->
+		listenToModelEvents: () ->
 			@stopListening @model, 'press'
 			@listenTo @model, 'press', @press
 
-			@stopListening @model, 'change:fx.*'
-			@listenTo @model, 'change:fx.*', (model, attrs) =>
-				@timbreContextAttached = false
-				@rendered = false
+			@stopListening @model, 'loaded'
+			@listenTo @model, 'loaded', () =>
+				@$('.pad').addClass('mapped')
+				@parent.app.display.log(@name+' loaded')
 
-		bootstrapWithModel: (sound) ->
-			if not sound and
-				not sound instanceof SoundModel 
+		bootstrapWithModel: (soundModel) ->
+			if not soundModel and
+				not soundModel instanceof SoundModel
 				then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
 
-			(@model = sound).pad = @
+			(@model = soundModel).pad = @
 
-			if @model.get 'keyCode'
-				@model.set('key', String.fromCharCode @model.get('keyCode'))
+			@listenToModelEvents()
+
+			if (keyCode = @model.get('keyCode'))
+				@model.set 'key', String.fromCharCode(keyCode)
 
 			new Backbone.Ligaments model: @model, view: @
-
-			@loadSrc @model.get('src'), () =>
-				@trigger 'modelPresent'
 
 		render: () ->
 			@el.innerHTML = @template name: @name
@@ -66,7 +64,7 @@ define [
 			e.preventDefault()
 			e.stopPropagation()
 
-		press: (e) ->
+		press: (e = {}) ->
 			return true if e and e.button is 2
 			@$('.pad').addClass 'active'
 
@@ -75,66 +73,23 @@ define [
 				@$('.pad').removeClass 'active'
 			, 50)
 
-			if @loaded
-				@play().parent.record(@)
+			if @model?.loaded
+				if not e.silent
+					@parent.trigger('press', @)
+				@model.play()
 
 		release: (e) ->
 			# @$('.pad').removeClass 'active'
 
-		play: () ->
-			_this = _this
-
-			if not @rendered
-				sound = @renderEffects()
-				if not @timbreContextAttached
-					@timbreContextAttached = true
-					sound.play()
-				else
-					sound.bang()
-			else
-				if @T.rendered?.playbackState
-					@T.rendered.currentTime = 0
-				else
-					@T.rendered.bang()
-			return @
-
 		###
-		 # creates a new model when a pad has a file dropped
-		 # onto it. Add itself to the current group's SoundCollection
+		 # creates a new model
+		 # Adds itself to the current group's SoundCollection
 		###
 		createModel: (attrs = {}) ->
 			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
 			@parent.currentGroup.sounds.add @model
+			@listenToModelEvents()
 			return @model
-
-		loadSrc: (url, cb) ->
-			_this = @
-
-			if url || @model.get('src')
-				T('audio').load(url || @model.get('src'), () ->
-					_this.T = raw: @
-					_this.loaded = true
-					_this.$('.pad').addClass('mapped')
-					
-					_this.parent.app.display.log(_this.name+' loaded')
-					cb.call _this, @ if cb
-				)
-
-		renderEffects: (cb) ->
-
-			sound = null
-
-			delete @T.rendered if @T
-
-			@T.rendered = @T.raw.clone()
-
-			_.each(@model.get('fx'), (params, fx) =>
-				sound = T(fx, params, sound || @T.rendered)
-			)
-
-			@rendered = true
-
-			return sound || @T.rendered
 
 		uploadSample: (e) ->
 			e = e.originalEvent
@@ -144,13 +99,11 @@ define [
 			if not @model
 				@createModel()
 
-			objectUrl = URL.createObjectURL(e.dataTransfer.files[0])
+			objectUrl = window.URL.createObjectURL(e.dataTransfer.files[0])
 
-			@model.set('src', objectUrl, silent: true)
-			@loadSrc objectUrl, () =>
-				@trigger 'modelPresent'
+			@model.set('src', objectUrl)
 
-			@parent.app.display.log('New Sample Uploaded on ' + @name + ': ' + e.dataTransfer.files[0].name)
+			@parent.app.display.log('File: ' + e.dataTransfer.files[0].name + ' uploaded on pad ' + @name)
 
 		edit: (e) ->
 			e.preventDefault()

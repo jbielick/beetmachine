@@ -19,10 +19,9 @@ define [
 		initialize: () ->
 			@router 				= new Router app: @
 			@display 				= new Display parent: @
-			@pads 					= new Pads parent: @
-			@pattern				= new Pattern parent: @
-			@sequence				= new Sequence parent: @
 			@transport 			= new Transport parent: @
+			@pads 					= new Pads parent: @
+			@sequence				= new Sequence parent: @
 
 			@recipe = new RecipeModel
 
@@ -43,6 +42,7 @@ define [
 			'click [data-behavior]'			: 'delegateBehavior'
 			'keypress'									: 'keyPressDelegate'
 			'keydown'										: 'keyDownDelegate'
+			'keyup'											: 'keyUpDelegate'
 
 		delegateBehavior: (e) ->
 			behavior = $(e.currentTarget).data 'behavior'
@@ -82,9 +82,13 @@ define [
 
 		keyPressDelegate: (e) ->
 			if @keyMap[e.charCode]?
-				debugger
-				sound = @pads.currentGroup.sounds.findWhere pad: @keyMap[e.charCode] + 1
-				sound.trigger('press') if sound
+				@pressing = e.charCode
+				pad = @pads.currentPads[@keyMap[e.charCode]]
+				pad.trigger('press') if pad
 
+		keyUpDelegate: (e) ->
+			if e.charCode = @pressing
+				pad = @pads.currentPads[@keyMap[e.charCode]]
+				pad.trigger('release') if pad
 
 	return new AppView()

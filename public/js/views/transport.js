@@ -19,31 +19,22 @@
         this.app = options.parent;
         _.bindAll(this, '_start', '_stop', '_tick', 'recalculate');
         this.model = new TransportModel({
-          bpm: 100,
-          interval: this.calculateInterval(100)
+          bpm: 80,
+          step: 64
         });
         this._currentTime = 0;
         this._currentTick = 0;
         this._playing = false;
         this._recording = false;
-        this.render();
-        this.listenTo(this.model, 'change:interval', this.recalculate);
-        return this.listenTo(this.model, 'change:bpm', this.recalculate);
-      };
-
-      TransportView.prototype.render = function() {
-        return this.el.innerHTML = this.template();
-      };
-
-      TransportView.prototype.calculateInterval = function(bpm, step) {
-        if (step == null) {
-          step = 64;
-        }
-        return (60 * 1000) / 100 / step;
+        return this.render();
       };
 
       TransportView.prototype.events = {
         'click [data-behavior]': 'delegateAction'
+      };
+
+      TransportView.prototype.render = function() {
+        return this.el.innerHTML = this.template();
       };
 
       TransportView.prototype.delegateAction = function(e) {
@@ -77,7 +68,6 @@
       };
 
       TransportView.prototype.restart = function(e) {
-        this.setTime(0);
         return this.setTick(0);
       };
 
@@ -99,33 +89,20 @@
       };
 
       TransportView.prototype._tick = function() {
-        var pad, _i, _len, _ref, _ref1;
-        this._currentTime += this.model.get('interval');
-        this._currentTick++;
-        if (this.pattern && this.pattern[this._currentTick] && this.pattern[this._currentTick].length > 0) {
-          _ref = this.pattern[this._currentTick];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            pad = _ref[_i];
-            if ((_ref1 = this.app.pads.currentGroup.sounds.findWhere({
-              pad: pad
-            })) != null) {
-              _ref1.trigger('press');
-            }
-          }
-        }
-        return this.app.display.model.set('left', this.getTime(true));
+        this.setTick(this._currentTick + 1);
+        return this.trigger('tick', this.getTick());
       };
 
       TransportView.prototype.getTick = function() {
         return this._currentTick;
       };
 
-      TransportView.prototype.getTime = function(readable) {
+      TransportView.prototype.getTime = function(humanReadable) {
         var formatted, time;
-        if (readable == null) {
-          readable = false;
+        if (humanReadable == null) {
+          humanReadable = false;
         }
-        if (!readable) {
+        if (!humanReadable) {
           return this._currentTime;
         } else {
           time = ('' + (this._currentTime / 1000 * 100)).split('.')[0];
@@ -147,19 +124,18 @@
         }
       };
 
+      TransportView.prototype.setTick = function(value) {
+        this.trigger('tick', value);
+        this._currentTick = value;
+        this._currentTime = value * parseInt(this.model.get('interval'), 10);
+        return this.app.display.model.set('left', this.getTime(true));
+      };
+
       TransportView.prototype.setTime = function(value) {
         this._currentTime = value;
         this._currentTick = value / this.model.get('interval');
-        return this.app.display.model.set('left', this.getTime() / 1000);
+        return this.app.display.model.set('left', this.getTime(true));
       };
-
-      TransportView.prototype.setTick = function(value) {
-        this._currentTick = value;
-        this._currentTime = value * this.model.get('interval');
-        return this.app.display.model.set('left', this.getTime() / 1000);
-      };
-
-      TransportView.prototype.timestamp = function() {};
 
       TransportView.prototype.recalculate = function(model, changed) {
         if (changed.bpm) {

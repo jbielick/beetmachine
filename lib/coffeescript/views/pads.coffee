@@ -22,7 +22,7 @@ define [
 
 		initialize: (options) ->
 			@app = options.parent
-			@groups = new GroupCollection {position: 1}, view: @
+			@groups = new GroupCollection {position: 1}, pads: @, app: @app
 			@currentGroup = @groups.at(0)
 			@createPads()
 			@bootstrapGroupPads(@currentGroup)
@@ -32,7 +32,7 @@ define [
 				collection.each((model) => 
 					@bootstrapGroupPads(model)
 				)
-				@render(1)
+				@render()
 			)
 
 			@listenTo(@groups, 'add', (model) =>
@@ -48,6 +48,7 @@ define [
 				options = 
 					name: 'c'+(i - z * 16)
 					parent: @
+					number: (i - z * 16)
 				@pads.push new PadView options
 
 				z++ if i % 16 is 0
@@ -56,35 +57,24 @@ define [
 		bootstrapGroupPads: (group) ->
 			pos = group.get('position') - 1 or 0
 			pads = @pads.slice(pos * 16, pos * 16 + 16)
-			_.each(pads, (pad, i) ->
+			_.each pads, (pad, i) ->
 				if group.sounds.at(i)?
 					pad.bootstrapWithModel(group.sounds.at(i))
-			)
-
-		record: (pad) ->
-			if @app.transport._recording and pad.model
-				tick = @app.transport.getTick()
-				console.log('recordHit at %s', tick)
-				# trigger = 
-
-				@app.transport.pattern or (@app.transport.pattern = {})
-				@app.transport.pattern[tick] or (@app.transport.pattern[tick] = [])
-				@app.transport.pattern[tick].push(pad.model.get('pad'))
 
 		toggleGroupSelectButtons: (group) ->
-			$('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="'+group+'"]').addClass('active');
+			$('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
 
-		render: (group = 1) ->
+		render: (groupNumber = 1) ->
 			@$('.pad-container').detach()
-			@toggleGroupSelectButtons(group)
+			@toggleGroupSelectButtons(groupNumber)
 
-			zeroedIndex = group - 1
-			active = @groups.findWhere(position: group)
+			zeroedIndex = groupNumber - 1
+			active = @groups.findWhere(position: groupNumber)
 
-			if active is 'undefined'
-				active = @groups.create position: group
+			if typeof active is 'undefined'
+				active = @groups.add position: groupNumber
 
 			@currentGroup = active
 			@currentPads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
-			@app.display.model.set('right', 'Group '+group)
+			@app.display.model.set('right', 'Group ' + groupNumber)
 			@$el.append(_.pluck(@currentPads, 'el'))

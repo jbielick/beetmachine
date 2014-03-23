@@ -6,6 +6,54 @@ define [
 	'use strict';
 
 	class SoundModel extends Backbone.DeepModel
+
+		initialize: (attrs = {}, options = {}) ->
+			_.bindAll this, 'loadSrc'
+			@on 'change:src', @loadSrc
+			@on 'change:fx:*', () =>
+				@timbreContextAttached = false
+				@rendered = false
+
+		play: () ->
+			if not @rendered
+				sound = @renderEffects()
+				if not @timbreContextAttached
+					@timbreContextAttached = true
+					sound.play()
+				else
+					sound.bang()
+			else
+				if @T.rendered?.playbackState
+					@T.rendered.currentTime = 0
+				else
+					@T.rendered.bang()
+			return @
+
+		renderEffects: (cb) ->
+
+			sound = null
+
+			delete @T.rendered if @T
+
+			@T.rendered = @T.raw.clone()
+
+			_.each @get('fx'), (params, fx) =>
+				sound = T(fx, params, sound || @T.rendered)
+
+			@rendered = true
+
+			return sound || @T.rendered
+
+		loadSrc: (model, src, options, cb) ->
+			_this = @
+			if src || @get('src')
+				@loaded = false
+				T('audio').load(src || @get('src'), () ->
+					_this.T = raw: @
+					_this.loaded = true
+					_this.trigger('loaded')
+					cb.call _this, @ if cb
+				)
 		# defaults:
 		# 	fx: {}
 				# eq:

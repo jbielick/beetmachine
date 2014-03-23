@@ -90,16 +90,16 @@
 				</div>
 				<div class="col-sm-6">
 					<div class="btn-group btn-group-justified group-buttons">
-						<a class="btn btn-squishy btn-sm" title="CTRL+1" href="javascript:void(0)" data-behavior="selectGroup" data-meta="1"><small>GRP 1</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+2" href="javascript:void(0)" data-behavior="selectGroup" data-meta="2"><small>GRP 2</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+3" href="javascript:void(0)" data-behavior="selectGroup" data-meta="3"><small>GRP 3</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+4" href="javascript:void(0)" data-behavior="selectGroup" data-meta="4"><small>GRP 4</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+5" href="javascript:void(0)" data-behavior="selectGroup" data-meta="5"><small>GRP 5</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+6" href="javascript:void(0)" data-behavior="selectGroup" data-meta="6"><small>GRP 6</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+7" href="javascript:void(0)" data-behavior="selectGroup" data-meta="7"><small>GRP 7</small></a>
-						<a class="btn btn-squishy btn-sm" title="CTRL+8" href="javascript:void(0)" data-behavior="selectGroup" data-meta="8"><small>GRP 8</small></a>
+<%
+						count = 1;
+						while (count <= 8) {
+%>
+							<a class="btn btn-squishy btn-sm" title="CTRL+<%= count %>" href="javascript:void(0)" data-behavior="selectGroup" data-meta="<%= count %>"><small>GRP <%= count %></small></a>
+<%
+							count++;
+						}
+%>
 					</div>
-					<hr>
 					<hr>
 					<div class="row pads">
 
@@ -112,26 +112,42 @@
 		<div class="col-xs-12">
 			<div class="patterns-headers">
 				<div class="btn-group btn-group-justified">
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="1">1</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="2">2</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="3">3</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="4">4</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="5">5</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="6">6</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="7">7</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="8">8</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="9">9</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="10">10</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="11">11</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="12">12</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="13">13</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="14">14</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="15">15</a>
-					<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="16">16</a>
+<%
+					count = 1;
+					while (count <= 16) {
+%>
+						<a class="btn btn-default btn-sm" href="javascript:void(0)" data-behavior="selectPattern" data-meta="<%= count %>"><%= count %></a>
+<%
+						count++;
+					}
+%>
 				</div>
 			</div>
-			<div class="patterns">
-
+			<div class="pattern">
+				<div class="row">
+					<div class="col-xs-2">
+						<div data-bind="Sound.1.name" 	class="slot slot-label">Sound 1</div>
+						<div data-bind="Sound.2.name" 	class="slot slot-label">Sound 2</div>
+						<div data-bind="Sound.3.name" 	class="slot slot-label">Sound 3</div>
+						<div data-bind="Sound.4.name" 	class="slot slot-label">Sound 4</div>
+						<div data-bind="Sound.5.name" 	class="slot slot-label">Sound 5</div>
+						<div data-bind="Sound.6.name" 	class="slot slot-label">Sound 6</div>
+						<div data-bind="Sound.7.name" 	class="slot slot-label">Sound 7</div>
+						<div data-bind="Sound.8.name" 	class="slot slot-label">Sound 8</div>
+						<div data-bind="Sound.9.name" 	class="slot slot-label">Sound 9</div>
+						<div data-bind="Sound.10.name" 	class="slot slot-label">Sound 10</div>
+						<div data-bind="Sound.11.name" 	class="slot slot-label">Sound 11</div>
+						<div data-bind="Sound.12.name" 	class="slot slot-label">Sound 12</div>
+						<div data-bind="Sound.13.name" 	class="slot slot-label">Sound 13</div>
+						<div data-bind="Sound.14.name" 	class="slot slot-label">Sound 14</div>
+						<div data-bind="Sound.15.name" 	class="slot slot-label">Sound 15</div>
+						<div data-bind="Sound.16.name" 	class="slot slot-label">Sound 16</div>
+					</div>
+					<div class="col-xs-10">
+						<div class="patterns">
+						</div>
+					</div>
+				</div>
 			</div>
 			<br>
 			<br>

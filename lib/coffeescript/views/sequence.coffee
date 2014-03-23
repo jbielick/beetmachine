@@ -17,20 +17,20 @@ define [
 			@app = options.parent
 			@buildSequence()
 
-		buildSequence: () ->
-			i = 0
+		buildSequence: ->
+			column = 0
 			cols = []
-			while i < 13
-				z = 0
-				cols[i] = $('<div class="col col-1">')
+			while column < 13
+				row = 0
+				cols[column] = $('<div class="col col-1">')
 				rows = []
-				while z < 8
-					if i is 0
-						html = '<div class="slot slot-label">Group '+(z+1)+'</div>'
+				while row < 8
+					if column is 0
+						html = '<div class="slot slot-label">Group ' + ( row + 1 ) + '</div>'
 					else
 						html = '<div class="slot">&nbsp;</div>'
 					rows.push($(html))
-					z++
-				cols[i].append(rows)
-				i++
+					row++
+				cols[column].append(rows)
+				column++
 			@$el.append(cols)

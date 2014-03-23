@@ -10,10 +10,12 @@ define [
 
 	class GroupModel extends Backbone.DeepModel
 
-		initialize: (attrs = {}) ->
-			@sounds = new SoundCollection attrs.sounds
-			@patterns = new PatternCollection attrs.patterns
-			@sounds.parent = @
+		initialize: (attrs = {}, options = {}) ->
+			@app = options.collection.app
+			@pads = options.collection.pads
+			@sounds = new SoundCollection attrs.sounds, group: @
+			@patterns = new PatternCollection attrs.patterns || {}, app: @app, pads: @pads, group: @
+			@currentPattern = @patterns.at(0)
 		toJSON: () ->
 			shallow = _.extend({}, @attributes)
 			shallow.sounds = @sounds.toJSON()

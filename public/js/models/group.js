@@ -32,9 +32,19 @@
         return this.currentPattern = this.patterns.at(0);
       };
 
+      GroupModel.prototype.enable = function(patternNumber) {
+        if (patternNumber) {
+          this.currentPattern = this.patterns.findWhere({
+            position: patternNumber
+          });
+        }
+        return this.currentPattern.view.$el.show();
+      };
+
       GroupModel.prototype.toJSON = function() {
         var deep, shallow;
         shallow = _.extend({}, this.attributes);
+        shallow.patterns = this.patterns.toJSON();
         shallow.sounds = this.sounds.toJSON();
         deep = shallow;
         return deep;

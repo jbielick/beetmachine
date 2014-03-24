@@ -10,7 +10,8 @@ define [
 	class PatternView extends Backbone.View
 
 		attributes:
-			'class': 'grid'
+			'class' 		: 'grid'
+			style				: 'display:none;'
 
 		initialize: (options = {}) ->
 			@model = options.model

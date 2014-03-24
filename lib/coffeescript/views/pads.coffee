@@ -37,7 +37,6 @@ define [
 
 			@listenTo(@groups, 'add', (model) =>
 				@bootstrapGroupPads(model)
-				@render(model.get('position'))
 			)
 
 		createPads: () ->
@@ -65,16 +64,37 @@ define [
 			$('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
 
 		render: (groupNumber = 1) ->
+
+			# remove current pads from DOM
+			# TODO don't create 128 pads, just re-use and re-map the same 16
 			@$('.pad-container').detach()
+
+			groupNumber = groupNumber * 1
+
+			# deselect inactive group buttons, highlight selected
 			@toggleGroupSelectButtons(groupNumber)
 
+			# groups have position 1-8, but pads cache is broken into a zero-indexed array
 			zeroedIndex = groupNumber - 1
-			active = @groups.findWhere(position: groupNumber)
 
-			if typeof active is 'undefined'
-				active = @groups.add position: groupNumber
+			# set the currentGroup to the one selected
+			@currentGroup = @groups.findWhere(position: groupNumber)
 
-			@currentGroup = active
+			# if there wasn't a group at this position, create one real quick.
+			if not @currentGroup
+				@groups.add position: groupNumber
+				@currentGroup = @groups.findWhere(position: groupNumber)
+
+			@app.$('.patterns .grid').hide()
+
+			# show this group's pattern
+			@currentGroup.enable()
+
+			# slice the pads cache to the 16 views we want
 			@currentPads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
+
+			# update display UI
 			@app.display.model.set('right', 'Group ' + groupNumber)
+
+			# append the DOM els from the 16 pads we sliced from the cache
 			@$el.append(_.pluck(@currentPads, 'el'))

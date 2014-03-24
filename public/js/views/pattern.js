@@ -13,7 +13,8 @@
       }
 
       PatternView.prototype.attributes = {
-        'class': 'grid'
+        'class': 'grid',
+        style: 'display:none;'
       };
 
       PatternView.prototype.initialize = function(options) {

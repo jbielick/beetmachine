@@ -45,8 +45,7 @@
         })(this));
         return this.listenTo(this.groups, 'add', (function(_this) {
           return function(model) {
-            _this.bootstrapGroupPads(model);
-            return _this.render(model.get('position'));
+            return _this.bootstrapGroupPads(model);
           };
         })(this));
       };
@@ -88,22 +87,27 @@
       };
 
       PadsView.prototype.render = function(groupNumber) {
-        var active, zeroedIndex;
+        var zeroedIndex;
         if (groupNumber == null) {
           groupNumber = 1;
         }
         this.$('.pad-container').detach();
+        groupNumber = groupNumber * 1;
         this.toggleGroupSelectButtons(groupNumber);
         zeroedIndex = groupNumber - 1;
-        active = this.groups.findWhere({
+        this.currentGroup = this.groups.findWhere({
           position: groupNumber
         });
-        if (typeof active === 'undefined') {
-          active = this.groups.add({
+        if (!this.currentGroup) {
+          this.groups.add({
+            position: groupNumber
+          });
+          this.currentGroup = this.groups.findWhere({
             position: groupNumber
           });
         }
-        this.currentGroup = active;
+        this.app.$('.patterns .grid').hide();
+        this.currentGroup.enable();
         this.currentPads = this.pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
         this.app.display.model.set('right', 'Group ' + groupNumber);
         return this.$el.append(_.pluck(this.currentPads, 'el'));

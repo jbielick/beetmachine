@@ -6,6 +6,7 @@ access.log
 console.log
 node_modules
 *.DS_Store
+_session_store.json
 log/
 npm-debug.log
 config/secrets.json

@@ -2,6 +2,8 @@ define [
 	'jquery'
 	'underscore'
 	'backbone'
+	'deepmodel'
+	'ligaments'
 	'module'
 	'routes/app'
 	'views/pads'
@@ -10,33 +12,29 @@ define [
 	'views/sequence'
 	'views/pattern'
 	'models/recipe'
-], ($, _, Backbone, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
+], ($, _, Backbone, deepmodel, ligaments, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
+
+	DEFAULT_KEYS = '6789yuiohjklnm,.'.split('')
 
 	class AppView extends Backbone.View
 
 		el: 'body'
 
 		initialize: () ->
+			@recipe 				= new RecipeModel
 			@router 				= new Router app: @
-			@display 				= new Display parent: @
-			@transport 			= new Transport parent: @
-			@pads 					= new Pads parent: @
-			@sequence				= new Sequence parent: @
+			(@display 			= new Display app: @).log('Ready')
+			@transport 			= new Transport app: @
+			@pads 					= new Pads app: @
+			@sequence				= new Sequence app: @
+			@UI 						= new Backbone.DeepModel.extend()
+			@ligament 			= new Backbone.Ligaments(model: @UI, view: @)
+			@keyMap 				= {}
 
-			@recipe = new RecipeModel
-
-			@keyMap = {}
-
-			defaultKeys = '6789yuiohjklnm,.'
-
-			_.each(defaultKeys, (key, i) =>
-				@keyMap[key.charCodeAt(0)] = i
-			)
-
-			@display.log('Ready')
+			@keyMap[key.charCodeAt(0)] = i for key, i in DEFAULT_KEYS
 
 			if not _.isEmpty(module.config().recipe)
-				@open(module.config().recipe, parse: true)
+				@open module.config().recipe, parse: true
 
 		events:
 			'click [data-behavior]'			: 'delegateBehavior'
@@ -53,16 +51,29 @@ define [
 			$target = $(e.currentTarget)
 			@pads.render($target.data 'meta')
 
-		open: (recipe) ->
-			@recipe = recipe
+		open: (@recipe) ->
+			# @recipe = recipe
 			if recipe.groups.length > 0
 				@pads.groups.reset(recipe.groups)
 			if recipe.keyMap
 				@keyMap = _.extend(@keyMap, recipe.keyMap)
 
 		save: (e) ->
-			@recipe.set('groups', @pads.groups.toJSON())
+			_this = @
+			# @recipe.set('groups', @pads.groups.toJSON())
 			console.log(@recipe.toJSON())
+			@recipe.save({}, {
+				success: (recipe) ->
+					_this.pads.groups.each (group) ->
+						group
+							.save({recipe_id: recipe.id}, {
+								success: (groupSaved) ->
+									group.patterns.each (pattern) ->
+										pattern.save(group_id: groupSaved.id)
+									group.sounds.each (sound) ->
+										sound.save(group_id: groupSaved.id)
+							})
+			})
 
 		keyDownDelegate: (e) ->
 			key = String.fromCharCode(e.keyCode)
@@ -75,20 +86,16 @@ define [
 				prevent = true
 			else if _.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 and e.ctrlKey
 				prevent = true
-				@pads.render(key)
+				@pads.render key
 
-				if prevent
-					e.preventDefault()
+			e.preventDefault() if prevent
 
 		keyPressDelegate: (e) ->
 			if @keyMap[e.charCode]?
 				@pressing = e.charCode
-				pad = @pads.currentPads[@keyMap[e.charCode]]
-				pad.trigger('press') if pad
+				pad = @pads.currentPads[@keyMap[e.charCode]]?.trigger('press')
 
 		keyUpDelegate: (e) ->
-			if e.charCode = @pressing
-				pad = @pads.currentPads[@keyMap[e.charCode]]
-				pad.trigger('release') if pad
+			pad = @pads.currentPads[@keyMap[e.charCode]]?.trigger('release') if e.charCode is @pressing
 
-	return new AppView()
+	new AppView()

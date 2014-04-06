@@ -35,7 +35,7 @@
           sound = this.renderEffects();
           if (!this.timbreContextAttached) {
             this.timbreContextAttached = true;
-            sound.play();
+            $(sound.play()).one('ended', this.onEnded);
           } else {
             sound.bang();
           }
@@ -43,10 +43,14 @@
           if ((_ref = this.T.rendered) != null ? _ref.playbackState : void 0) {
             this.T.rendered.currentTime = 0;
           } else {
-            this.T.rendered.bang();
+            $(this.T.rendered.bang()).one('ended', this.onEnded);
           }
         }
         return this;
+      };
+
+      SoundModel.prototype.onEnded = function() {
+        return this.pause();
       };
 
       SoundModel.prototype.renderEffects = function(cb) {

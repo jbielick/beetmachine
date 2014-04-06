@@ -79,7 +79,7 @@
         if (e == null) {
           e = {};
         }
-        if (e && e.button === 2) {
+        if ((e != null) && e.button === 2) {
           return true;
         }
         this.$('.pad').addClass('active');
@@ -117,27 +117,25 @@
       };
 
       PadView.prototype.uploadSample = function(e) {
-        var objectUrl;
+        var objectUrl, _ref, _ref1, _ref2;
         e = e.originalEvent;
         e.preventDefault();
         e.stopPropagation();
         if (!this.model) {
           this.createModel();
         }
-        objectUrl = window.URL.createObjectURL(e.dataTransfer.files[0]);
+        objectUrl = (_ref = window.URL) != null ? typeof _ref.createObjectURL === "function" ? _ref.createObjectURL((_ref1 = e.dataTransfer) != null ? (_ref2 = _ref1.files) != null ? _ref2[0] : void 0 : void 0) : void 0 : void 0;
         this.model.set('src', objectUrl);
-        return this.parent.app.display.log('File: ' + e.dataTransfer.files[0].name + ' uploaded on pad ' + this.name);
+        return this.parent.app.display.log("File: " + e.dataTransfer.files[0].name + " uploaded on pad " + this.name);
       };
 
       PadView.prototype.edit = function(e) {
-        var editor;
         e.preventDefault();
         if (!this.editor) {
-          editor = new SoundEditor({
+          return this.editor = new SoundEditor({
             model: this.model || this.createModel(),
             pad: this
           });
-          return this.editor = editor;
         } else {
           return this.editor.show();
         }

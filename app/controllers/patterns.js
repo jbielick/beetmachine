@@ -1,5 +1,5 @@
 var Patterns = function () {
-  this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
+  this.respondsWith = ['json'];
 
   this.index = function (req, resp, params) {
     this.respond({params: params});
@@ -10,8 +10,12 @@ var Patterns = function () {
   };
 
   this.create = function (req, resp, params) {
-    // Save the resource, then display index page
-    this.redirect({controller: this.name});
+    var _this = this,
+        pattern = geddy.model.Pattern.create(params);
+    pattern.save(function(err, data) {
+      if (err) throw err;
+      _this.respond(data);
+    });
   };
 
   this.show = function (req, resp, params) {

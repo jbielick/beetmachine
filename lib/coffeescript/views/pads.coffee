@@ -21,11 +21,11 @@ define [
 			'5': '#FFE97F'
 
 		initialize: (options) ->
-			@app = options.parent
+			{ @app } = options
 			@groups = new GroupCollection {position: 1}, pads: @, app: @app
 			@currentGroup = @groups.at(0)
 			@createPads()
-			@bootstrapGroupPads(@currentGroup)
+			@bootstrapGroupPads @currentGroup
 			@render()
 
 			@listenTo(@groups, 'reset', (collection) =>
@@ -41,9 +41,8 @@ define [
 
 		createPads: () ->
 			@pads = []
-			i = 1
 			z = 0
-			while i <= 128
+			for i in [1..128]
 				options = 
 					name: 'c'+(i - z * 16)
 					parent: @
@@ -51,17 +50,21 @@ define [
 				@pads.push new PadView options
 
 				z++ if i % 16 is 0
-				i++
 
 		bootstrapGroupPads: (group) ->
-			pos = group.get('position') - 1 or 0
+			pos = if group.get('position') - 1 then group.get('position') else 0
 			pads = @pads.slice(pos * 16, pos * 16 + 16)
-			_.each pads, (pad, i) ->
-				if group.sounds.at(i)?
-					pad.bootstrapWithModel(group.sounds.at(i))
+
+			pad.bootstrapWithModel group.sounds.at(i) for pad, i in pads if group.sounds.at(i)?
+			# _.each pads, (pad, i) ->
+			# 	if group.sounds.at(i)?
+			# 		pad.bootstrapWithModel(group.sounds.at(i))
 
 		toggleGroupSelectButtons: (group) ->
-			$('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
+			@app.$('[data-behavior="selectGroup"]')
+				.removeClass 'active'
+				.filter "[data-meta=\"#{group}\"]"
+				.addClass 'active'
 
 		render: (groupNumber = 1) ->
 
@@ -72,7 +75,7 @@ define [
 			groupNumber = groupNumber * 1
 
 			# deselect inactive group buttons, highlight selected
-			@toggleGroupSelectButtons(groupNumber)
+			@toggleGroupSelectButtons groupNumber
 
 			# groups have position 1-8, but pads cache is broken into a zero-indexed array
 			zeroedIndex = groupNumber - 1
@@ -94,7 +97,7 @@ define [
 			@currentPads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
 
 			# update display UI
-			@app.display.model.set('right', 'Group ' + groupNumber)
+			@app.display.model.set('right', "Group #{groupNumber}")
 
 			# append the DOM els from the 16 pads we sliced from the cache
 			@$el.append(_.pluck(@currentPads, 'el'))

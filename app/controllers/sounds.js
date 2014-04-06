@@ -1,4 +1,4 @@
-var Groups = function () {
+var Sounds = function () {
   this.respondsWith = ['json'];
 
   this.index = function (req, resp, params) {
@@ -10,10 +10,9 @@ var Groups = function () {
   };
 
   this.create = function (req, resp, params) {
-    // Save the resource, then display index page
     var _this = this,
-        group = geddy.model.Group.create(params);
-    group.save(function(err, data) {
+        sound = geddy.model.Sound.create(params);
+    sound.save(function(err, data) {
       if (err) throw err;
       _this.respond(data);
     });
@@ -38,5 +37,5 @@ var Groups = function () {
 
 };
 
-exports.Groups = Groups;
+exports.Sounds = Sounds;
 

@@ -19,15 +19,21 @@ define [
 				sound = @renderEffects()
 				if not @timbreContextAttached
 					@timbreContextAttached = true
-					sound.play()
+					$(sound.play()).one('ended', @onEnded)
 				else
 					sound.bang()
 			else
 				if @T.rendered?.playbackState
 					@T.rendered.currentTime = 0
 				else
-					@T.rendered.bang()
+					$(@T.rendered.bang()).one('ended', @onEnded)
 			return @
+
+
+
+		onEnded: ->
+			# timbre api http://mohayonao.github.io/timbre.js/audio.html
+			@pause()
 
 		renderEffects: (cb) ->
 
@@ -48,7 +54,7 @@ define [
 			_this = @
 			if src || @get('src')
 				@loaded = false
-				T('audio').load(src || @get('src'), () ->
+				T('audio').load(src || @get('src'), ->
 					_this.T = raw: @
 					_this.loaded = true
 					_this.trigger('loaded')

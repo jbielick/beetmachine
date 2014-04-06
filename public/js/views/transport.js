@@ -16,16 +16,17 @@
       TransportView.prototype.template = _.template(TransportTemplate);
 
       TransportView.prototype.initialize = function(options) {
-        this.app = options.parent;
+        if (options == null) {
+          options = {};
+        }
+        this.app = options.app;
         _.bindAll(this, '_start', '_stop', '_tick', 'recalculate');
         this.model = new TransportModel({
           bpm: 80,
           step: 64
         });
-        this._currentTime = 0;
-        this._currentTick = 0;
-        this._playing = false;
-        this._recording = false;
+        this._currentTime = this._currentTick = 0;
+        this._playing = this._recording = false;
         return this.render();
       };
 
@@ -51,6 +52,11 @@
         return this.$('[data-behavior="record"], [data-behavior="play"]').removeClass('active');
       };
 
+
+      /*
+      		 * pause/play
+       */
+
       TransportView.prototype.play = function(e) {
         if (this._playing) {
           return this._stop();
@@ -58,6 +64,12 @@
           return this._start();
         }
       };
+
+
+      /*
+      		 * sets recording property to true so that the pads UI
+      		 * can detect that it should be recording triggers
+       */
 
       TransportView.prototype.record = function(e) {
         if (!this._playing) {
@@ -67,6 +79,11 @@
         return this.$('[data-behavior="record"]').toggleClass('active');
       };
 
+
+      /*
+      		 * restarts playhead tick to 0
+       */
+
       TransportView.prototype.restart = function(e) {
         return this.setTick(0);
       };
@@ -75,11 +92,21 @@
         debugger;
       };
 
+
+      /*
+      		 * private start method to start the playhead and sequence/pattern
+       */
+
       TransportView.prototype._start = function() {
         this._playing = true;
         this.clock = setInterval(this._tick, parseInt(this.model.get('interval'), 10));
         return this.$('[data-behavior="play"]').addClass('active');
       };
+
+
+      /*
+      		 * private stop method to stop the playhead and sequence/pattern
+       */
 
       TransportView.prototype._stop = function() {
         clearInterval(this.clock);
@@ -124,6 +151,12 @@
         }
       };
 
+
+      /*
+      		 * Setter for the desired tick
+      		 * calls necessary update methods to keep the UI and time in sync
+       */
+
       TransportView.prototype.setTick = function(value) {
         this.trigger('tick', value);
         this._currentTick = value;
@@ -131,11 +164,22 @@
         return this.app.display.model.set('left', this.getTime(true));
       };
 
+
+      /*
+      		 * setter for the desired playhead time
+      		 * calls necessary update methods to keep the UI and tick in sync
+       */
+
       TransportView.prototype.setTime = function(value) {
         this._currentTime = value;
         this._currentTick = value / this.model.get('interval');
         return this.app.display.model.set('left', this.getTime(true));
       };
+
+
+      /*
+      		 * recalulate the interval when the bpm changes
+       */
 
       TransportView.prototype.recalculate = function(model, changed) {
         if (changed.bpm) {

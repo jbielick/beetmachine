@@ -39,8 +39,18 @@ router.get('/').to('Main.index');
 //   this.get('/print(.:format)').to('Hemispheres.print');
 // });
 
-router.resource('groups');
+router.resource('recipes').nest(function() {
+	this.resource('groups');
+	this.get('/print(.:format)').to('Recipes.index');
+});
+
+router.resource('groups').nest(function() {
+	this.resource('patterns');
+	this.resource('sounds');
+});
+
 router.resource('patterns');
-router.resource('recipes');
 router.resource('templates');
+router.resource('sounds');
+
 exports.router = router;

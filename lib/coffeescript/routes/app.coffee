@@ -12,7 +12,7 @@ define [
 		}
 
 		initialize: (options) ->
-			@app = options.app
+			{ @app } = options
 
 		main: ->
 

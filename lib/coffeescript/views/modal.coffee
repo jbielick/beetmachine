@@ -11,8 +11,7 @@ define [
 		template: _.template(ModalTemplate),
 		attributes:
 			'class'					: 'modal fade'
-		initialize: (options) ->
-			options or options = {}
+		initialize: (options = {}) ->
 			@model = new ModalModel(options.data)
 			@render()
 			new Backbone.Ligaments(model: @model, view: this)

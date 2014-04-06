@@ -16,8 +16,7 @@ define [
 
 		initialize: (options) ->
 			@viewVars = {}
-			@model = options.model
-			@pad = options.pad
+			{ @model, @pad } = options
 			@render()
 			new Backbone.Ligaments(model: @model, view: @)
 
@@ -46,12 +45,12 @@ define [
 
 		toggleEffect: (e) ->
 			effect = $(e.currentTarget).data('effect')
-			if not @model.get('fx.'+effect)
+			if not @model.get "fx.#{effect}"
 				@viewVars.show = effect
-				@addEffect(effect)
+				@addEffect effect
 			else
 				delete @viewVars.show
-				@removeEffect(effect)
+				@removeEffect effect
 
 		addEffect: (effect) ->
 			switch effect
@@ -74,12 +73,12 @@ define [
 						fb				: 0.2 		# -1 ... 1
 						wet				: 0.33		# 0 ... 1
 
-			@model.set('fx.'+effect, fx)
+			@model.set "fx.#{effect}", fx
 
 			@render()
 
 		removeEffect: (effect) ->
-			@model.unset('fx.'+effect)
+			@model.unset "fx.#{effect}"
 			@render()
 
 		play: (e) ->
@@ -87,10 +86,10 @@ define [
 			@pad.play()
 
 		show: () ->
-			@$el.modal('show')
+			@$el.modal 'show'
 
 		hide: () ->
-			@$el.modal('hide')
+			@$el.modal 'hide'
 
 		render: () ->
 			@el.innerHTML = @template(

@@ -4,7 +4,9 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['backbone', 'underscore', 'collections/pattern', 'views/transport'], function(Backbone, _, PatternCollection, Transport) {
-    var PatternView;
+    var HAS_TRIGGER_CLASS, PATTERN_LENGTH, PatternView;
+    HAS_TRIGGER_CLASS = 'has-trigger';
+    PATTERN_LENGTH = 4;
     return PatternView = (function(_super) {
       __extends(PatternView, _super);
 
@@ -21,9 +23,7 @@
         if (options == null) {
           options = {};
         }
-        this.model = options.model;
-        this.app = options.app;
-        this.pads = options.pads;
+        this.model = options.model, this.app = options.app, this.pads = options.pads;
         this.render();
         this.app.$('.patterns').append(this.$el);
         _.bindAll(this, 'updatePlayHead', 'recordTrigger');
@@ -34,15 +34,21 @@
       PatternView.prototype.events = {
         'mousedown .playHead': 'engagePlayHeadScrub',
         'mouseup .playHead': 'disengagePlayHeadScrub',
-        'contextmenu .slot': 'unmark'
+        "contextmenu .slot.has-trigger": 'deleteTrigger'
       };
+
+
+      /*
+      		 * updates the position of the playhead
+      		 * when transport is in play/record
+       */
 
       PatternView.prototype.updatePlayHead = function(tick) {
         var normalizedTick, playHeadPosition, triggers;
         normalizedTick = tick % this.totalTicks;
         playHeadPosition = (100 / this.totalTicks) * normalizedTick;
         this.$playHead.css({
-          left: playHeadPosition + '%'
+          left: "" + playHeadPosition + "%"
         });
         if (this.app.transport._playing && (triggers = this.model.get(normalizedTick.toString()))) {
           return _.each(triggers, (function(_this) {
@@ -58,38 +64,97 @@
         }
       };
 
+
+      /*
+      		 *
+      		 *
+       */
+
+      PatternView.prototype.engagePlayHeadScrub = function(e) {
+        return null;
+      };
+
+
+      /*
+      		 *wefw
+      		 *
+       */
+
+      PatternView.prototype.disengagePlayHeadScrub = function(e) {
+        return null;
+      };
+
+
+      /*
+      		 * UI delegate.
+      		 * checks if the transport is recording, records a trigger 
+      		 * in a slot
+       */
+
       PatternView.prototype.recordTrigger = function(pad) {
         var normalizedTick, tick, triggers;
         if (this.app.transport._recording && pad.model.collection.group.currentPattern === this.model) {
           tick = this.app.transport.getTick();
           normalizedTick = (tick % this.totalTicks).toString();
           triggers = this.model.get(normalizedTick) || [];
-          if (_.indexOf(triggers, pad.number) < 0) {
-            triggers.push(pad.number);
-            this.tickSlots[normalizedTick][pad.number].addClass('has-trigger');
-            return this.model.set(normalizedTick, triggers);
-          }
+          triggers.push(pad.number);
+          this.tickSlots[normalizedTick][pad.number].addClass(HAS_TRIGGER_CLASS).data('tick', normalizedTick);
+          return this.model.set(normalizedTick, triggers);
         }
       };
 
-      PatternView.prototype.unmark = function(e) {
+
+      /*
+      		 * UI delegate.
+      		 * removes the right-clicked trigger from the pattern
+       */
+
+      PatternView.prototype.deleteTrigger = function(e) {
+        var padNumber;
         e.preventDefault();
-        debugger;
+        padNumber = $(e.currentTarget).index();
+        this.removeTrigger(padNumber, $(e.currentTarget).data('tick'));
+        return $(e.currentTarget).removeClass(HAS_TRIGGER_CLASS);
       };
 
       PatternView.prototype.draw = function() {
-        return _.each(this.model.toJSON(), (function(_this) {
-          return function(tick, triggers) {
-            return _.each(triggers, function(pad) {
-              return _this.tickSlots[tick][pad].addClass('has-trigger');
-            });
-          };
-        })(this));
+        var pad, tick, triggers, _ref, _results;
+        _ref = this.model.toJSON();
+        _results = [];
+        for (tick in _ref) {
+          if (!__hasProp.call(_ref, tick)) continue;
+          triggers = _ref[tick];
+          _results.push((function() {
+            var _i, _len, _results1;
+            _results1 = [];
+            for (_i = 0, _len = triggers.length; _i < _len; _i++) {
+              pad = triggers[_i];
+              _results1.push(this.tickSlots[tick][pad].addClass(HAS_TRIGGER_CLASS));
+            }
+            return _results1;
+          }).call(this));
+        }
+        return _results;
+      };
+
+      PatternView.prototype.removeTrigger = function(padNumber, normalizedTick) {
+        var removed, triggers;
+        triggers = this.model.get(normalizedTick) || [];
+        removed = triggers.splice(_.indexOf(triggers, padNumber), 1);
+        this.model.set(normalizedTick, triggers);
+        return removed;
+      };
+
+      PatternView.prototype.addTrigger = function(padNumber, normalizedTick) {
+        var triggers;
+        (triggers = this.model.get(normalizedTick) || []).push(padNumber);
+        this.model.set(normalizedTick, triggers);
+        return padNumber;
       };
 
       PatternView.prototype.build = function() {
         var $slot, cols, slot, slots, tick, width;
-        this.length = 4;
+        this.length = PATTERN_LENGTH;
         this.bar = this.app.transport.model.get('step');
         this.totalTicks = this.bar * this.length;
         this.tickSlots = {};

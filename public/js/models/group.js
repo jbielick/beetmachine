@@ -13,14 +13,14 @@
       }
 
       GroupModel.prototype.initialize = function(attrs, options) {
+        var _ref;
         if (attrs == null) {
           attrs = {};
         }
         if (options == null) {
           options = {};
         }
-        this.app = options.collection.app;
-        this.pads = options.collection.pads;
+        _ref = options.collection, this.app = _ref.app, this.pads = _ref.pads;
         this.sounds = new SoundCollection(attrs.sounds, {
           group: this
         });
@@ -44,8 +44,6 @@
       GroupModel.prototype.toJSON = function() {
         var deep, shallow;
         shallow = _.extend({}, this.attributes);
-        shallow.patterns = this.patterns.toJSON();
-        shallow.sounds = this.sounds.toJSON();
         deep = shallow;
         return deep;
       };

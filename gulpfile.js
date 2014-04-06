@@ -15,3 +15,10 @@ gulp.task('watch', function() {
 		console.log('<< Compiled and Minified ' + src);
 	});
 });
+
+gulp.task('coffee:batch', function() {
+	gulp.src('lib/coffeescript/**/*.coffee')
+			.pipe(coffee()).on('error', function(err) {console.log(err)})
+			// .pipe(uglify({mangle: false}))
+			.pipe(gulp.dest('public/js'));
+});

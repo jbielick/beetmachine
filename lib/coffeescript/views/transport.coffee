@@ -12,14 +12,16 @@ define [
 
 		template: _.template TransportTemplate
 
-		initialize: (options) ->
-			@app = options.parent
+		initialize: (options = {}) ->
+			{ @app } = options
+
 			_.bindAll @, '_start', '_stop', '_tick', 'recalculate'
+
 			@model = new TransportModel bpm: 80, step: 64
-			@_currentTime = 0
-			@_currentTick = 0
-			@_playing = false
-			@_recording = false
+
+			@_currentTime 	= @_currentTick		= 0
+			@_playing 			= @_recording 		= false
+
 			@render()
 
 		events:
@@ -38,18 +40,24 @@ define [
 			@_stop()
 			@$('[data-behavior="record"], [data-behavior="play"]').removeClass 'active'
 
+		###
 		# pause/play
+		###
 		play: (e) ->
 			if @_playing then @_stop() else @_start()
 
+		###
 		# sets recording property to true so that the pads UI
 		# can detect that it should be recording triggers
+		###
 		record: (e) ->
 			if not @_playing then @_start()
 			@_recording = !@_recording
 			@$('[data-behavior="record"]').toggleClass 'active'
 
+		###
 		# restarts playhead tick to 0
+		###
 		restart: (e) ->
 			@setTick 0
 
@@ -57,13 +65,17 @@ define [
 		end: (e) ->
 			debugger
 
+		###
 		# private start method to start the playhead and sequence/pattern
+		###
 		_start: ->
 			@_playing = true
 			@clock = setInterval @_tick, parseInt(@model.get('interval'), 10)
 			@$('[data-behavior="play"]').addClass 'active'
 
+		###
 		# private stop method to stop the playhead and sequence/pattern
+		###
 		_stop: ->
 			clearInterval @clock
 			@_recording = false
@@ -110,22 +122,28 @@ define [
 					break if not time.length
 				return formatted
 
+		###
 		# Setter for the desired tick
 		# calls necessary update methods to keep the UI and time in sync
+		###
 		setTick: (value) ->
 			@trigger('tick', value)
 			@_currentTick = value
 			@_currentTime = value * parseInt(@model.get('interval'), 10)
 			@app.display.model.set 'left', @getTime(true)
 
+		###
 		# setter for the desired playhead time
 		# calls necessary update methods to keep the UI and tick in sync
+		###
 		setTime: (value) ->
 			@_currentTime = value
 			@_currentTick = value / @model.get 'interval'
 			@app.display.model.set('left', @getTime(true))
 
+		###
 		# recalulate the interval when the bpm changes
+		###
 		recalculate: (model, changed) ->
 			if changed.bpm
 				@model.set 'interval', @calculateInterval(changed.bpm)

@@ -14,7 +14,7 @@ define [
 		template: _.template(DisplayTemplate)
 
 		initialize: (options) ->
-			@parent = options.parent
+			{ @app } = options
 			@model = new DisplayModel()
 			@render()
 			@$canvas = this.$('#waveform')

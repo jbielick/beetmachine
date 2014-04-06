@@ -49,6 +49,12 @@ body {
 .pad-container {margin:6px 0 6px;}
 .pad-label {margin-bottom:2px;}
 
+/*===========
+ * Pattern
+ * =========*/
+.patterns {overflow-x: scroll;}
+.grid {width:100%;}
+
 .btn-squishy {
 	color:#000;
 	padding:6px 12px;

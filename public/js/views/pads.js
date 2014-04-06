@@ -24,7 +24,7 @@
       };
 
       PadsView.prototype.initialize = function(options) {
-        this.app = options.parent;
+        this.app = options.app;
         this.groups = new GroupCollection({
           position: 1
         }, {
@@ -51,12 +51,11 @@
       };
 
       PadsView.prototype.createPads = function() {
-        var i, options, z, _results;
+        var i, options, z, _i, _results;
         this.pads = [];
-        i = 1;
         z = 0;
         _results = [];
-        while (i <= 128) {
+        for (i = _i = 1; _i <= 128; i = ++_i) {
           options = {
             name: 'c' + (i - z * 16),
             parent: this,
@@ -64,26 +63,30 @@
           };
           this.pads.push(new PadView(options));
           if (i % 16 === 0) {
-            z++;
+            _results.push(z++);
+          } else {
+            _results.push(void 0);
           }
-          _results.push(i++);
         }
         return _results;
       };
 
       PadsView.prototype.bootstrapGroupPads = function(group) {
-        var pads, pos;
-        pos = group.get('position') - 1 || 0;
+        var i, pad, pads, pos, _i, _len, _results;
+        pos = group.get('position') - 1 ? group.get('position') : 0;
         pads = this.pads.slice(pos * 16, pos * 16 + 16);
-        return _.each(pads, function(pad, i) {
-          if (group.sounds.at(i) != null) {
-            return pad.bootstrapWithModel(group.sounds.at(i));
+        if (group.sounds.at(i) != null) {
+          _results = [];
+          for (i = _i = 0, _len = pads.length; _i < _len; i = ++_i) {
+            pad = pads[i];
+            _results.push(pad.bootstrapWithModel(group.sounds.at(i)));
           }
-        });
+          return _results;
+        }
       };
 
       PadsView.prototype.toggleGroupSelectButtons = function(group) {
-        return $('[data-behavior="selectGroup"]').removeClass('active').filter('[data-meta="' + group + '"]').addClass('active');
+        return this.app.$('[data-behavior="selectGroup"]').removeClass('active').filter("[data-meta=\"" + group + "\"]").addClass('active');
       };
 
       PadsView.prototype.render = function(groupNumber) {
@@ -109,7 +112,7 @@
         this.app.$('.patterns .grid').hide();
         this.currentGroup.enable();
         this.currentPads = this.pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
-        this.app.display.model.set('right', 'Group ' + groupNumber);
+        this.app.display.model.set('right', "Group " + groupNumber);
         return this.$el.append(_.pluck(this.currentPads, 'el'));
       };
 

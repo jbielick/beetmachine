@@ -14,7 +14,7 @@ define [
 		el: '.sequence'
 
 		initialize: (options) ->
-			@app = options.parent
+			{ @app } = options
 			@buildSequence()
 
 		buildSequence: ->

@@ -17,12 +17,17 @@
           attrs = {};
         }
         if ((attrs.bpm != null) && attrs.step) {
-          return this.set('interval', this.calculateInterval(attrs.bpm, attrs.step));
+          this.setInterval(attrs.bpm, attrs.step);
         }
+        this.on('change:interval', this.setInterval);
+        this.on('change:bpm', this.setInterval);
+        return this.on('change:step', this.setInterval);
       };
 
-      TransportModel.prototype.calculateInterval = function(bpm, step) {
-        return (60 * 1000) / parseInt(this.get('bpm'), 10) / parseInt(this.get('step'), 10);
+      TransportModel.prototype.setInterval = function(bpm, step) {
+        var interval;
+        interval = (60 * 1000) / parseInt(bpm || this.get('bpm'), 10) / parseInt(step || this.get('step'), 10);
+        return this.set('interval', interval);
       };
 
       return TransportModel;

@@ -4,7 +4,7 @@ define [
 	'backbone'
 	'models/sound'
 	'views/editor'
-	'ligaments',
+	'ligaments'
 	'text!/js/templates/pad.ejs'
 ], ($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) ->
 
@@ -16,9 +16,7 @@ define [
 		template: _.template PadTemplate
 
 		initialize: (options) ->
-			@parent = options.parent
-			@name = options.name
-			@number = options.number
+			{ @parent, @name, @number } = options
 
 			_.bindAll @, 'listenToModelEvents', 'press'
 
@@ -36,8 +34,7 @@ define [
 				@parent.app.display.log(@name+' loaded')
 
 		bootstrapWithModel: (soundModel) ->
-			if not soundModel and
-				not soundModel instanceof SoundModel
+			if not soundModel and not soundModel instanceof SoundModel
 				then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
 
 			(@model = soundModel).pad = @
@@ -65,7 +62,7 @@ define [
 			e.stopPropagation()
 
 		press: (e = {}) ->
-			return true if e and e.button is 2
+			return true if e? and e.button is 2
 			@$('.pad').addClass 'active'
 
 			# if e.originalEvent and e.originalEvent not instanceof MouseEvent
@@ -74,8 +71,7 @@ define [
 			, 50)
 
 			if @model?.loaded
-				if not e.silent
-					@parent.trigger('press', @)
+				@parent.trigger('press', @) if not e.silent
 				@model.play()
 
 		release: (e) ->
@@ -89,29 +85,27 @@ define [
 			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
 			@parent.currentGroup.sounds.add @model
 			@listenToModelEvents()
-			return @model
+			@model
 
 		uploadSample: (e) ->
 			e = e.originalEvent
 			e.preventDefault()
 			e.stopPropagation()
 
-			if not @model
-				@createModel()
+			@createModel() if not @model
 
-			objectUrl = window.URL.createObjectURL(e.dataTransfer.files[0])
+			objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
-			@model.set('src', objectUrl)
+			@model.set 'src', objectUrl
 
-			@parent.app.display.log('File: ' + e.dataTransfer.files[0].name + ' uploaded on pad ' + @name)
+			@parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
 
 		edit: (e) ->
 			e.preventDefault()
 			if not @editor
-				editor = new SoundEditor(
-					model: @model || @createModel()
+				@editor = new SoundEditor(
+					model: @model or @createModel()
 					pad: this
 				)
-				@editor = editor;
 			else
 				@editor.show()

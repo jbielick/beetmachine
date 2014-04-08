@@ -30,6 +30,7 @@ require.config
 		bootstrap				: 'vendor/bootstrap.min'
 		timbre 					: 'vendor/timbre.dev'
 		socketio				: 'vendor/socket.io'
+		async						: '/bower_components/async/lib/async'
 
 require [
 	'jquery'

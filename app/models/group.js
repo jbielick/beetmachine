@@ -1,10 +1,13 @@
 var Group = function () {
 
+  this.belongsTo('Recipes');
+  this.hasMany('Patterns');
+  this.hasMany('Sounds');
+
   this.defineProperties({
-    name: {type: 'string', required: true},
+    name: {type: 'string'},
     recipeId: {type: 'string'},
     position: {type: 'int'},
-    sounds: {type: 'object'},
     fx: {type: 'object'}
   });
 

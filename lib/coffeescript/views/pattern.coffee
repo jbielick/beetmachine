@@ -13,7 +13,7 @@ define [
 	class PatternView extends Backbone.View
 
 		attributes:
-			'class' 		: 'grid'
+			class 			: 'grid'
 			style				: 'display:none;'
 
 		initialize: (options = {}) ->
@@ -24,14 +24,15 @@ define [
 
 			_.bindAll this, 'updatePlayHead', 'recordTrigger'
 
-			@app.transport.on 'tick', @updatePlayHead
-			@pads.on 'press', @recordTrigger
+			@app.transport.on('tick', @updatePlayHead)
+			@pads.on('press', @recordTrigger)
 
 
 		events:
 			'mousedown .playHead'									: 'engagePlayHeadScrub'
 			'mouseup .playHead'										: 'disengagePlayHeadScrub'
-			"contextmenu .slot.has-trigger"				: 'deleteTrigger'
+			'contextmenu .slot.has-trigger'				: 'UIDeleteTrigger'
+			'dblclick .slot'											: 'UIAddTrigger'
 
 
 		###
@@ -43,7 +44,7 @@ define [
 			normalizedTick = tick % @totalTicks
 			playHeadPosition = (100 / @totalTicks) * normalizedTick
 			@$playHead.css left: "#{playHeadPosition}%"
-			if @app.transport._playing && (triggers = @model.get(normalizedTick.toString()))
+			if @app.transport._playing && (triggers = @model.get("triggers.#{normalizedTick}")
 				_.each triggers, (padNumber) =>
 					@model.group.sounds.findWhere(pad: padNumber)?.trigger('press', silent: true)
 
@@ -72,23 +73,35 @@ define [
 			if @app.transport._recording && pad.model.collection.group.currentPattern is @model
 				tick = @app.transport.getTick()
 				# normalize the tick in relation to the looping pattern
-				normalizedTick = (tick % @totalTicks).toString()
-				triggers = @model.get(normalizedTick) or []
+				normalizedTick = (tick % @totalTicks)
+				triggers = @model.get("triggers.#{normalizedTick}") or []
 				triggers.push(pad.number)
 				# draw trigger on pattern, cache the normalized tick for this trigger
 				@tickSlots[normalizedTick][pad.number].addClass( HAS_TRIGGER_CLASS ).data('tick', normalizedTick)
-				@model.set(normalizedTick, triggers)
+				@model.set("triggers.#{normalizedTick}", triggers)
 
 
 		###
 		# UI delegate.
 		# removes the right-clicked trigger from the pattern
 		###
-		deleteTrigger: (e) ->
+		UIDeleteTrigger: (e) ->
 			e.preventDefault()
 			padNumber = $(e.currentTarget).index()
 			@removeTrigger(padNumber, $(e.currentTarget).data('tick'))
 			$(e.currentTarget).removeClass(HAS_TRIGGER_CLASS)
+
+
+		###
+		# UI delegate.
+		# adds a trigger where the user double-clicks
+		###
+		UIAddTrigger: (e) ->
+			e.preventDefault()
+			padNumber = $(e.currentTarget).index()
+			debugger
+			# @addTrigger(padNumber, )
+
 
 		draw: () ->
 			for own tick, triggers of @model.toJSON()
@@ -99,17 +112,17 @@ define [
 		removeTrigger: (padNumber, normalizedTick) ->
 			triggers = @model.get(normalizedTick) || []
 			removed = triggers.splice(_.indexOf(triggers, padNumber), 1)
-			@model.set(normalizedTick, triggers)
+			@model.set("triggers.#{normalizedTick}", triggers)
 			removed
 
 		addTrigger: (padNumber, normalizedTick) ->
-			(triggers = @model.get(normalizedTick) || []).push(padNumber)
-			@model.set(normalizedTick, triggers)
+			(triggers = @model.get("triggers.#{normalizedTick}") || []).push(padNumber)
+			@model.set("triggers.#{normalizedTick}", triggers)
 			padNumber
 
 		build: () ->
 			# lets assume all patterns are 2 bars long and the timesig is 4/4 and the step is 1/64 for the time being
-			@length = PATTERN_LENGTH
+			@length = @model.get('length')
 			@bar = @app.transport.model.get('step')
 			@totalTicks = @bar * @length
 			@tickSlots = {}

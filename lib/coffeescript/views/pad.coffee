@@ -8,21 +8,32 @@ define [
 	'text!/js/templates/pad.ejs'
 ], ($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) ->
 
+	PAD_CLASSES 						= 'small-3 columns pad-container'
+	PAD_RELEASE_TIMEOUT			= 50
+
 	class PadView extends Backbone.View
 
 		attributes:
-			class: 'small-3 columns pad-container'
+			class: PAD_CLASSES
 
 		template: _.template PadTemplate
 
 		initialize: (options) ->
 			{ @parent, @name, @number } = options
 
-			_.bindAll @, 'listenToModelEvents', 'press'
+			_.bindAll(@, 'listenToModelEvents', 'press')
 
-			@on 'press', @press
+			@on('press', @press)
 
 			@render()
+
+		events:
+			'contextmenu .pad'		: 'edit'
+			'mousedown .pad'			: 'press'
+			'mouseup .pad'				: 'release'
+			'dragover'						: 'prevent'
+			'dragenter'						: 'prevent'
+			'drop'								: 'uploadSample'
 
 		listenToModelEvents: () ->
 			@stopListening @model, 'press'
@@ -33,9 +44,10 @@ define [
 				@$('.pad').addClass('mapped')
 				@parent.app.display.log(@name+' loaded')
 
+
 		bootstrapWithModel: (soundModel) ->
 			if not soundModel and not soundModel instanceof SoundModel
-				then throw new Error 'Must provide a SoundModel instance when mapping a pad.'
+				throw new Error 'Must provide a SoundModel instance when mapping a pad.'
 
 			(@model = soundModel).pad = @
 
@@ -44,18 +56,7 @@ define [
 			if (keyCode = @model.get('keyCode'))
 				@model.set 'key', String.fromCharCode(keyCode)
 
-			new Backbone.Ligaments model: @model, view: @
-
-		render: () ->
-			@el.innerHTML = @template name: @name
-
-		events:
-			'contextmenu .pad'		: 'edit'
-			'mousedown .pad'			: 'press'
-			'mouseup .pad'				: 'release'
-			'dragover'						: 'prevent'
-			'dragenter'						: 'prevent'
-			'drop'								: 'uploadSample'
+			new Backbone.Ligaments(model: @model, view: @)
 
 		prevent: (e) ->
 			e.preventDefault()
@@ -66,9 +67,9 @@ define [
 			@$('.pad').addClass 'active'
 
 			# if e.originalEvent and e.originalEvent not instanceof MouseEvent
-			setTimeout(() =>
+			setTimeout =>
 				@$('.pad').removeClass 'active'
-			, 50)
+			, PAD_RELEASE_TIMEOUT
 
 			if @model?.loaded
 				@parent.trigger('press', @) if not e.silent
@@ -96,7 +97,7 @@ define [
 
 			objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
-			@model.set 'src', objectUrl
+			@model.set('src', objectUrl)
 
 			@parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
 
@@ -107,5 +108,7 @@ define [
 					model: @model or @createModel()
 					pad: this
 				)
-			else
-				@editor.show()
+			@editor.show()
+
+		render: () ->
+			@el.innerHTML = @template(name: @name)

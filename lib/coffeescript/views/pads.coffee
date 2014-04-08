@@ -7,6 +7,8 @@ define [
 	'text!/js/templates/pads.ejs'
 ], ($, _, Backbone, PadView, GroupCollection, PadsTemplate) ->
 
+	PADLABEL_PREFIX 		= 'c'
+
 	class PadsView extends Backbone.View
 
 		el: '.pads'
@@ -22,38 +24,35 @@ define [
 
 		initialize: (options) ->
 			{ @app } = options
-			@groups = new GroupCollection {position: 1}, pads: @, app: @app
+			@groups = new GroupCollection({position: 1}, pads: @, app: @app)
 			@currentGroup = @groups.at(0)
 			@createPads()
-			@bootstrapGroupPads @currentGroup
+			@bootstrapGroupPads(@currentGroup)
 			@render()
 
-			@listenTo(@groups, 'reset', (collection) =>
-				collection.each((model) => 
+			@listenTo @groups, 'reset', (collection) =>
+				collection.each (model) => 
 					@bootstrapGroupPads(model)
-				)
 				@render()
-			)
 
-			@listenTo(@groups, 'add', (model) =>
+			@listenTo @groups, 'add', (model) =>
 				@bootstrapGroupPads(model)
-			)
 
 		createPads: () ->
-			@pads = []
+			@padEls = []
 			z = 0
 			for i in [1..128]
 				options = 
-					name: 'c'+(i - z * 16)
+					name: "#{PADLABEL_PREFIX + (i - z * 16)}"
 					parent: @
 					number: (i - z * 16)
-				@pads.push new PadView options
+				@padEls.push new PadView(options)
 
 				z++ if i % 16 is 0
 
 		bootstrapGroupPads: (group) ->
 			pos = if group.get('position') - 1 then group.get('position') else 0
-			pads = @pads.slice(pos * 16, pos * 16 + 16)
+			pads = @padEls.slice(pos * 16, pos * 16 + 16)
 
 			pad.bootstrapWithModel group.sounds.at(i) for pad, i in pads if group.sounds.at(i)?
 			# _.each pads, (pad, i) ->
@@ -94,7 +93,7 @@ define [
 			@currentGroup.enable()
 
 			# slice the pads cache to the 16 views we want
-			@currentPads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
+			@currentPads = @padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
 
 			# update display UI
 			@app.display.model.set('right', "Group #{groupNumber}")

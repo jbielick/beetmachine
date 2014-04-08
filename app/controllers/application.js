@@ -17,6 +17,20 @@
 */
 
 var Application = function () {
+	// this.before(function() {
+
+	// 	var associations = geddy.model.descriptionRegistry[geddy.inflection.singularize(this.params.controller)].associations,
+	// 			key,
+	// 			value;
+	// 	for (key in associations) { if (!associations.hasOwnProperty(key)) continue;
+	// 		value = associations[key]
+	// 	}
+
+	// 	this.params[geddy.string.decapitalize(this.params.controller)+"_id"]
+	// 	if (this.params[geddy.string.decapitalize(this.params.controller) + "_id"] && geddy.models[this.params.controller]) {
+	// 		// geddy.models[]
+	// 	}
+	// });
 };
 
 exports.Application = Application;

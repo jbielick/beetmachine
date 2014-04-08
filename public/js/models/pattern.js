@@ -12,6 +12,18 @@
         return PatternModel.__super__.constructor.apply(this, arguments);
       }
 
+      PatternModel.prototype.defaults = {
+        length: 4
+      };
+
+      PatternModel.prototype.url = function() {
+        if (this.get('group_id')) {
+          return "/groups/" + (this.get('group_id')) + "/patterns";
+        } else {
+          return "/patterns";
+        }
+      };
+
       PatternModel.prototype.initialize = function(attrs, options) {
         if (attrs == null) {
           attrs = {};
@@ -26,8 +38,6 @@
           pads: options.pads
         });
       };
-
-      PatternModel.prototype.url = '/patterns';
 
       return PatternModel;
 

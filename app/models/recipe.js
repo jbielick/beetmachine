@@ -1,5 +1,7 @@
 var Recipe = function () {
 
+  this.hasMany('Groups');
+
   this.defineProperties({
     name: {type: 'string', required: true},
     bpm: {type: 'number'},

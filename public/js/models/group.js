@@ -48,7 +48,13 @@
         return deep;
       };
 
-      GroupModel.prototype.url = '/groups';
+      GroupModel.prototype.url = function() {
+        if (this.get('recipe_id')) {
+          return "/recipes/" + (this.get('recipe_id')) + "/groups";
+        } else {
+          return "/groups";
+        }
+      };
 
       return GroupModel;
 

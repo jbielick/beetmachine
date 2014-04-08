@@ -7,6 +7,12 @@ define [
 
 	class SoundModel extends Backbone.DeepModel
 
+		url: () ->
+			if @get('group_id')
+				return "/groups/#{@get('group_id')}/sounds"
+			else
+				return "/sounds"
+
 		initialize: (attrs = {}, options = {}) ->
 			_.bindAll this, 'loadSrc'
 			@on 'change:src', @loadSrc

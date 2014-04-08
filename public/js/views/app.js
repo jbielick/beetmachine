@@ -2,9 +2,12 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'deepmodel', 'ligaments', 'module', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern', 'models/recipe'], function($, _, Backbone, deepmodel, ligaments, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) {
-    var AppView, DEFAULT_KEYS;
+  define(['jquery', 'underscore', 'backbone', 'deepmodel', 'ligaments', 'module', 'async', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern', 'models/recipe'], function($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) {
+    var APP_EL_SELECTOR, AppView, DEFAULT_KEYS, PLAYPAUSE_CHAR, RECORD_CHAR;
     DEFAULT_KEYS = '6789yuiohjklnm,.'.split('');
+    RECORD_CHAR = 'R';
+    PLAYPAUSE_CHAR = ' ';
+    APP_EL_SELECTOR = 'body';
     AppView = (function(_super) {
       __extends(AppView, _super);
 
@@ -12,7 +15,7 @@
         return AppView.__super__.constructor.apply(this, arguments);
       }
 
-      AppView.prototype.el = 'body';
+      AppView.prototype.el = APP_EL_SELECTOR;
 
       AppView.prototype.initialize = function() {
         var i, key, _i, _len;
@@ -32,12 +35,18 @@
         this.sequence = new Sequence({
           app: this
         });
-        this.UI = new Backbone.DeepModel.extend();
+        this.UIModel = new (Backbone.DeepModel.extend());
         this.ligament = new Backbone.Ligaments({
-          model: this.UI,
-          view: this
+          model: this.UIModel,
+          view: this,
+          bindings: {
+            'pattern.zoom': {
+              cast: [parseFloat, 10]
+            }
+          }
         });
         this.keyMap = {};
+        this.listenForUIEvents();
         for (i = _i = 0, _len = DEFAULT_KEYS.length; _i < _len; i = ++_i) {
           key = DEFAULT_KEYS[i];
           this.keyMap[key.charCodeAt(0)] = i;
@@ -64,6 +73,12 @@
         }
       };
 
+      AppView.prototype.listenForUIEvents = function() {
+        return this.listenTo(this.UIModel, 'change:pattern.zoom', function(model, value) {
+          return this.pads.currentGroup.currentPattern.view.el.style.width = "" + (value * 100) + "%";
+        });
+      };
+
       AppView.prototype.selectGroup = function(e) {
         var $target;
         $target = $(e.currentTarget);
@@ -83,43 +98,116 @@
       AppView.prototype.save = function(e) {
         var _this;
         _this = this;
-        console.log(this.recipe.toJSON());
-        return this.recipe.save({}, {
-          success: function(recipe) {
-            return _this.pads.groups.each(function(group) {
-              return group.save({
-                recipe_id: recipe.id
-              }, {
-                success: function(groupSaved) {
-                  group.patterns.each(function(pattern) {
-                    return pattern.save({
-                      group_id: groupSaved.id
+        return async.waterfall([
+          (function(_this) {
+            return function(recipeSavedCallback) {
+              return _this.recipe.save({}, {
+                success: function(savedRecipe) {
+                  return async.each(_this.pads.groups.models, function(group, eachGroupSavedCallback) {
+                    return group.save({
+                      recipe_id: savedRecipe.id
+                    }, {
+                      success: (function(_this) {
+                        return function(savedGroup) {
+                          return async.parallel([
+                            function(cbSound) {
+                              return async.each(group.sounds.models, function(sound, eachSoundSavedCallback) {
+                                return sound.save({
+                                  group_id: group.id
+                                }, {
+                                  success: function(savedSound) {
+                                    return eachSoundSavedCallback(null, savedSound);
+                                  },
+                                  error: function(err) {
+                                    return eachSoundSavedCallback(err);
+                                  }
+                                });
+                              }, function(err) {
+                                if (err) {
+                                  cbSound(err);
+                                }
+                                return cbSound(null);
+                              });
+                            }, function(cbPattern) {
+                              return async.each(group.patterns.models, function(pattern, eachPatternSavedCallback) {
+                                return pattern.save({
+                                  group_id: group.id
+                                }, {
+                                  success: function(savedPattern) {
+                                    return eachPatternSavedCallback(null, savedPattern);
+                                  },
+                                  error: function(err) {
+                                    return eachPatternSavedCallback(err);
+                                  }
+                                });
+                              }, function(err) {
+                                if (err) {
+                                  cbPattern(err);
+                                }
+                                return cbPattern(null);
+                              });
+                            }
+                          ], function(err) {
+                            if (err) {
+                              eachGroupSavedCallback(err);
+                            }
+                            return eachGroupSavedCallback(null);
+                          });
+                        };
+                      })(this)
                     });
+                  }, function(err) {
+                    return recipeSavedCallback(null);
                   });
-                  return group.sounds.each(function(sound) {
-                    return sound.save({
-                      group_id: groupSaved.id
-                    });
-                  });
+                },
+                error: function(err) {
+                  return recipeSavedCallback(err);
                 }
               });
-            });
+            };
+          })(this)
+        ], function(err, recipe) {
+          if (err) {
+            throw new Error(err);
           }
+          return console.log('SUCCESS');
         });
       };
 
+      AppView.prototype.toJSON = function(e) {
+        var recipe;
+        recipe = this.recipe.toJSON();
+        recipe.groups = [];
+        this.pads.groups.each((function(_this) {
+          return function(group) {
+            var groupAttributes;
+            groupAttributes = group.toJSON();
+            groupAttributes.sounds = [];
+            group.sounds.each(function(sound) {
+              return groupAttributes.sounds.push(sound.toJSON());
+            });
+            groupAttributes.patterns = [];
+            group.patterns.each(function(pattern) {
+              return groupAttributes.patterns.push(pattern.toJSON());
+            });
+            return recipe.groups.push(groupAttributes);
+          };
+        })(this));
+        return console.log(recipe);
+      };
+
       AppView.prototype.keyDownDelegate = function(e) {
-        var key, prevent;
-        key = String.fromCharCode(e.keyCode);
-        if (key === 'R' && e.ctrlKey) {
+        var char, prevent;
+        char = String.fromCharCode(e.keyCode);
+        if (char === RECORD_CHAR && e.ctrlKey) {
           this.transport.record();
           prevent = true;
-        } else if (key === ' ') {
+        } else if (char === PLAYPAUSE_CHAR) {
           this.transport.play();
           prevent = true;
-        } else if (_.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 && e.ctrlKey) {
+        } else if (_.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], char) > 0 && e.ctrlKey) {
           prevent = true;
-          this.pads.render(key);
+          this.pads.render(char);
         }
         if (prevent) {
           return e.preventDefault();

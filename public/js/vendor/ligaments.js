@@ -1,1 +1,359 @@
-(function(){var __hasProp={}.hasOwnProperty,__slice=[].slice;!function(factory){return"function"==typeof define&&define.amd?define(["underscore","backbone"],factory):factory(_,Backbone)}(function(_,Backbone){var Ligaments,ligamentOptions;return Ligaments=Backbone.Ligaments=function(options){return this.cid=_.uniqueId("ligament"),options||(options={}),this.ensureArguments.call(this,options),_.extend(this,_.pick(options,ligamentOptions)),options.bootstrap!==!1&&this.bootstrap(),this.createBindings(),this.readOnly||options.ingest===!1?void 0:this.model.set(this.parseModel())},ligamentOptions=["view","model","readOnly","bindings"],_.extend(Ligaments.prototype,{createBindings:function(){var ingest,inject;return ingest=_.bind(this.ingest,this),inject=_.bind(this.inject,this),this.view.listenTo(this.model,"change",inject),this.readOnly?void 0:(_.extend(this.view.events||(this.view.events={}),{"change *[name]:not([data-bind])":ingest,"input *[name]:not([data-bind])":ingest,"change *[data-bind]":ingest,"input *[data-bind]":ingest}),this.view.delegateEvents(this.view.events))},ensureArguments:function(options){return options.view&&options.model?void 0:console.warn("You must provide an instance of a Backbone view and model")},ingest:function(e){var $input,data,key,value,_this;return _this=this,this.readOnly?void 0:($input=$(this.target=e.target),key=$input.data("bind")||$input.attr("name"),key&&key.indexOf(!1)&&(key=key.replace(/\[\]/g,function(_this){return function(){return"["+_this.view.$("[name]").filter('[name="'+key+'"]').index($input)+"]"}}(this)),key=this.dotToBracketNotation(key,!0)),value=this.getVal($input),$input.is("select[multiple]")&&this.model.unset(key),(data={})[key]=value,data=this.expand(data),this.parse&&_.isFunction(this.model.parse)&&this.model.parse(data),null==value?this.model.unset(key):this.model.set(data),delete this.target)},bootstrap:function(){return this.inject(this.model,{bootstrap:this.model.toJSON()})},inject:function(model,options){var $bound,$boundTarget,changed,path,value,_results;if(changed=options.bootstrap||model.changedAttributes(),this.lockBinding)return this;_.isFunction(this.view.beforeInject)&&this.view.beforeInject(model,changed),changed=this.flatten(changed),_results=[];for(path in changed)__hasProp.call(changed,path)&&(value=changed[path],!this.binds||_.indexOf(this.binds,path)>-1?($bound=this.getBound(path),$bound.length?$bound.is(":input")?$bound.is(":checkbox")||$bound.is(":radio")?($boundTarget=$bound.length>1?$bound.prop("checked",!1).filter('[value="'+value+'"]'):$bound,_results.push($boundTarget.prop("checked",function(){return value&&"off"!==value.toString().toLowerCase()&&"false"!==value.toString().toLowerCase()}))):_results.push($bound.val($bound.is("select[multiple]")?this.model.get(path):value)):_results.push($bound.is("img, svg")?$bound.attr("src",value):$bound.html(value)):_results.push(void 0)):_results.push(void 0));return _results},parseModel:function(){var $bound,flat;return $bound=this.view.$el.find("[name], [data-bind]"),flat={},$bound.each(function(_this){return function(idx,el){var $this,name;return $this=$(el),name=$this.data("bind")||$this.attr("name"),name=name.replace(/\[\]/g,function(){return"["+$bound.filter('[data-bind="'+name+'"], [name="'+name+'"]').index($this)+"]"}),"undefined"!=typeof _this.getVal($this)?flat[name]=_this.getVal($this):void 0}}(this)),this.expand(flat)},getBound:function(path){var eqNameSelector,nameAttribute,nameSelectors;return/[0-9]+/.test(path.split("").pop())&&(path=path.split("."),path.pop(),path=path.join(".")),nameAttribute=this.dotToBracketNotation(path),eqNameSelector=nameAttribute.replace(/(.*\[)([0-9]+)?(\].*)/g,'[name="$1$3"]:eq($2)'),nameSelectors='[data-bind="'+path+'"], [name="'+path+'"] '+eqNameSelector+', [name="'+nameAttribute+'"]',this.view.$(nameSelectors).not(this.target)},getVal:function(input){var $input;return $input=$(input),$input.is(":input")?!$input.is(":checkbox")&&!$input.is(":radio")||$input.prop("checked")?$input.val():void 0:$input.text()},matchToken:function(key,token){return"{n}"===token&&Number(key)%1===0,parseInt(token,10)%1===0&&key===parseInt(token,10),key===token},expand:function(flat){var child,out,parent,path,set,token,tokens,value,_i,_j,_len,_len1;for(flat.constructor!==Array&&(flat=[flat]),_i=0,_len=flat.length;_len>_i;_i++){set=flat[_i];for(path in set)if(__hasProp.call(set,path)){for(value=set[path],tokens=this.tokenize(path).reverse(),value=_.result(set,path),"{n}"!==tokens[0]&&isNaN(Number(tokens[0]))?(child={})[tokens[0]]=value:(child=[])[tokens[0]]=value,tokens.shift(),_j=0,_len1=tokens.length;_len1>_j;_j++)token=tokens[_j],isNaN(Number(token))?(parent={})[token]=child:(parent=[])[parseInt(token,10)]=child,child=parent;this.merge(out=out||(out={}),child)}}return out},flatten:function(data,separator,depthLimit){var curr,el,key,out,path,stack;for(null==separator&&(separator="."),null==depthLimit&&(depthLimit=!1),data=this.merge({},data),path="",stack=[],out={};_.keys(data).length>0;)_.isArray(data)&&data.length>0?(key=data.length-1,el=data.pop()):(key=_.keys(data)[0],el=data[key],delete data[key]),null==el||path.split(separator).length===depthLimit||"object"!=typeof el||el.nodeType||"object"==typeof el&&(el.constructor===Date||el.constructor===RegExp||el.constructor===Function)?out[path+key]=el:(_.keys(data).length>0&&stack.push([data,path]),data=el,path+=key+separator),0===_.keys(data).length&&stack.length>0&&(curr=stack.pop(),data=curr[0],path=curr[1]);return out},merge:function(){var key,object,objects,out,value,_i,_len;for(objects=1<=arguments.length?__slice.call(arguments,0):[],out=objects.shift(),_i=0,_len=objects.length;_len>_i;_i++){object=objects[_i];for(key in object)__hasProp.call(object,key)&&(value=object[key],out[key]=out[key]&&value&&(_.isObject(out[key])&&_.isObject(value)||out[key].constructor===Array)?this.merge(out[key],value):value)}return out},dotToBracketNotation:function(path,reverse){if(null==reverse&&(reverse=!1),!path)throw new TypeError("Not Enough Arguments");return reverse?path.replace(/\]/g,"").split("[").join("."):path.replace(/([\w]+)\.?/g,"[$1]").replace(/^\[(\w+)\]/,"$1")},tokenize:function(path){return-1===path.indexOf("[")?path.split("."):_.map(path.split("["),function(v){return v=v.replace(/\]/,""),""===v?"{n}":v})}})})}).call(this);
+
+/*
+  *  Backbone.Ligaments
+  *     Declarative view-model data binding for Backbone.js
+  *  
+  *  Author: Josh Bielick
+  *  License: GNU GENERAL PUBLIC LICENSE
+  *
+ */
+
+(function() {
+  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = {}.hasOwnProperty,
+    __slice = [].slice;
+
+  (function(factory) {
+    if (typeof define === 'function' && define.amd) {
+      return define(['underscore', 'backbone'], factory);
+    } else {
+      return factory(_, Backbone);
+    }
+  })(function(_, Backbone) {
+    var Ligaments;
+    Ligaments = (function() {
+      function Ligaments(options) {
+        if (options == null) {
+          options = {};
+        }
+        this.cid = _.uniqueId('ligament');
+        this.ensureArguments.apply(this, arguments);
+        this.view = options.view, this.model = options.model, this.readOnly = options.readOnly, this.bindings = options.bindings, this.blacklist = options.blacklist, this.whitelist = options.whitelist;
+        this.createBindings();
+        if (options.inject !== false) {
+          this.bootstrapView();
+        }
+        if (!(this.readOnly || !options.ingest)) {
+          this.model.set(this.parseModel(), {
+            silent: true
+          });
+        }
+        return this;
+      }
+
+      Ligaments.prototype.createBindings = function() {
+        _.bindAll(this, 'ingest', 'inject');
+        this.view.listenTo(this.model, 'change', this.inject);
+        if (!this.readOnly) {
+          _.extend(this.view.events || (this.view.events = {}), {
+            'change *[name]:not([data-bind])': this.ingest,
+            'input *[name]:not([data-bind])': this.ingest,
+            'change *[data-bind]': this.ingest,
+            'input *[data-bind]': this.ingest
+          });
+          return this.view.delegateEvents(this.view.events);
+        }
+      };
+
+      Ligaments.prototype.ensureArguments = function() {
+        var args;
+        args = [].slice.call(arguments);
+        if (!(args.length || args[0].view || args[0].model)) {
+          return console.warn('You must provide an instance of a Backbone View and Model');
+        }
+      };
+
+      Ligaments.prototype.ingest = function(e) {
+        var $input, data, path, value, _ref, _this;
+        _this = this;
+        if (!this.readOnly) {
+          if (!(this.blacklist && (_ref = !path, __indexOf.call(this.blacklist, _ref) >= 0) || (this.whitelist != null) && __indexOf.call(this.whitelist, path) >= 0)) {
+            $input = $(this.target = e.currentTarget);
+            path = $input.data('bind') || $input.attr('name');
+            if (path && path.indexOf('[' > -1)) {
+              path = path.replace(/\[\]/g, (function(_this) {
+                return function() {
+                  return '[' + _this.view.$('[name]').filter("[name=\"" + path + "\"]").index($input) + ']';
+                };
+              })(this));
+              path = this.dotToBracketNotation(path, true);
+            }
+            value = this.getVal($input, path);
+            if ($input.is('select[multiple]')) {
+              this.model.unset(path);
+            }
+            (data = {})[path] = value;
+            data = this.expand(data);
+            if (this.parse && _.isFunction(this.model.parse)) {
+              this.model.parse(data);
+            }
+            if (value == null) {
+              this.model.unset(path);
+            } else {
+              this.model.set(data);
+            }
+            return delete this.target;
+          }
+        }
+      };
+
+      Ligaments.prototype.bootstrapView = function() {
+        return this.inject(this.model, {
+          bootstrapData: this.model.toJSON()
+        });
+      };
+
+      Ligaments.prototype.inject = function(model, options) {
+        var $bound, $boundTarget, data, path, value, _ref, _results;
+        data = options.bootstrapData || model.changedAttributes();
+        if (this.lockBinding) {
+          return this;
+        }
+        data = this.flatten(data);
+        if (_.isFunction(this.view.beforeInject)) {
+          this.view.beforeInject(model, data);
+        }
+        _results = [];
+        for (path in data) {
+          if (!__hasProp.call(data, path)) continue;
+          value = data[path];
+          if (!(((this.blacklist != null) && (_ref = !path, __indexOf.call(this.blacklist, _ref) >= 0)) || ((this.whitelist != null) && __indexOf.call(this.whitelist, path) >= 0))) {
+            $bound = this.getBound(path);
+            if ($bound.length) {
+              if ($bound.is(':input')) {
+                if ($bound.is(':checkbox') || $bound.is(':radio')) {
+                  if ($bound.length > 1) {
+                    $boundTarget = $bound.prop('checked', false).filter("[value=\"" + value + "\"]");
+                  } else {
+                    $boundTarget = $bound;
+                  }
+                  _results.push($boundTarget.prop('checked', function() {
+                    var lowerCaseString;
+                    lowerCaseString = value.toString().toLowerCase();
+                    return value && lowerCaseString !== 'off' && lowerCaseString !== 'false' && lowerCaseString !== 'no';
+                  }));
+                } else if ($bound.is('select[multiple]')) {
+                  _results.push($bound.val(this.model.get(path)));
+                } else {
+                  _results.push($bound.val(value));
+                }
+              } else if ($bound.is('img, svg')) {
+                _results.push($bound.attr('src', value));
+              } else {
+                _results.push($bound.html(value));
+              }
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+
+      Ligaments.prototype.parseModel = function() {
+        var $bound, flat;
+        $bound = this.view.$('[data-bind], [name]');
+        flat = {};
+        $bound.each((function(_this) {
+          return function(idx, el) {
+            var $el, path, value;
+            $el = $(el);
+            path = $el.data('bind') || $el.attr('name');
+            path = path.replace(/\[\]/g, function() {
+              return '[' + $bound.filter("[data-bind=\"" + path + "\"], [name=\"" + path + "\"]").index($el) + ']';
+            });
+            if ((value = _this.getVal($el, path)) != null) {
+              return flat[path] = value;
+            }
+          };
+        })(this));
+        return this.expand(flat);
+      };
+
+      Ligaments.prototype.getBound = function(path) {
+        var eqNameSelector, nameAttribute, nameSelectors;
+        if (/[0-9]+/.test(path.split('').pop())) {
+          path = path.split('.');
+          path.pop();
+          path = path.join('.');
+        }
+        nameAttribute = this.dotToBracketNotation(path);
+        eqNameSelector = nameAttribute.replace(/(.*\[)([0-9]+)?(\].*)/g, '[name="$1$3"]:eq($2)');
+        nameSelectors = "[data-bind=\"" + path + "\"], [name=\"" + path + "\"] " + eqNameSelector + ", [name=\"" + nameAttribute + "\"]";
+        return this.view.$(nameSelectors).not(this.target);
+      };
+
+      Ligaments.prototype.getVal = function(input, path) {
+        var $input, args, castOptions, caster, value, _ref, _ref1;
+        if (path == null) {
+          path = '*';
+        }
+        $input = $(input);
+        if ($input.is(':input')) {
+          if ((!$input.is(':checkbox') && !$input.is(':radio')) || $input.prop('checked')) {
+            value = $input.val();
+          } else {
+            value = void 0;
+          }
+        } else {
+          value = $input.text();
+        }
+        if (((_ref = this.bindings) != null ? (_ref1 = _ref[path]) != null ? _ref1.cast : void 0 : void 0) != null) {
+          castOptions = this.bindings[path].cast;
+          if (_.isFunction(this.bindings[path].cast)) {
+            args = [];
+            caster = castOptions;
+          } else if (_.isArray(this.bindings[path].cast)) {
+            args = castOptions.slice(1);
+            caster = castOptions[0];
+          }
+          if (!args || typeof caster !== 'function') {
+            throw new Error("options.bindings[path].cast is expected to be a function or function + arguments array ex: {cast: [parseInt, 10]}");
+          }
+          args.unshift(value);
+          value = caster.apply(this.model, args) || value;
+        }
+        return value;
+      };
+
+      Ligaments.prototype.matchToken = function(key, token) {
+        if (token === '{n}') {
+          Number(key) % 1 === 0;
+        }
+        if (token === '{s}') {
+          typeof key === string;
+        }
+        if (parseInt(token, 10) % 1 === 0) {
+          key === parseInt(token, 10);
+        }
+        return key === token;
+      };
+
+      Ligaments.prototype.expand = function(flat) {
+        var child, out, parent, path, set, token, tokens, value, _i, _j, _len, _len1;
+        if (flat.constructor !== Array) {
+          flat = [flat];
+        }
+        for (_i = 0, _len = flat.length; _i < _len; _i++) {
+          set = flat[_i];
+          for (path in set) {
+            if (!__hasProp.call(set, path)) continue;
+            value = set[path];
+            tokens = this.tokenize(path).reverse();
+            value = _.result(set, path);
+            if (tokens[0] === '{n}' || !isNaN(Number(tokens[0]))) {
+              (child = [])[tokens[0]] = value;
+            } else {
+              (child = {})[tokens[0]] = value;
+            }
+            tokens.shift();
+            for (_j = 0, _len1 = tokens.length; _j < _len1; _j++) {
+              token = tokens[_j];
+              if (!isNaN(Number(token))) {
+                (parent = [])[parseInt(token, 10)] = child;
+              } else {
+                (parent = {})[token] = child;
+              }
+              child = parent;
+            }
+            this.merge((out = out || (out = {})), child);
+          }
+        }
+        return out;
+      };
+
+      Ligaments.prototype.flatten = function(data, separator, depthLimit) {
+        var curr, el, key, out, path, stack;
+        if (separator == null) {
+          separator = '.';
+        }
+        if (depthLimit == null) {
+          depthLimit = false;
+        }
+        data = this.merge({}, data);
+        path = '';
+        stack = [];
+        out = {};
+        while (_.keys(data).length > 0) {
+          if (_.isArray(data) && data.length > 0) {
+            key = data.length - 1;
+            el = data.pop();
+          } else {
+            key = _.keys(data)[0];
+            el = data[key];
+            delete data[key];
+          }
+          if ((el == null) || path.split(separator).length === depthLimit || typeof el !== 'object' || el.nodeType || (typeof el === 'object' && (el.constructor === Date || el.constructor === RegExp || el.constructor === Function))) {
+            out[path + key] = el;
+          } else {
+            if (_.keys(data).length > 0) {
+              stack.push([data, path]);
+            }
+            data = el;
+            path += key + separator;
+          }
+          if (_.keys(data).length === 0 && stack.length > 0) {
+            curr = stack.pop();
+            data = curr[0], path = curr[1];
+          }
+        }
+        return out;
+      };
+
+      Ligaments.prototype.merge = function() {
+        var key, object, objects, out, value, _i, _len;
+        objects = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        out = objects.shift();
+        for (_i = 0, _len = objects.length; _i < _len; _i++) {
+          object = objects[_i];
+          for (key in object) {
+            if (!__hasProp.call(object, key)) continue;
+            value = object[key];
+            if (out[key] && value && (_.isObject(out[key]) && _.isObject(value) || out[key].constructor === Array)) {
+              out[key] = this.merge(out[key], value);
+            } else {
+              out[key] = value;
+            }
+          }
+        }
+        return out;
+      };
+
+      Ligaments.prototype.dotToBracketNotation = function(path, reverse) {
+        if (reverse == null) {
+          reverse = false;
+        }
+        if (!path) {
+          throw new TypeError('Not Enough Arguments');
+        }
+        if (reverse) {
+          return path.replace(/\]/g, '').split('[').join('.');
+        } else {
+          return path.replace(/([\w]+)\.?/g, '[$1]').replace(/^\[(\w+)\]/, '$1');
+        }
+      };
+
+      Ligaments.prototype.tokenize = function(path) {
+        if (path.indexOf('[') === -1) {
+          return path.split('.');
+        } else {
+          return _.map(path.split('['), function(v) {
+            v = v.replace(/\]/, '');
+            if (v === '') {
+              return '{n}';
+            } else {
+              return v;
+            }
+          });
+        }
+      };
+
+      return Ligaments;
+
+    })();
+    return Backbone.Ligament = Backbone.Ligaments = Ligaments;
+  });
+
+}).call(this);

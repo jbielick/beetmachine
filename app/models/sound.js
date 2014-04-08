@@ -1,5 +1,7 @@
 var Sound = function () {
 
+  this.belongsTo('Groups');
+
   this.defineProperties({
     
   });

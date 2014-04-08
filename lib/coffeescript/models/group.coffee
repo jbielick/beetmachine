@@ -30,4 +30,8 @@ define [
 			deep = shallow
 			return deep
 
-		url: '/groups'
+		url: () ->
+			if @get('recipe_id')
+				return "/recipes/#{@get('recipe_id')}/groups"
+			else
+				return "/groups"

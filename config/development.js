@@ -17,19 +17,26 @@
 */
 
 var config = {
-  appName: 'beetmachine (development)'
-, detailedErrors: true
-, debug: true
-, hostname: null
-, port: 4000
-, model: {
-    defaultAdapter: 'filesystem'
-  }
-, sessions: {
-    store: 'filesystem'
-  , filename: '_session_store.json'
-  , key: 'sid'
-  , expiry: 14 * 24 * 60 * 60
+  appName: 'beetmachine (development)',
+  detailedErrors: true,
+	debug: true,
+	hostname: null,
+	port: 4000,
+	model: {
+    defaultAdapter: 'mongo'
+  },
+	db: {
+  	mongo: {
+  		dbname: 'beetmachine-dev'
+  	, host: '127.0.0.1'
+  	, port: 27017
+  	}
+	},
+	sessions: {
+		store: 'cookie',
+		filename: '_session_store.json',
+		key: 'sid',
+		expiry: 14 * 24 * 60 * 60
   }
 };
 

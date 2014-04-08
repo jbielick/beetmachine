@@ -83,7 +83,7 @@ define [
 
 		play: (e) ->
 			e.preventDefault()
-			@pad.play()
+			@pad.trigger('press')
 
 		show: () ->
 			@$el.modal 'show'
@@ -96,9 +96,9 @@ define [
 				data: @model.toJSON()
 				view: @viewVars
 			)
-			@$canvas = this.$('.waveform');
-			if @pad.T
-				@pad.T.raw.plot(
+			@$canvas = this.$('.waveform')
+			if @pad.model?.T?.raw
+				@pad.model.T.raw.plot(
 					target: @$canvas.get(0)
 					background: 'rgb(70,70,70)'
 					foreground: '#f08a24'

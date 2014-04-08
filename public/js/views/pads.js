@@ -3,7 +3,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'underscore', 'backbone', 'views/pad', 'collections/group', 'text!/js/templates/pads.ejs'], function($, _, Backbone, PadView, GroupCollection, PadsTemplate) {
-    var PadsView;
+    var PADLABEL_PREFIX, PadsView;
+    PADLABEL_PREFIX = 'c';
     return PadsView = (function(_super) {
       __extends(PadsView, _super);
 
@@ -52,16 +53,16 @@
 
       PadsView.prototype.createPads = function() {
         var i, options, z, _i, _results;
-        this.pads = [];
+        this.padEls = [];
         z = 0;
         _results = [];
         for (i = _i = 1; _i <= 128; i = ++_i) {
           options = {
-            name: 'c' + (i - z * 16),
+            name: "" + (PADLABEL_PREFIX + (i - z * 16)),
             parent: this,
             number: i - z * 16
           };
-          this.pads.push(new PadView(options));
+          this.padEls.push(new PadView(options));
           if (i % 16 === 0) {
             _results.push(z++);
           } else {
@@ -74,7 +75,7 @@
       PadsView.prototype.bootstrapGroupPads = function(group) {
         var i, pad, pads, pos, _i, _len, _results;
         pos = group.get('position') - 1 ? group.get('position') : 0;
-        pads = this.pads.slice(pos * 16, pos * 16 + 16);
+        pads = this.padEls.slice(pos * 16, pos * 16 + 16);
         if (group.sounds.at(i) != null) {
           _results = [];
           for (i = _i = 0, _len = pads.length; _i < _len; i = ++_i) {
@@ -111,7 +112,7 @@
         }
         this.app.$('.patterns .grid').hide();
         this.currentGroup.enable();
-        this.currentPads = this.pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
+        this.currentPads = this.padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
         this.app.display.model.set('right', "Group " + groupNumber);
         return this.$el.append(_.pluck(this.currentPads, 'el'));
       };

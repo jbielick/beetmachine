@@ -12,6 +12,14 @@
         return SoundModel.__super__.constructor.apply(this, arguments);
       }
 
+      SoundModel.prototype.url = function() {
+        if (this.get('group_id')) {
+          return "/groups/" + (this.get('group_id')) + "/sounds";
+        } else {
+          return "/sounds";
+        }
+      };
+
       SoundModel.prototype.initialize = function(attrs, options) {
         if (attrs == null) {
           attrs = {};

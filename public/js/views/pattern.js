@@ -15,7 +15,7 @@
       }
 
       PatternView.prototype.attributes = {
-        'class': 'grid',
+        "class": 'grid',
         style: 'display:none;'
       };
 
@@ -34,7 +34,8 @@
       PatternView.prototype.events = {
         'mousedown .playHead': 'engagePlayHeadScrub',
         'mouseup .playHead': 'disengagePlayHeadScrub',
-        "contextmenu .slot.has-trigger": 'deleteTrigger'
+        'contextmenu .slot.has-trigger': 'UIDeleteTrigger',
+        'dblclick .slot': 'UIAddTrigger'
       };
 
 
@@ -109,12 +110,25 @@
       		 * removes the right-clicked trigger from the pattern
        */
 
-      PatternView.prototype.deleteTrigger = function(e) {
+      PatternView.prototype.UIDeleteTrigger = function(e) {
         var padNumber;
         e.preventDefault();
         padNumber = $(e.currentTarget).index();
         this.removeTrigger(padNumber, $(e.currentTarget).data('tick'));
         return $(e.currentTarget).removeClass(HAS_TRIGGER_CLASS);
+      };
+
+
+      /*
+      		 * UI delegate.
+      		 * adds a trigger where the user double-clicks
+       */
+
+      PatternView.prototype.UIAddTrigger = function(e) {
+        var padNumber;
+        e.preventDefault();
+        padNumber = $(e.currentTarget).index();
+        debugger;
       };
 
       PatternView.prototype.draw = function() {

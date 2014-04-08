@@ -108,7 +108,7 @@
 
       EditorView.prototype.play = function(e) {
         e.preventDefault();
-        return this.pad.play();
+        return this.pad.trigger('press');
       };
 
       EditorView.prototype.show = function() {
@@ -120,13 +120,14 @@
       };
 
       EditorView.prototype.render = function() {
+        var _ref, _ref1;
         this.el.innerHTML = this.template({
           data: this.model.toJSON(),
           view: this.viewVars
         });
         this.$canvas = this.$('.waveform');
-        if (this.pad.T) {
-          return this.pad.T.raw.plot({
+        if ((_ref = this.pad.model) != null ? (_ref1 = _ref.T) != null ? _ref1.raw : void 0 : void 0) {
+          return this.pad.model.T.raw.plot({
             target: this.$canvas.get(0),
             background: 'rgb(70,70,70)',
             foreground: '#f08a24'

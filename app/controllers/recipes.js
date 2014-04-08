@@ -1,3 +1,5 @@
+var async = require('async');
+
 var Recipes = function () {
   this.respondsWith = ['json'];
 
@@ -23,7 +25,6 @@ var Recipes = function () {
   };
 
   this.show = function (req, resp, params) {
-    // var async = require('async'); 
 
     // Recipe.findOne(req.param('id')).done(function(err, recipe) {
     //   if (err) return res.json(err);
@@ -45,7 +46,8 @@ var Recipes = function () {
     // this.respond({params: params});
     var _this = this;
     geddy.model.Recipe.first(params.id, function(err, recipe) {
-      if (err) throw err;
+      if (err) throw Error('An error occurred.');
+      if (!recipe) throw geddy.errors.NotFoundError();
       _this.respond(recipe);
     });
   };

@@ -7,6 +7,10 @@ define [
 	'text!/js/templates/sequence.ejs'
 ], ($, _, Backbone, SequenceTemplate) ->
 
+	SLOT_LABEL_CLASSES 				= 'slot slot-label'
+	SLOT_COL_CLASSES					= 'col col-1'
+	SLOT_CLASSES							= 'slot'
+
 	class SequenceView extends Backbone.View
 
 		template: _.template SequenceTemplate
@@ -22,13 +26,13 @@ define [
 			cols = []
 			while column < 13
 				row = 0
-				cols[column] = $('<div class="col col-1">')
+				cols[column] = $("<div class=\"#{SLOT_COL_CLASSES}\">")
 				rows = []
 				while row < 8
 					if column is 0
-						html = '<div class="slot slot-label">Group ' + ( row + 1 ) + '</div>'
+						html = "<div class=\"#{SLOT_CLASSES}\">Group #{row + 1}</div>"
 					else
-						html = '<div class="slot">&nbsp;</div>'
+						html = "<div class=\"#{SLOT_CLASSES}\">&nbsp;</div>"
 					rows.push($(html))
 					row++
 				cols[column].append(rows)

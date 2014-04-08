@@ -3,7 +3,9 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'underscore', 'backbone', 'models/sound', 'views/editor', 'ligaments', 'text!/js/templates/pad.ejs'], function($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) {
-    var PadView;
+    var PAD_CLASSES, PAD_RELEASE_TIMEOUT, PadView;
+    PAD_CLASSES = 'small-3 columns pad-container';
+    PAD_RELEASE_TIMEOUT = 50;
     return PadView = (function(_super) {
       __extends(PadView, _super);
 
@@ -12,18 +14,25 @@
       }
 
       PadView.prototype.attributes = {
-        "class": 'small-3 columns pad-container'
+        "class": PAD_CLASSES
       };
 
       PadView.prototype.template = _.template(PadTemplate);
 
       PadView.prototype.initialize = function(options) {
-        this.parent = options.parent;
-        this.name = options.name;
-        this.number = options.number;
+        this.parent = options.parent, this.name = options.name, this.number = options.number;
         _.bindAll(this, 'listenToModelEvents', 'press');
         this.on('press', this.press);
         return this.render();
+      };
+
+      PadView.prototype.events = {
+        'contextmenu .pad': 'edit',
+        'mousedown .pad': 'press',
+        'mouseup .pad': 'release',
+        'dragover': 'prevent',
+        'dragenter': 'prevent',
+        'drop': 'uploadSample'
       };
 
       PadView.prototype.listenToModelEvents = function() {
@@ -54,21 +63,6 @@
         });
       };
 
-      PadView.prototype.render = function() {
-        return this.el.innerHTML = this.template({
-          name: this.name
-        });
-      };
-
-      PadView.prototype.events = {
-        'contextmenu .pad': 'edit',
-        'mousedown .pad': 'press',
-        'mouseup .pad': 'release',
-        'dragover': 'prevent',
-        'dragenter': 'prevent',
-        'drop': 'uploadSample'
-      };
-
       PadView.prototype.prevent = function(e) {
         e.preventDefault();
         return e.stopPropagation();
@@ -87,7 +81,7 @@
           return function() {
             return _this.$('.pad').removeClass('active');
           };
-        })(this), 50);
+        })(this), PAD_RELEASE_TIMEOUT);
         if ((_ref = this.model) != null ? _ref.loaded : void 0) {
           if (!e.silent) {
             this.parent.trigger('press', this);
@@ -132,13 +126,18 @@
       PadView.prototype.edit = function(e) {
         e.preventDefault();
         if (!this.editor) {
-          return this.editor = new SoundEditor({
+          this.editor = new SoundEditor({
             model: this.model || this.createModel(),
             pad: this
           });
-        } else {
-          return this.editor.show();
         }
+        return this.editor.show();
+      };
+
+      PadView.prototype.render = function() {
+        return this.el.innerHTML = this.template({
+          name: this.name
+        });
       };
 
       return PadView;

@@ -1,9 +1,10 @@
 var Pattern = function () {
 
+  this.belongsTo('Groups');
+
   this.defineProperties({
-    name: {type: 'string', required: true},
-    groupId: {type: 'string'},
-    positions: {type: 'object'},
+    group_id: {type: 'string'},
+    position: {type: 'int'},
     length: {type: 'int'},
     triggers: {type: 'object'}
   });

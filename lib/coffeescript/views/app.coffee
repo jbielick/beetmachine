@@ -5,6 +5,7 @@ define [
 	'deepmodel'
 	'ligaments'
 	'module'
+	'async'
 	'routes/app'
 	'views/pads'
 	'views/display'
@@ -12,13 +13,16 @@ define [
 	'views/sequence'
 	'views/pattern'
 	'models/recipe'
-], ($, _, Backbone, deepmodel, ligaments, module, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
+], ($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
 
-	DEFAULT_KEYS = '6789yuiohjklnm,.'.split('')
+	DEFAULT_KEYS 		= '6789yuiohjklnm,.'.split('')
+	RECORD_CHAR			= 'R'
+	PLAYPAUSE_CHAR 	= ' '
+	APP_EL_SELECTOR = 'body'
 
 	class AppView extends Backbone.View
 
-		el: 'body'
+		el: APP_EL_SELECTOR
 
 		initialize: () ->
 			@recipe 				= new RecipeModel
@@ -27,9 +31,15 @@ define [
 			@transport 			= new Transport app: @
 			@pads 					= new Pads app: @
 			@sequence				= new Sequence app: @
-			@UI 						= new Backbone.DeepModel.extend()
-			@ligament 			= new Backbone.Ligaments(model: @UI, view: @)
+			@UIModel				= new (Backbone.DeepModel.extend())
+			@ligament 			= new Backbone.Ligaments(
+				model: @UIModel, 
+				view: @, 
+				bindings: {
+					'pattern.zoom': {cast: [parseFloat, 10]}})
 			@keyMap 				= {}
+
+			@listenForUIEvents()
 
 			@keyMap[key.charCodeAt(0)] = i for key, i in DEFAULT_KEYS
 
@@ -47,6 +57,10 @@ define [
 			if behavior? and _.isFunction @[behavior]
 				@[behavior](e)
 
+		listenForUIEvents: () ->
+			@listenTo @UIModel, 'change:pattern.zoom', (model, value) ->
+				@pads.currentGroup.currentPattern.view.el.style.width = "#{value * 100}%"
+
 		selectGroup: (e) ->
 			$target = $(e.currentTarget)
 			@pads.render($target.data 'meta')
@@ -60,33 +74,75 @@ define [
 
 		save: (e) ->
 			_this = @
-			# @recipe.set('groups', @pads.groups.toJSON())
-			console.log(@recipe.toJSON())
-			@recipe.save({}, {
-				success: (recipe) ->
-					_this.pads.groups.each (group) ->
-						group
-							.save({recipe_id: recipe.id}, {
-								success: (groupSaved) ->
-									group.patterns.each (pattern) ->
-										pattern.save(group_id: groupSaved.id)
-									group.sounds.each (sound) ->
-										sound.save(group_id: groupSaved.id)
-							})
-			})
+			async.waterfall [
+				(recipeSavedCallback) =>
+					@recipe.save({}, {
+						success: (savedRecipe) =>
+							async.each @pads.groups.models, (group, eachGroupSavedCallback) ->
+								group.save({recipe_id: savedRecipe.id}, {
+									success: (savedGroup) =>
+										async.parallel [
+											(cbSound) ->
+												async.each group.sounds.models, (sound, eachSoundSavedCallback) ->
+													sound.save({group_id: group.id}, {
+														success: (savedSound) ->
+															eachSoundSavedCallback(null, savedSound)
+														error: (err) ->
+															eachSoundSavedCallback(err)
+													})
+												, (err) ->
+													cbSound(err) if err
+													cbSound(null)
+											, (cbPattern) ->
+												async.each group.patterns.models, (pattern, eachPatternSavedCallback) ->
+													pattern.save({group_id: group.id}, {
+														success: (savedPattern) ->
+															eachPatternSavedCallback(null, savedPattern)
+														error: (err) ->
+															eachPatternSavedCallback(err)
+													})
+												, (err) ->
+													cbPattern(err) if err
+													cbPattern(null)
+										], (err) ->
+											eachGroupSavedCallback(err) if err
+											eachGroupSavedCallback(null)
+								})
+							, (err) ->
+								recipeSavedCallback(null)
+						error: (err) ->
+							recipeSavedCallback(err)
+					})
+			], (err, recipe) ->
+				throw new Error(err) if err 
+				console.log('SUCCESS')
+
+		toJSON: (e) ->
+			recipe = @recipe.toJSON()
+			recipe.groups = []
+			@pads.groups.each (group) =>
+				groupAttributes = group.toJSON()
+				groupAttributes.sounds = []
+				group.sounds.each (sound) =>
+					groupAttributes.sounds.push(sound.toJSON())
+				groupAttributes.patterns = []
+				group.patterns.each (pattern) =>
+					groupAttributes.patterns.push(pattern.toJSON())
+				recipe.groups.push(groupAttributes)
+			console.log(recipe)
 
 		keyDownDelegate: (e) ->
-			key = String.fromCharCode(e.keyCode)
+			char = String.fromCharCode(e.keyCode)
 
-			if key is 'R' and e.ctrlKey
+			if char is RECORD_CHAR and e.ctrlKey
 				@transport.record()
 				prevent = true
-			else if key is ' '
+			else if char is PLAYPAUSE_CHAR
 				@transport.play()
 				prevent = true
-			else if _.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], key) > 0 and e.ctrlKey
+			else if _.indexOf([1, '1', '2', '3', '4', '5', '6', '7', '8'], char) > 0 and e.ctrlKey
 				prevent = true
-				@pads.render key
+				@pads.render char
 
 			e.preventDefault() if prevent
 

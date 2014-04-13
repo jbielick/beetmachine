@@ -1,4 +1,4 @@
-/*
+	/*
  * Geddy JavaScript Web development framework
  * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
  *
@@ -20,6 +20,7 @@
 var router = new geddy.RegExpRouter();
 
 router.get('/').to('Main.index');
+router.get('/recipe/:recipe_id').to('Main.index');
 
 // Basic routes
 // router.match('/moving/pictures/:id', 'GET').to('Moving.pictures');
@@ -41,7 +42,6 @@ router.get('/').to('Main.index');
 
 router.resource('recipes').nest(function() {
 	this.resource('groups');
-	this.get('/print(.:format)').to('Recipes.index');
 });
 
 router.resource('groups').nest(function() {

@@ -31,13 +31,16 @@
       bootstrap: 'vendor/bootstrap.min',
       timbre: 'vendor/timbre.dev',
       socketio: 'vendor/socket.io',
-      async: '/bower_components/async/lib/async'
+      async: '/bower_components/async/lib/async',
+      paper: '/bower_components/paper/dist/paper-full.min'
     }
   });
 
   require(['jquery', 'foundation', 'socketio', 'timbre', 'backbone', 'views/app'], function($, foundation, io, Timbre, Backbone, App) {
     var doc;
-    Backbone.history.start();
+    Backbone.history.start({
+      pushState: true
+    });
     $(document).foundation();
     doc = document.documentElement;
     return doc.setAttribute('data-useragent', navigator.userAgent);

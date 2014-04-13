@@ -10,4 +10,4 @@ define [
 		defaults: 
 			name: 'New Recipe'
 
-		url: '/recipes'
+		urlRoot: '/recipes'

@@ -31,16 +31,18 @@ body {
 /*============
  * Sequence / Pattern
  * ==========*/
- .sequence, .pattern {box-shadow:inset 0 0 8px rgba(0,0,0,0.7);overflow:hidden;position:relative;}
+ .sequence, .pattern-inner {box-shadow:inset 0 0 8px rgba(0,0,0,0.7);overflow:hidden;position:relative;}
 .grid {position:relative;overflow:hidden;}
 .sequence {margin:15px auto;}
 .playHead {top:0;width:1px;background-color:#aaa;height:100%;left:0%;position:absolute;box-shadow:0 0 3px rgba(170,170,170,0.8);cursor:pointer;}
 .sequence-headers {margin-top:12px;overflow:hidden;}
 .col {float:left;}
 .col-1 {width:7.692307%;}
-.slot.has-trigger {background-color:rgba(201,229,255,0.7);}
-.slot {border-left:1px solid #333;border-bottom:1px solid #111;display:block;font-size:10px;line-height:1.8;margin-right:-1px;}
+.trigger {background-color:rgba(201,229,255,0.7);position:absolute;}
+.slot {border-left:1px solid #444;border-bottom:1px solid #444;display:block;font-size:10px;line-height:1.8;margin-right:-1px;}
 .slot-label {text-transform:uppercase;font-size: 10px;line-height: 1.8;padding-left: 8px;background: #111;}
+.slots {margin-right:-15px;}
+.patterns {margin-left:-15px;}
 
 /*===========
  * Pads
@@ -52,8 +54,8 @@ body {
 /*===========
  * Pattern
  * =========*/
-.patterns {overflow-x: scroll;}
-.grid {width:100%;}
+.patterns {overflow-x: scroll;overflow-y:hidden;max-height:300px;position:relative;}
+/*.grid {width:100%;}*/
 
 .btn-squishy {
 	color:#000;

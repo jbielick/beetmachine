@@ -57,8 +57,13 @@ var Recipes = function () {
   };
 
   this.update = function (req, resp, params) {
-    // Save the resource, then display the item page
-    this.redirect({controller: this.name, id: params.id});
+    var _this = this;
+    geddy.model.Recipe.first(params.id, function(err, recipe) {
+      recipe.updateProperties(params);
+      recipe.save(function(err, recipe) {
+        _this.respond(recipe);
+      });
+    });
   };
 
   this.remove = function (req, resp, params) {

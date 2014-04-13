@@ -1,3 +1,4 @@
+var async = require('async');
 /*
  * Geddy JavaScript Web development framework
  * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
@@ -18,10 +19,25 @@
 
 var Main = function () {
   this.index = function (req, resp, params) {
-    this.respond({params: params}, {
-      format: 'html'
-    , template: 'app/views/main/index'
-    });
+  	var _this = this,
+  			recipe = null,
+  			tasks = [];
+
+  	if (params.recipe_id) {
+  		tasks.push(function(callback) {
+  			geddy.model.Recipe.first({id: params.recipe_id}, function(err, data) {
+  				if (err) { /* show notice */}
+  				callback(null, data);
+  			});
+  		});
+  	}
+
+  	async.series(tasks, function(err, data) {
+  		_this.respond({params: params, recipe: data[0]}, {
+	      format: 'html',
+	      template: 'app/views/main/index'
+	    });
+  	});
   };
 };
 

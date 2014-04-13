@@ -1,6 +1,5 @@
 var async = require('async');
 
-
 var Groups = function () {
   this.respondsWith = ['json'];
 
@@ -60,8 +59,28 @@ var Groups = function () {
   };
 
   this.update = function (req, resp, params) {
-    // Save the resource, then display the item page
-    this.redirect({controller: this.name, id: params.id});
+    var _this = this,
+        i = 0,
+        items = [],
+        modelName = geddy.inflection.singularize(this.name);
+
+    if (typeof params[0] !== 'undefined') {
+      while (params[i]) {
+        if (params.group_id) {
+          params[i].group_id = params.group_id;
+        }
+        items.push(geddy.model[modelName].create(params[i]));
+        i++;
+      }
+    } else {
+      items.push(geddy.model[modelName].create(params));
+    }
+
+    async.map(items, function(item, callback) {
+      item.save(callback);
+    }, function(err, models) {
+      _this.respond(models);
+    });
   };
 
   this.remove = function (req, resp, params) {

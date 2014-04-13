@@ -12,26 +12,14 @@ define [
 
 		initialize: (attrs = {}, options = {}) ->
 			{ @app, @pads } = options.collection
-			@sounds = new SoundCollection attrs.sounds, group: @
-			@patterns = new PatternCollection attrs.patterns || {}, app: @app, pads: @pads, group: @
-			@currentPattern = @patterns.at(0)
-
-		enable: (patternNumber) ->
-			if patternNumber
-				@currentPattern = @patterns.findWhere(position: patternNumber)
-
-			@currentPattern.view.$el.show()
-
-
-		toJSON: () ->
-			shallow = _.extend({}, @attributes)
-			# shallow.patterns = @patterns.toJSON()
-			# shallow.sounds = @sounds.toJSON()
-			deep = shallow
-			return deep
+			@sounds = new SoundCollection attrs.sounds || [{pad: 1}], group: @
+			@patterns = new PatternCollection attrs.patterns || [{position: 1}], group: @
 
 		url: () ->
-			if @get('recipe_id')
+			if @isNew() && @get('recipe_id')
 				return "/recipes/#{@get('recipe_id')}/groups"
 			else
-				return "/groups"
+				if @isNew()
+					return "/groups"
+				else
+					return "/groups/#{@get('id')}"

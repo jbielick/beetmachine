@@ -11,13 +11,19 @@ define [
 	'views/display'
 	'views/transport'
 	'views/sequence'
-	'views/pattern'
+	'views/pattern.ui'
 	'models/recipe'
-], ($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) ->
+	'collections/group'
+], ($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, PatternUIView, RecipeModel, GroupCollection) ->
 
-	DEFAULT_KEYS 		= '6789yuiohjklnm,.'.split('')
-	RECORD_CHAR			= 'R'
-	PLAYPAUSE_CHAR 	= ' '
+	DEFAULT_KEYCODES = [ 
+		54, 55, 56,  57
+		89, 85, 73,  79
+		72, 74, 75,  76
+		78, 77, 188, 190
+	]
+	RECORD_CHAR			= 82
+	PLAYPAUSE_CHAR 	= 32
 	APP_EL_SELECTOR = 'body'
 
 	class AppView extends Backbone.View
@@ -25,26 +31,33 @@ define [
 		el: APP_EL_SELECTOR
 
 		initialize: () ->
-			@recipe 				= new RecipeModel
-			@router 				= new Router app: @
-			(@display 			= new Display app: @).log('Ready')
-			@transport 			= new Transport app: @
-			@pads 					= new Pads app: @
-			@sequence				= new Sequence app: @
-			@UIModel				= new (Backbone.DeepModel.extend())
-			@ligament 			= new Backbone.Ligaments(
-				model: @UIModel, 
-				view: @, 
-				bindings: {
-					'pattern.zoom': {cast: [parseFloat, 10]}})
+			window.App = @
+			@current 					= {}
+			@recipe 					= new RecipeModel(module.config().recipe)
+			@router 					= new Router app: @
+			(@display 				= new Display app: @).log('Please Wait...')
+			@transport 				= new Transport app: @
+			@pattern 					= new PatternUIView app: @
+			@groups 					= new GroupCollection({position: 1}, app: @)
+			@pads 						= new Pads app: @
+			@sequence					= new Sequence app: @
+			@UIModel					= new (Backbone.DeepModel.extend())
 			@keyMap 				= {}
 
-			@listenForUIEvents()
+			async.series [
+				(callback) =>
+					if @recipe.get('id')
+						@open @recipe, () =>
+							callback(null, true)
+					else
+						callback(null, false)
+			], (err, opened) =>
+				@_selectGroupAt(0)
+				@pattern._selectPatternAt(0)
 
-			@keyMap[key.charCodeAt(0)] = i for key, i in DEFAULT_KEYS
+			@keyMap[keyCode] = i for keyCode, i in DEFAULT_KEYCODES
 
-			if not _.isEmpty(module.config().recipe)
-				@open module.config().recipe, parse: true
+			@display.log 'Ready'
 
 		events:
 			'click [data-behavior]'			: 'delegateBehavior'
@@ -54,23 +67,27 @@ define [
 
 		delegateBehavior: (e) ->
 			behavior = $(e.currentTarget).data 'behavior'
+			meta = $(e.currentTarget).data 'meta'
 			if behavior? and _.isFunction @[behavior]
-				@[behavior](e)
+				@[behavior].call(@, e, meta)
 
-		listenForUIEvents: () ->
-			@listenTo @UIModel, 'change:pattern.zoom', (model, value) ->
-				@pads.currentGroup.currentPattern.view.el.style.width = "#{value * 100}%"
+		selectGroup: (e, number) ->
+			@_selectGroup(number)
 
-		selectGroup: (e) ->
-			$target = $(e.currentTarget)
-			@pads.render($target.data 'meta')
+		_selectGroupAt: (idx) ->
+			@_selectGroup(@groups.at(0).get('position'))
 
-		open: (@recipe) ->
-			# @recipe = recipe
-			if recipe.groups.length > 0
-				@pads.groups.reset(recipe.groups)
-			if recipe.keyMap
-				@keyMap = _.extend(@keyMap, recipe.keyMap)
+		_selectGroup: (groupNumber) ->
+			@current.group = @groups.findWhere(position: groupNumber)
+			@pads.render(groupNumber)
+
+		open: (recipe, callback) ->
+			_this = this
+			@display.log("Loading #{@recipe.get('name')}...");
+			@groups.fetchRecursive @, @recipe, (err, fetched) =>
+				# @pads.bootstrapGroupPads(@groups.at(0))
+				callback.call(@)
+				@display.log "Recipe \"#{@recipe.get('name')}\" Loaded"
 
 		save: (e) ->
 			_this = @
@@ -78,7 +95,7 @@ define [
 				(recipeSavedCallback) =>
 					@recipe.save({}, {
 						success: (savedRecipe) =>
-							async.each @pads.groups.models, (group, eachGroupSavedCallback) ->
+							async.each @groups.models, (group, eachGroupSavedCallback) ->
 								group.save({recipe_id: savedRecipe.id}, {
 									success: (savedGroup) =>
 										async.parallel [
@@ -113,14 +130,15 @@ define [
 						error: (err) ->
 							recipeSavedCallback(err)
 					})
-			], (err, recipe) ->
-				throw new Error(err) if err 
-				console.log('SUCCESS')
+			], (err, results) =>
+				throw new Error(err) if err
+				@router.navigate("recipe/#{@recipe.get('id')}", {silent: true})
+				@display.log "Recipe \"#{@recipe.get('name')}\" Saved"
 
 		toJSON: (e) ->
 			recipe = @recipe.toJSON()
 			recipe.groups = []
-			@pads.groups.each (group) =>
+			@groups.each (group) =>
 				groupAttributes = group.toJSON()
 				groupAttributes.sounds = []
 				group.sounds.each (sound) =>
@@ -147,11 +165,12 @@ define [
 			e.preventDefault() if prevent
 
 		keyPressDelegate: (e) ->
-			if @keyMap[e.charCode]?
-				@pressing = e.charCode
-				pad = @pads.currentPads[@keyMap[e.charCode]]?.trigger('press')
+			if @keyMap[e.which]?
+				@pressing = e.which
+				#  left off here trying to listen to press event from pattern and match to pads view
+				pad = @current.pads[@keyMap[e.which]]?.trigger('press')
 
 		keyUpDelegate: (e) ->
-			pad = @pads.currentPads[@keyMap[e.charCode]]?.trigger('release') if e.charCode is @pressing
+			pad = @pads.current.pads[@keyMap[e.which]]?.trigger('release') if e.which is @pressing
 
 	new AppView()

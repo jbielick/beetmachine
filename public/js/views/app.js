@@ -2,11 +2,11 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'deepmodel', 'ligaments', 'module', 'async', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern', 'models/recipe'], function($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, Pattern, RecipeModel) {
-    var APP_EL_SELECTOR, AppView, DEFAULT_KEYS, PLAYPAUSE_CHAR, RECORD_CHAR;
-    DEFAULT_KEYS = '6789yuiohjklnm,.'.split('');
-    RECORD_CHAR = 'R';
-    PLAYPAUSE_CHAR = ' ';
+  define(['jquery', 'underscore', 'backbone', 'deepmodel', 'ligaments', 'module', 'async', 'routes/app', 'views/pads', 'views/display', 'views/transport', 'views/sequence', 'views/pattern.ui', 'models/recipe', 'collections/group'], function($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, PatternUIView, RecipeModel, GroupCollection) {
+    var APP_EL_SELECTOR, AppView, DEFAULT_KEYCODES, PLAYPAUSE_CHAR, RECORD_CHAR;
+    DEFAULT_KEYCODES = [54, 55, 56, 57, 89, 85, 73, 79, 72, 74, 75, 76, 78, 77, 188, 190];
+    RECORD_CHAR = 82;
+    PLAYPAUSE_CHAR = 32;
     APP_EL_SELECTOR = 'body';
     AppView = (function(_super) {
       __extends(AppView, _super);
@@ -18,15 +18,25 @@
       AppView.prototype.el = APP_EL_SELECTOR;
 
       AppView.prototype.initialize = function() {
-        var i, key, _i, _len;
-        this.recipe = new RecipeModel;
+        var i, keyCode, _i, _len;
+        window.App = this;
+        this.current = {};
+        this.recipe = new RecipeModel(module.config().recipe);
         this.router = new Router({
           app: this
         });
         (this.display = new Display({
           app: this
-        })).log('Ready');
+        })).log('Please Wait...');
         this.transport = new Transport({
+          app: this
+        });
+        this.pattern = new PatternUIView({
+          app: this
+        });
+        this.groups = new GroupCollection({
+          position: 1
+        }, {
           app: this
         });
         this.pads = new Pads({
@@ -36,26 +46,30 @@
           app: this
         });
         this.UIModel = new (Backbone.DeepModel.extend());
-        this.ligament = new Backbone.Ligaments({
-          model: this.UIModel,
-          view: this,
-          bindings: {
-            'pattern.zoom': {
-              cast: [parseFloat, 10]
-            }
-          }
-        });
         this.keyMap = {};
-        this.listenForUIEvents();
-        for (i = _i = 0, _len = DEFAULT_KEYS.length; _i < _len; i = ++_i) {
-          key = DEFAULT_KEYS[i];
-          this.keyMap[key.charCodeAt(0)] = i;
+        async.series([
+          (function(_this) {
+            return function(callback) {
+              if (_this.recipe.get('id')) {
+                return _this.open(_this.recipe, function() {
+                  return callback(null, true);
+                });
+              } else {
+                return callback(null, false);
+              }
+            };
+          })(this)
+        ], (function(_this) {
+          return function(err, opened) {
+            _this._selectGroupAt(0);
+            return _this.pattern._selectPatternAt(0);
+          };
+        })(this));
+        for (i = _i = 0, _len = DEFAULT_KEYCODES.length; _i < _len; i = ++_i) {
+          keyCode = DEFAULT_KEYCODES[i];
+          this.keyMap[keyCode] = i;
         }
-        if (!_.isEmpty(module.config().recipe)) {
-          return this.open(module.config().recipe, {
-            parse: true
-          });
-        }
+        return this.display.log('Ready');
       };
 
       AppView.prototype.events = {
@@ -66,33 +80,39 @@
       };
 
       AppView.prototype.delegateBehavior = function(e) {
-        var behavior;
+        var behavior, meta;
         behavior = $(e.currentTarget).data('behavior');
+        meta = $(e.currentTarget).data('meta');
         if ((behavior != null) && _.isFunction(this[behavior])) {
-          return this[behavior](e);
+          return this[behavior].call(this, e, meta);
         }
       };
 
-      AppView.prototype.listenForUIEvents = function() {
-        return this.listenTo(this.UIModel, 'change:pattern.zoom', function(model, value) {
-          return this.pads.currentGroup.currentPattern.view.el.style.width = "" + (value * 100) + "%";
+      AppView.prototype.selectGroup = function(e, number) {
+        return this._selectGroup(number);
+      };
+
+      AppView.prototype._selectGroupAt = function(idx) {
+        return this._selectGroup(this.groups.at(0).get('position'));
+      };
+
+      AppView.prototype._selectGroup = function(groupNumber) {
+        this.current.group = this.groups.findWhere({
+          position: groupNumber
         });
+        return this.pads.render(groupNumber);
       };
 
-      AppView.prototype.selectGroup = function(e) {
-        var $target;
-        $target = $(e.currentTarget);
-        return this.pads.render($target.data('meta'));
-      };
-
-      AppView.prototype.open = function(recipe) {
-        this.recipe = recipe;
-        if (recipe.groups.length > 0) {
-          this.pads.groups.reset(recipe.groups);
-        }
-        if (recipe.keyMap) {
-          return this.keyMap = _.extend(this.keyMap, recipe.keyMap);
-        }
+      AppView.prototype.open = function(recipe, callback) {
+        var _this;
+        _this = this;
+        this.display.log("Loading " + (this.recipe.get('name')) + "...");
+        return this.groups.fetchRecursive(this, this.recipe, (function(_this) {
+          return function(err, fetched) {
+            callback.call(_this);
+            return _this.display.log("Recipe \"" + (_this.recipe.get('name')) + "\" Loaded");
+          };
+        })(this));
       };
 
       AppView.prototype.save = function(e) {
@@ -103,7 +123,7 @@
             return function(recipeSavedCallback) {
               return _this.recipe.save({}, {
                 success: function(savedRecipe) {
-                  return async.each(_this.pads.groups.models, function(group, eachGroupSavedCallback) {
+                  return async.each(_this.groups.models, function(group, eachGroupSavedCallback) {
                     return group.save({
                       recipe_id: savedRecipe.id
                     }, {
@@ -166,19 +186,24 @@
               });
             };
           })(this)
-        ], function(err, recipe) {
-          if (err) {
-            throw new Error(err);
-          }
-          return console.log('SUCCESS');
-        });
+        ], (function(_this) {
+          return function(err, results) {
+            if (err) {
+              throw new Error(err);
+            }
+            _this.router.navigate("recipe/" + (_this.recipe.get('id')), {
+              silent: true
+            });
+            return _this.display.log("Recipe \"" + (_this.recipe.get('name')) + "\" Saved");
+          };
+        })(this));
       };
 
       AppView.prototype.toJSON = function(e) {
         var recipe;
         recipe = this.recipe.toJSON();
         recipe.groups = [];
-        this.pads.groups.each((function(_this) {
+        this.groups.each((function(_this) {
           return function(group) {
             var groupAttributes;
             groupAttributes = group.toJSON();
@@ -216,16 +241,16 @@
 
       AppView.prototype.keyPressDelegate = function(e) {
         var pad, _ref;
-        if (this.keyMap[e.charCode] != null) {
-          this.pressing = e.charCode;
-          return pad = (_ref = this.pads.currentPads[this.keyMap[e.charCode]]) != null ? _ref.trigger('press') : void 0;
+        if (this.keyMap[e.which] != null) {
+          this.pressing = e.which;
+          return pad = (_ref = this.current.pads[this.keyMap[e.which]]) != null ? _ref.trigger('press') : void 0;
         }
       };
 
       AppView.prototype.keyUpDelegate = function(e) {
         var pad, _ref;
-        if (e.charCode === this.pressing) {
-          return pad = (_ref = this.pads.currentPads[this.keyMap[e.charCode]]) != null ? _ref.trigger('release') : void 0;
+        if (e.which === this.pressing) {
+          return pad = (_ref = this.pads.current.pads[this.keyMap[e.which]]) != null ? _ref.trigger('release') : void 0;
         }
       };
 

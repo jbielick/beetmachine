@@ -16,7 +16,7 @@
         name: 'New Recipe'
       };
 
-      RecipeModel.prototype.url = '/recipes';
+      RecipeModel.prototype.urlRoot = '/recipes';
 
       return RecipeModel;
 

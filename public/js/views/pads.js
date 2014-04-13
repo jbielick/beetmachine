@@ -2,7 +2,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'views/pad', 'collections/group', 'text!/js/templates/pads.ejs'], function($, _, Backbone, PadView, GroupCollection, PadsTemplate) {
+  define(['jquery', 'underscore', 'backbone', 'views/pad', 'text!/js/templates/pads.ejs'], function($, _, Backbone, PadView, PadsTemplate) {
     var PADLABEL_PREFIX, PadsView;
     PADLABEL_PREFIX = 'c';
     return PadsView = (function(_super) {
@@ -26,17 +26,9 @@
 
       PadsView.prototype.initialize = function(options) {
         this.app = options.app;
-        this.groups = new GroupCollection({
-          position: 1
-        }, {
-          pads: this,
-          app: this.app
-        });
-        this.currentGroup = this.groups.at(0);
         this.createPads();
-        this.bootstrapGroupPads(this.currentGroup);
         this.render();
-        this.listenTo(this.groups, 'reset', (function(_this) {
+        this.listenTo(this.app.groups, 'fetch', (function(_this) {
           return function(collection) {
             collection.each(function(model) {
               return _this.bootstrapGroupPads(model);
@@ -44,7 +36,7 @@
             return _this.render();
           };
         })(this));
-        return this.listenTo(this.groups, 'add', (function(_this) {
+        return this.listenTo(this.app.groups, 'add', (function(_this) {
           return function(model) {
             return _this.bootstrapGroupPads(model);
           };
@@ -74,7 +66,7 @@
 
       PadsView.prototype.bootstrapGroupPads = function(group) {
         var i, pad, pads, pos, _i, _len, _results;
-        pos = group.get('position') - 1 ? group.get('position') : 0;
+        pos = group.get('position') - 1 > -1 ? group.get('position') - 1 : 0;
         pads = this.padEls.slice(pos * 16, pos * 16 + 16);
         if (group.sounds.at(i) != null) {
           _results = [];
@@ -91,7 +83,7 @@
       };
 
       PadsView.prototype.render = function(groupNumber) {
-        var zeroedIndex;
+        var zeroedIndex, _ref;
         if (groupNumber == null) {
           groupNumber = 1;
         }
@@ -99,22 +91,22 @@
         groupNumber = groupNumber * 1;
         this.toggleGroupSelectButtons(groupNumber);
         zeroedIndex = groupNumber - 1;
-        this.currentGroup = this.groups.findWhere({
+        this.app.current.group = this.app.groups.findWhere({
           position: groupNumber
         });
-        if (!this.currentGroup) {
-          this.groups.add({
+        if (!this.app.current.group) {
+          this.app.groups.add({
             position: groupNumber
           });
-          this.currentGroup = this.groups.findWhere({
+          this.app.current.group = this.app.groups.findWhere({
             position: groupNumber
           });
         }
         this.app.$('.patterns .grid').hide();
-        this.currentGroup.enable();
-        this.currentPads = this.padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
+        this.app.pattern._selectPattern(((_ref = this.app.current.group.lastActivePattern) != null ? _ref.get('position') : void 0) || 1);
+        this.app.current.pads = this.padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
         this.app.display.model.set('right', "Group " + groupNumber);
-        return this.$el.append(_.pluck(this.currentPads, 'el'));
+        return this.$el.append(_.pluck(this.app.current.pads, 'el'));
       };
 
       return PadsView;

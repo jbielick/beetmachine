@@ -17,8 +17,12 @@ define [
 		initialize: (options) ->
 			@viewVars = {}
 			{ @model, @pad } = options
+			
 			@render()
+
+			_.bindAll @, 'redrawCanvas'
 			new Backbone.Ligaments(model: @model, view: @)
+			@listenTo @model, 'change', @redrawCanvas
 
 		events:
 			'click [data-behavior]'				: 'delegateBehavior'
@@ -96,7 +100,11 @@ define [
 				data: @model.toJSON()
 				view: @viewVars
 			)
-			@$canvas = this.$('.waveform')
+			@redrawCanvas
+			
+		redrawCanvas: () ->
+			unless @$canvas
+				@$canvas = this.$('.waveform')
 			if @pad.model?.T?.raw
 				@pad.model.T.raw.plot(
 					target: @$canvas.get(0)

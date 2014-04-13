@@ -8,7 +8,8 @@
     "requirejs": "~2.1.5",
     "requirejs-text": "~2.0.5",
     "modernizr": "~2.6.2",
-    "backbone-deep-model": "~0.10.4"
+    "backbone-deep-model": "~0.10.4",
+    "paper": "~0.9.18"
   },
   "devDependencies": {}
 }

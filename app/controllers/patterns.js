@@ -5,9 +5,10 @@ var Patterns = function () {
 
   this.index = function (req, resp, params) {
     var _this = this;
-    if (params.recipe_id) {
+    if (params.group_id) {
       geddy.model.Group.first(params.group_id, function(err, group) {
         if (err) throw err;
+        if (!group) _this.respond({})
           group.getPatterns(function(err, patterns) {
             _this.respond(patterns);
           });
@@ -54,7 +55,16 @@ var Patterns = function () {
   };
 
   this.show = function (req, resp, params) {
-    this.respond({params: params});
+    var _this = this;
+    if (params.id) {
+      geddy.model.Pattern.first({id: params.id}, function(err, pattern) {
+        if (err) throw new Error("Server Error");
+        if (!pattern) _this.respond(404);
+        _this.respond(pattern);
+      });
+    } else {
+      this.respond(404);
+    }
   };
 
   this.edit = function (req, resp, params) {
@@ -62,8 +72,13 @@ var Patterns = function () {
   };
 
   this.update = function (req, resp, params) {
-    // Save the resource, then display the item page
-    this.redirect({controller: this.name, id: params.id});
+    var _this = this;
+    geddy.model.Pattern.first(params.id, function(err, pattern) {
+      pattern.updateProperties(params);
+      pattern.save(function(err, pattern) {
+        _this.respond(pattern);
+      });
+    });
   };
 
   this.remove = function (req, resp, params) {

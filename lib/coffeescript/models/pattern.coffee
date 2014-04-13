@@ -4,20 +4,31 @@ define [
 	'underscore'
 	'backbone'
 	'deepmodel'
-	'views/pattern'
-], (_, Backbone, deepmodel, PatternView) ->
+	'views/pattern.grid'
+], (_, Backbone, deepmodel, PatternGridView) ->
 
 	class PatternModel extends Backbone.DeepModel
 
-		defaults:
-			length: 4
+		defaults: () ->
+			attrs = 
+				triggers: {}
+				len: 4
+				position: 1
+				zoom: 2
 
 		url: () ->
-			if @get('group_id')
-				return "/groups/#{@get('group_id')}/patterns"
+			if @isNew() && @get('groupId')
+				return "/groups/#{@get('groupId')}/patterns"
 			else
-				return "/patterns"
+				if @isNew()
+					return "/patterns"
+				else
+					return "/patterns/#{@get('id')}"
 
 		initialize: (attrs = {}, options = {}) ->
-			@group = options.group
-			@view = new PatternView model: @, app: options.app, pads: options.pads
+			@view = new PatternGridView model: @
+
+		toJSON: ->
+			attrs = _.deepClone @attributes
+			attrs.zoom = parseInt(attrs.zoom, 10)
+			attrs

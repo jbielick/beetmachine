@@ -31,6 +31,7 @@ require.config
 		timbre 					: 'vendor/timbre.dev'
 		socketio				: 'vendor/socket.io'
 		async						: '/bower_components/async/lib/async'
+		paper						: '/bower_components/paper/dist/paper-full.min'
 
 require [
 	'jquery'
@@ -48,7 +49,7 @@ require [
 	# 	client_id: '0dee6e7b428540e10373263de1cbf711'
 	# )
 
-	Backbone.history.start()
+	Backbone.history.start({pushState: true})
 
 	$(document).foundation()
 	doc = document.documentElement

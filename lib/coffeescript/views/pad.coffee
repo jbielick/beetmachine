@@ -23,7 +23,10 @@ define [
 
 			_.bindAll(@, 'listenToModelEvents', 'press')
 
-			@on('press', @press)
+			if @model
+				bootstrapWithModel @model
+
+			@on 'press', @press
 
 			@render()
 
@@ -84,7 +87,7 @@ define [
 		###
 		createModel: (attrs = {}) ->
 			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
-			@parent.currentGroup.sounds.add @model
+			@parent.app.current.group.sounds.add @model
 			@listenToModelEvents()
 			@model
 

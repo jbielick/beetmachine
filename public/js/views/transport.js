@@ -116,8 +116,7 @@
       };
 
       TransportView.prototype._tick = function() {
-        this.setTick(this._currentTick + 1);
-        return this.trigger('tick', this.getTick());
+        return this.setTick(this._currentTick + 1);
       };
 
       TransportView.prototype.getTick = function() {

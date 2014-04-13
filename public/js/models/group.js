@@ -21,38 +21,31 @@
           options = {};
         }
         _ref = options.collection, this.app = _ref.app, this.pads = _ref.pads;
-        this.sounds = new SoundCollection(attrs.sounds, {
+        this.sounds = new SoundCollection(attrs.sounds || [
+          {
+            pad: 1
+          }
+        ], {
           group: this
         });
-        this.patterns = new PatternCollection(attrs.patterns || {}, {
-          app: this.app,
-          pads: this.pads,
+        return this.patterns = new PatternCollection(attrs.patterns || [
+          {
+            position: 1
+          }
+        ], {
           group: this
         });
-        return this.currentPattern = this.patterns.at(0);
-      };
-
-      GroupModel.prototype.enable = function(patternNumber) {
-        if (patternNumber) {
-          this.currentPattern = this.patterns.findWhere({
-            position: patternNumber
-          });
-        }
-        return this.currentPattern.view.$el.show();
-      };
-
-      GroupModel.prototype.toJSON = function() {
-        var deep, shallow;
-        shallow = _.extend({}, this.attributes);
-        deep = shallow;
-        return deep;
       };
 
       GroupModel.prototype.url = function() {
-        if (this.get('recipe_id')) {
+        if (this.isNew() && this.get('recipe_id')) {
           return "/recipes/" + (this.get('recipe_id')) + "/groups";
         } else {
-          return "/groups";
+          if (this.isNew()) {
+            return "/groups";
+          } else {
+            return "/groups/" + (this.get('id'));
+          }
         }
       };
 

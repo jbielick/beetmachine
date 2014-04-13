@@ -3,9 +3,8 @@ define [
 	'underscore'
 	'backbone'
 	'views/pad'
-	'collections/group'
 	'text!/js/templates/pads.ejs'
-], ($, _, Backbone, PadView, GroupCollection, PadsTemplate) ->
+], ($, _, Backbone, PadView, PadsTemplate) ->
 
 	PADLABEL_PREFIX 		= 'c'
 
@@ -24,18 +23,16 @@ define [
 
 		initialize: (options) ->
 			{ @app } = options
-			@groups = new GroupCollection({position: 1}, pads: @, app: @app)
-			@currentGroup = @groups.at(0)
 			@createPads()
-			@bootstrapGroupPads(@currentGroup)
+			# @bootstrapGroupPads(@app.current.group)
 			@render()
 
-			@listenTo @groups, 'reset', (collection) =>
+			@listenTo @app.groups, 'fetch', (collection) =>
 				collection.each (model) => 
 					@bootstrapGroupPads(model)
 				@render()
 
-			@listenTo @groups, 'add', (model) =>
+			@listenTo @app.groups, 'add', (model) =>
 				@bootstrapGroupPads(model)
 
 		createPads: () ->
@@ -51,13 +48,10 @@ define [
 				z++ if i % 16 is 0
 
 		bootstrapGroupPads: (group) ->
-			pos = if group.get('position') - 1 then group.get('position') else 0
+			pos = if group.get('position') - 1 > -1 then group.get('position') - 1 else 0
 			pads = @padEls.slice(pos * 16, pos * 16 + 16)
 
 			pad.bootstrapWithModel group.sounds.at(i) for pad, i in pads if group.sounds.at(i)?
-			# _.each pads, (pad, i) ->
-			# 	if group.sounds.at(i)?
-			# 		pad.bootstrapWithModel(group.sounds.at(i))
 
 		toggleGroupSelectButtons: (group) ->
 			@app.$('[data-behavior="selectGroup"]')
@@ -80,23 +74,23 @@ define [
 			zeroedIndex = groupNumber - 1
 
 			# set the currentGroup to the one selected
-			@currentGroup = @groups.findWhere(position: groupNumber)
+			@app.current.group = @app.groups.findWhere(position: groupNumber)
 
 			# if there wasn't a group at this position, create one real quick.
-			if not @currentGroup
-				@groups.add position: groupNumber
-				@currentGroup = @groups.findWhere(position: groupNumber)
+			if not @app.current.group
+				@app.groups.add position: groupNumber
+				@app.current.group = @app.groups.findWhere(position: groupNumber)
 
 			@app.$('.patterns .grid').hide()
 
 			# show this group's pattern
-			@currentGroup.enable()
+			@app.pattern._selectPattern(@app.current.group.lastActivePattern?.get('position') || 1)
 
 			# slice the pads cache to the 16 views we want
-			@currentPads = @padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
+			@app.current.pads = @padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
 
 			# update display UI
 			@app.display.model.set('right', "Group #{groupNumber}")
 
 			# append the DOM els from the 16 pads we sliced from the cache
-			@$el.append(_.pluck(@currentPads, 'el'))
+			@$el.append(_.pluck(@app.current.pads, 'el'))

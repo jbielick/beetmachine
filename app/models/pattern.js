@@ -5,7 +5,8 @@ var Pattern = function () {
   this.defineProperties({
     group_id: {type: 'string'},
     position: {type: 'int'},
-    length: {type: 'int'},
+    len: {type: 'int'},
+    zoom: {type: 'int'},
     triggers: {type: 'object'}
   });
 

@@ -101,7 +101,6 @@ define [
 		#  loaded in the current group (pads.currentGroup)
 		_tick: ->
 			@setTick @_currentTick + 1
-			@trigger('tick', @getTick())
 
 		getTick: ->
 			@_currentTick

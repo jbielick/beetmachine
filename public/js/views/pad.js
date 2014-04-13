@@ -22,6 +22,9 @@
       PadView.prototype.initialize = function(options) {
         this.parent = options.parent, this.name = options.name, this.number = options.number;
         _.bindAll(this, 'listenToModelEvents', 'press');
+        if (this.model) {
+          bootstrapWithModel(this.model);
+        }
         this.on('press', this.press);
         return this.render();
       };
@@ -105,7 +108,7 @@
         this.model = new SoundModel(_.extend({
           pad: this.$el.index() + 1
         }, attrs));
-        this.parent.currentGroup.sounds.add(this.model);
+        this.parent.app.current.group.sounds.add(this.model);
         this.listenToModelEvents();
         return this.model;
       };

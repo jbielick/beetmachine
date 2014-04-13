@@ -2,16 +2,31 @@ define [
 	'underscore'
 	'backbone'
 	'models/group'
-], (_, Backbone, GroupModel) ->
+	'async'
+], (_, Backbone, GroupModel, async) ->
 
 	class GroupCollection extends Backbone.Collection
-
-		initialize: (attrs = {}, options = {}) ->
-			@app = options.app
-			@pads = options.pads
 
 		model: GroupModel
 
 		comparator: 'position'
 
 		url: '/groups'
+
+		belongsTo: 'recipes'
+
+		initialize: (attrs = {}, options = {}) ->
+			{ @app } = options
+
+		fetchRecursive: (@app, @parent, parentCallback) ->
+			@fetch
+				url: "/#{@belongsTo}/#{@parent.get('id')}#{@url}",
+				success: (collection, models, options) =>
+					fetchTasks = []
+					@each (model) =>
+						fetchTasks.push (callback) =>
+							model.sounds.fetchRecursive @app, model, callback
+						fetchTasks.push (callback2) =>
+							model.patterns.fetchRecursive @app, model, callback2
+					async.parallel fetchTasks, parentCallback
+			, reset: true

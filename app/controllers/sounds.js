@@ -1,3 +1,5 @@
+var async = require('async');
+
 var Sounds = function () {
   this.respondsWith = ['json'];
 

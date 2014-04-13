@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['underscore', 'backbone', 'deepmodel', 'views/pattern'], function(_, Backbone, deepmodel, PatternView) {
+  define(['underscore', 'backbone', 'deepmodel', 'views/pattern.grid'], function(_, Backbone, deepmodel, PatternGridView) {
     var PatternModel;
     return PatternModel = (function(_super) {
       __extends(PatternModel, _super);
@@ -12,15 +12,25 @@
         return PatternModel.__super__.constructor.apply(this, arguments);
       }
 
-      PatternModel.prototype.defaults = {
-        length: 4
+      PatternModel.prototype.defaults = function() {
+        var attrs;
+        return attrs = {
+          triggers: {},
+          len: 4,
+          position: 1,
+          zoom: 2
+        };
       };
 
       PatternModel.prototype.url = function() {
-        if (this.get('group_id')) {
-          return "/groups/" + (this.get('group_id')) + "/patterns";
+        if (this.isNew() && this.get('groupId')) {
+          return "/groups/" + (this.get('groupId')) + "/patterns";
         } else {
-          return "/patterns";
+          if (this.isNew()) {
+            return "/patterns";
+          } else {
+            return "/patterns/" + (this.get('id'));
+          }
         }
       };
 
@@ -31,12 +41,16 @@
         if (options == null) {
           options = {};
         }
-        this.group = options.group;
-        return this.view = new PatternView({
-          model: this,
-          app: options.app,
-          pads: options.pads
+        return this.view = new PatternGridView({
+          model: this
         });
+      };
+
+      PatternModel.prototype.toJSON = function() {
+        var attrs;
+        attrs = _.deepClone(this.attributes);
+        attrs.zoom = parseInt(attrs.zoom, 10);
+        return attrs;
       };
 
       return PatternModel;

@@ -21,10 +21,12 @@
         this.viewVars = {};
         this.model = options.model, this.pad = options.pad;
         this.render();
-        return new Backbone.Ligaments({
+        _.bindAll(this, 'redrawCanvas');
+        new Backbone.Ligaments({
           model: this.model,
           view: this
         });
+        return this.listenTo(this.model, 'change', this.redrawCanvas);
       };
 
       EditorView.prototype.events = {
@@ -120,12 +122,18 @@
       };
 
       EditorView.prototype.render = function() {
-        var _ref, _ref1;
         this.el.innerHTML = this.template({
           data: this.model.toJSON(),
           view: this.viewVars
         });
-        this.$canvas = this.$('.waveform');
+        return this.redrawCanvas;
+      };
+
+      EditorView.prototype.redrawCanvas = function() {
+        var _ref, _ref1;
+        if (!this.$canvas) {
+          this.$canvas = this.$('.waveform');
+        }
         if ((_ref = this.pad.model) != null ? (_ref1 = _ref.T) != null ? _ref1.raw : void 0 : void 0) {
           return this.pad.model.T.raw.plot({
             target: this.$canvas.get(0),

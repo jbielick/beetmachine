@@ -13,10 +13,14 @@
       }
 
       SoundModel.prototype.url = function() {
-        if (this.get('group_id')) {
+        if (this.isNew() && this.get('group_id')) {
           return "/groups/" + (this.get('group_id')) + "/sounds";
         } else {
-          return "/sounds";
+          if (this.isNew()) {
+            return "/sounds";
+          } else {
+            return "/sounds/" + (this.get('id'));
+          }
         }
       };
 

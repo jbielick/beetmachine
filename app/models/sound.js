@@ -3,7 +3,14 @@ var Sound = function () {
   this.belongsTo('Groups');
 
   this.defineProperties({
-    
+    'name': {type: 'string'},
+    'groupId': {type: 'string'},
+    'src': {type: 'string'},
+    'keyCode': {type: 'int'},
+    'fx': {type: 'object'},
+    'pad': {type: 'int'},
+    'mute': {type: 'boolean'},
+    'solo': {type: 'boolean'}
   });
 
   /*

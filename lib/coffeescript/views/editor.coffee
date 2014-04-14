@@ -7,6 +7,9 @@ define [
 	'views/display'
 	'text!/js/templates/editor.ejs'
 ], ($, bootstrap, _, Backbone, ligaments, Display, EditorTemplate) ->
+
+	ORANGE = '#f08a24'
+
 	class EditorView extends Backbone.View
 
 		template: _.template EditorTemplate
@@ -17,10 +20,11 @@ define [
 		initialize: (options) ->
 			@viewVars = {}
 			{ @model, @pad } = options
+
+			_.bindAll @, 'redrawCanvas'
 			
 			@render()
 
-			_.bindAll @, 'redrawCanvas'
 			new Backbone.Ligaments(model: @model, view: @)
 			@listenTo @model, 'change', @redrawCanvas
 
@@ -33,6 +37,9 @@ define [
 			behavior = $(e.currentTarget).data 'behavior'
 			if behavior? and _.isFunction this[behavior]
 				this[behavior].call this, e
+
+		save: (e) ->
+			@pad.model.save()
 
 		eq: (e) ->
 			param = e.currentTarget.getAttribute('data-param')
@@ -79,17 +86,18 @@ define [
 
 			@model.set "fx.#{effect}", fx
 
-			@render()
+			@redrawCanvas()
 
 		removeEffect: (effect) ->
 			@model.unset "fx.#{effect}"
-			@render()
+			@redrawCanvas()
 
 		play: (e) ->
 			e.preventDefault()
 			@pad.trigger('press')
 
 		show: () ->
+			@redrawCanvas()
 			@$el.modal 'show'
 
 		hide: () ->
@@ -100,14 +108,17 @@ define [
 				data: @model.toJSON()
 				view: @viewVars
 			)
-			@redrawCanvas
+			@redrawCanvas()
 			
 		redrawCanvas: () ->
 			unless @$canvas
 				@$canvas = this.$('.waveform')
-			if @pad.model?.T?.raw
-				@pad.model.T.raw.plot(
+			if @pad.model?.T?.rendered
+				@pad.model.T.rendered.plot(
+					width: 558
+					height: 100
 					target: @$canvas.get(0)
-					background: 'rgb(70,70,70)'
-					foreground: '#f08a24'
+					lineWidth: 0.5
+					background: '#222'
+					foreground: ORANGE
 				)

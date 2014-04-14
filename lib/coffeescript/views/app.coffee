@@ -101,7 +101,7 @@ define [
 										async.parallel [
 											(cbSound) ->
 												async.each group.sounds.models, (sound, eachSoundSavedCallback) ->
-													sound.save({group_id: group.id}, {
+													sound.save({groupId: group.id}, {
 														success: (savedSound) ->
 															eachSoundSavedCallback(null, savedSound)
 														error: (err) ->
@@ -112,7 +112,7 @@ define [
 													cbSound(null)
 											, (cbPattern) ->
 												async.each group.patterns.models, (pattern, eachPatternSavedCallback) ->
-													pattern.save({group_id: group.id}, {
+													pattern.save({groupId: group.id}, {
 														success: (savedPattern) ->
 															eachPatternSavedCallback(null, savedPattern)
 														error: (err) ->
@@ -171,6 +171,6 @@ define [
 				pad = @current.pads[@keyMap[e.which]]?.trigger('press')
 
 		keyUpDelegate: (e) ->
-			pad = @pads.current.pads[@keyMap[e.which]]?.trigger('release') if e.which is @pressing
+			pad = @current.pads[@keyMap[e.which]]?.trigger('release') if e.which is @pressing
 
 	new AppView()

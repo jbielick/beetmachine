@@ -28,6 +28,12 @@
           bindings: {
             'pattern.zoom': {
               cast: [parseFloat, 10]
+            },
+            'pattern.len': {
+              cast: [parseInt, 10]
+            },
+            'pattern.step': {
+              cast: [parseInt, 10]
             }
           }
         });

@@ -13,8 +13,8 @@
       }
 
       SoundModel.prototype.url = function() {
-        if (this.isNew() && this.get('group_id')) {
-          return "/groups/" + (this.get('group_id')) + "/sounds";
+        if (this.isNew() && this.get('groupId')) {
+          return "/groups/" + (this.get('groupId')) + "/sounds";
         } else {
           if (this.isNew()) {
             return "/sounds";
@@ -25,6 +25,7 @@
       };
 
       SoundModel.prototype.initialize = function(attrs, options) {
+        var _ref, _ref1;
         if (attrs == null) {
           attrs = {};
         }
@@ -32,6 +33,11 @@
           options = {};
         }
         _.bindAll(this, 'loadSrc');
+        if (((_ref = this.collection) != null ? _ref.group.app.pads : void 0) != null) {
+          if ((_ref1 = this.collection.group.app.pads.pads[this.get('pad') - 1 % 16]) != null) {
+            _ref1.bootstrapWithModel(this);
+          }
+        }
         this.on('change:src', this.loadSrc);
         return this.on('change:fx:*', (function(_this) {
           return function() {

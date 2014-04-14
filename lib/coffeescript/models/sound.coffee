@@ -8,8 +8,8 @@ define [
 	class SoundModel extends Backbone.DeepModel
 
 		url: () ->
-			if @isNew() && @get('group_id')
-				return "/groups/#{@get('group_id')}/sounds"
+			if @isNew() && @get('groupId')
+				return "/groups/#{@get('groupId')}/sounds"
 			else
 				if @isNew()
 					return "/sounds"
@@ -18,6 +18,8 @@ define [
 
 		initialize: (attrs = {}, options = {}) ->
 			_.bindAll this, 'loadSrc'
+			if @collection?.group.app.pads?
+				@collection.group.app.pads.pads[@get('pad') - 1 % 16]?.bootstrapWithModel(@)
 			@on 'change:src', @loadSrc
 			@on 'change:fx:*', () =>
 				@timbreContextAttached = false

@@ -7,6 +7,7 @@ var Pattern = function () {
     position: {type: 'int'},
     len: {type: 'int'},
     zoom: {type: 'int'},
+    step: {type: 'int'},
     triggers: {type: 'object'}
   });
 

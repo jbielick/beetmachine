@@ -133,7 +133,7 @@
                             function(cbSound) {
                               return async.each(group.sounds.models, function(sound, eachSoundSavedCallback) {
                                 return sound.save({
-                                  group_id: group.id
+                                  groupId: group.id
                                 }, {
                                   success: function(savedSound) {
                                     return eachSoundSavedCallback(null, savedSound);
@@ -151,7 +151,7 @@
                             }, function(cbPattern) {
                               return async.each(group.patterns.models, function(pattern, eachPatternSavedCallback) {
                                 return pattern.save({
-                                  group_id: group.id
+                                  groupId: group.id
                                 }, {
                                   success: function(savedPattern) {
                                     return eachPatternSavedCallback(null, savedPattern);
@@ -250,7 +250,7 @@
       AppView.prototype.keyUpDelegate = function(e) {
         var pad, _ref;
         if (e.which === this.pressing) {
-          return pad = (_ref = this.pads.current.pads[this.keyMap[e.which]]) != null ? _ref.trigger('release') : void 0;
+          return pad = (_ref = this.current.pads[this.keyMap[e.which]]) != null ? _ref.trigger('release') : void 0;
         }
       };
 

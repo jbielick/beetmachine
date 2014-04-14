@@ -18,7 +18,8 @@
           triggers: {},
           len: 4,
           position: 1,
-          zoom: 2
+          zoom: 2,
+          step: 64
         };
       };
 
@@ -49,7 +50,8 @@
       PatternModel.prototype.toJSON = function() {
         var attrs;
         attrs = _.deepClone(this.attributes);
-        attrs.zoom = parseInt(attrs.zoom, 10);
+        attrs.zoom = parseInt(attrs.zoom, 10) || 2;
+        attrs.step = parseInt(attrs.step, 10) || 64;
         return attrs;
       };
 

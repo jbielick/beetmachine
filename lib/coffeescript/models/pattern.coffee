@@ -15,6 +15,7 @@ define [
 				len: 4
 				position: 1
 				zoom: 2
+				step: 64
 
 		url: () ->
 			if @isNew() && @get('groupId')
@@ -30,5 +31,6 @@ define [
 
 		toJSON: ->
 			attrs = _.deepClone @attributes
-			attrs.zoom = parseInt(attrs.zoom, 10)
+			attrs.zoom = parseInt(attrs.zoom, 10) || 2
+			attrs.step = parseInt(attrs.step, 10) || 64
 			attrs

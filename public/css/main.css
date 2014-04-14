@@ -58,6 +58,7 @@ body {
 /*.grid {width:100%;}*/
 
 .btn-squishy {
+	font-weight:500;
 	color:#000;
 	padding:6px 12px;
 	display:inline-block;

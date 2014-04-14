@@ -22,9 +22,6 @@
       PadView.prototype.initialize = function(options) {
         this.parent = options.parent, this.name = options.name, this.number = options.number;
         _.bindAll(this, 'listenToModelEvents', 'press');
-        if (this.model) {
-          bootstrapWithModel(this.model);
-        }
         this.on('press', this.press);
         return this.render();
       };
@@ -45,7 +42,7 @@
         return this.listenTo(this.model, 'loaded', (function(_this) {
           return function() {
             _this.$('.pad').addClass('mapped');
-            return _this.parent.app.display.log(_this.name + ' loaded');
+            return _this.parent.app.display.log((_this.model.get('name') || _this.name) + ' loaded');
           };
         })(this));
       };
@@ -58,7 +55,7 @@
         (this.model = soundModel).pad = this;
         this.listenToModelEvents();
         if ((keyCode = this.model.get('keyCode'))) {
-          this.model.set('key', String.fromCharCode(keyCode));
+          this.model.set('key', keyCode);
         }
         return new Backbone.Ligaments({
           model: this.model,
@@ -97,19 +94,25 @@
 
 
       /*
-      		  * creates a new model
+      		  * creates a new model if one doesn't exist for this pad
       		  * Adds itself to the current group's SoundCollection
        */
 
-      PadView.prototype.createModel = function(attrs) {
+      PadView.prototype.createOrFindModel = function(attrs) {
         if (attrs == null) {
           attrs = {};
         }
-        this.model = new SoundModel(_.extend({
-          pad: this.$el.index() + 1
-        }, attrs));
-        this.parent.app.current.group.sounds.add(this.model);
-        this.listenToModelEvents();
+        if (!(this.model = this.parent.app.groups.findWhere({
+          position: this.groupNumber
+        }).sounds.findWhere({
+          pad: this.number
+        }))) {
+          this.model = new SoundModel(_.extend({
+            pad: this.$el.index() + 1
+          }, attrs));
+          this.parent.app.current.group.sounds.add(this.model);
+          this.bootstrapWithModel(this.model);
+        }
         return this.model;
       };
 
@@ -119,7 +122,7 @@
         e.preventDefault();
         e.stopPropagation();
         if (!this.model) {
-          this.createModel();
+          this.createOrFindModel();
         }
         objectUrl = (_ref = window.URL) != null ? typeof _ref.createObjectURL === "function" ? _ref.createObjectURL((_ref1 = e.dataTransfer) != null ? (_ref2 = _ref1.files) != null ? _ref2[0] : void 0 : void 0) : void 0 : void 0;
         this.model.set('src', objectUrl);
@@ -130,7 +133,7 @@
         e.preventDefault();
         if (!this.editor) {
           this.editor = new SoundEditor({
-            model: this.model || this.createModel(),
+            model: this.model || this.createOrFindModel(),
             pad: this
           });
         }

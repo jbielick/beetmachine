@@ -107,7 +107,7 @@ define [
 			padNumber
 
 		getTotalTicks: () ->
-			totalTicks = (@model.get('len') * @app.transport.model.get('step'))
+			totalTicks = (@model.get('len') * @model.get('step'))
 
 		getNormalizedTick: (tick, asPercentage = false) ->
 			tick ||= @app.transport.getTick()
@@ -137,16 +137,16 @@ define [
 		drawGrid: () ->
 			zoom = @model.get('zoom') || 2
 			$patternWindow = @ui.$('.patterns')
-			w = @w = $patternWindow.width() * @model.get('zoom')
+			w = @w = $patternWindow.width() * @model.get('zoom') * 0.9
 			h = 310
 			@$el.width(w)
 			@$el.height(h)
 			len = parseInt(@model.get('len'), 10)
-			step = parseInt(@app.transport.model.get('step'), 10)
+			step = parseInt(@model.get('step'), 10)
 			totalTicks = step * len
 			xInterval = w / totalTicks
 			currentTick = 0
-			bar = Math.floor(w / len)
+			bar = Math.ceil(totalTicks / len)
 			(bars || bars = []).push( i * bar || 0 ) for i in [0..len + 1]
 			@paper = paper.setup @$canvas.get(0)
 			@paper.view.viewSize = new @paper.Size(w, h)
@@ -154,10 +154,10 @@ define [
 			while currentTick <= totalTicks
 				x = currentTick * xInterval
 				path = new @paper.Path()
-				path.strokeWidth = 0.5
-				path.strokeColor = if Math.floor(x) in bars || Math.ceil(x) in bars then '#ddd' else '#444'
-				path.moveTo(new @paper.Point(x, 0))
-				path.lineTo(new @paper.Point(x, h))
+				path.strokeWidth = 1
+				path.strokeColor = if currentTick in bars then '#ddd' else '#444'
+				path.moveTo(new @paper.Point(x - 0.5, 0))
+				path.lineTo(new @paper.Point(x - 0.5, h))
 				currentTick++
 			slotHeight = @ui.$('.slot').eq(0).outerHeight()
 			for i in [0..16]

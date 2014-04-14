@@ -36,20 +36,20 @@ define [
 				@bootstrapGroupPads(model)
 
 		createPads: () ->
-			@padEls = []
+			@pads = []
 			z = 0
 			for i in [1..128]
 				options = 
 					name: "#{PADLABEL_PREFIX + (i - z * 16)}"
 					parent: @
 					number: (i - z * 16)
-				@padEls.push new PadView(options)
-
+				@pads.push (padView = new PadView(options))
+				padView.groupNumber = z + 1
 				z++ if i % 16 is 0
 
 		bootstrapGroupPads: (group) ->
 			pos = if group.get('position') - 1 > -1 then group.get('position') - 1 else 0
-			pads = @padEls.slice(pos * 16, pos * 16 + 16)
+			pads = @pads.slice(pos * 16, pos * 16 + 16)
 
 			pad.bootstrapWithModel group.sounds.at(i) for pad, i in pads if group.sounds.at(i)?
 
@@ -87,7 +87,7 @@ define [
 			@app.pattern._selectPattern(@app.current.group.lastActivePattern?.get('position') || 1)
 
 			# slice the pads cache to the 16 views we want
-			@app.current.pads = @padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
+			@app.current.pads = @pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16)
 
 			# update display UI
 			@app.display.model.set('right', "Group #{groupNumber}")

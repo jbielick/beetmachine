@@ -24,7 +24,9 @@ define [
 				model: @UIModel,
 				view: @,
 				bindings: {
-					'pattern.zoom': {cast: [parseFloat, 10]}})
+					'pattern.zoom': {cast: [parseFloat, 10]}
+					'pattern.len': {cast: [parseInt, 10]}
+					'pattern.step': {cast: [parseInt, 10]}})
 
 			@listenTo @UIModel, 'change:pattern.*', (model, changed) =>
 				@app.current.pattern.set(changed)

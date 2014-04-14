@@ -3,7 +3,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'bootstrap', 'underscore', 'backbone', 'ligaments', 'views/display', 'text!/js/templates/editor.ejs'], function($, bootstrap, _, Backbone, ligaments, Display, EditorTemplate) {
-    var EditorView;
+    var EditorView, ORANGE;
+    ORANGE = '#f08a24';
     return EditorView = (function(_super) {
       __extends(EditorView, _super);
 
@@ -20,8 +21,8 @@
       EditorView.prototype.initialize = function(options) {
         this.viewVars = {};
         this.model = options.model, this.pad = options.pad;
-        this.render();
         _.bindAll(this, 'redrawCanvas');
+        this.render();
         new Backbone.Ligaments({
           model: this.model,
           view: this
@@ -41,6 +42,10 @@
         if ((behavior != null) && _.isFunction(this[behavior])) {
           return this[behavior].call(this, e);
         }
+      };
+
+      EditorView.prototype.save = function(e) {
+        return this.pad.model.save();
       };
 
       EditorView.prototype.eq = function(e) {
@@ -100,12 +105,12 @@
             };
         }
         this.model.set("fx." + effect, fx);
-        return this.render();
+        return this.redrawCanvas();
       };
 
       EditorView.prototype.removeEffect = function(effect) {
         this.model.unset("fx." + effect);
-        return this.render();
+        return this.redrawCanvas();
       };
 
       EditorView.prototype.play = function(e) {
@@ -114,6 +119,7 @@
       };
 
       EditorView.prototype.show = function() {
+        this.redrawCanvas();
         return this.$el.modal('show');
       };
 
@@ -126,7 +132,7 @@
           data: this.model.toJSON(),
           view: this.viewVars
         });
-        return this.redrawCanvas;
+        return this.redrawCanvas();
       };
 
       EditorView.prototype.redrawCanvas = function() {
@@ -134,11 +140,14 @@
         if (!this.$canvas) {
           this.$canvas = this.$('.waveform');
         }
-        if ((_ref = this.pad.model) != null ? (_ref1 = _ref.T) != null ? _ref1.raw : void 0 : void 0) {
-          return this.pad.model.T.raw.plot({
+        if ((_ref = this.pad.model) != null ? (_ref1 = _ref.T) != null ? _ref1.rendered : void 0 : void 0) {
+          return this.pad.model.T.rendered.plot({
+            width: 558,
+            height: 100,
             target: this.$canvas.get(0),
-            background: 'rgb(70,70,70)',
-            foreground: '#f08a24'
+            lineWidth: 0.5,
+            background: '#222',
+            foreground: ORANGE
           });
         }
       };

@@ -39,22 +39,40 @@ var Sounds = function () {
         items = [],
         modelName = geddy.inflection.singularize(this.name);
 
-    if (typeof params[0] !== 'undefined') {
+    if (!params.id) {
       while (params[i]) {
-        if (params.group_id) {
-          params[i].group_id = params.group_id;
+        if (params.groupId) {
+          params[i].groupId = params.groupId;
         }
         items.push(geddy.model[modelName].create(params[i]));
         i++;
       }
     } else {
-      items.push(geddy.model[modelName].create(params));
+      var sound;
+      if (params.id) {
+        geddy.model.Sound.first({id: params.id}, function(err, sound) {
+          if (err) throw err;
+          sound.updateProperties(params);
+          sound.save(function(err, sound) {
+            if (err) throw err;
+            return _this.respond(sound)
+          });
+        });
+      } else {
+        sound = geddy.model[modelName].create(params);
+      }
+      items.push(sound);
     }
 
     async.map(items, function(item, callback) {
       item.save(callback);
     }, function(err, models) {
-      _this.respond(models);
+      if (err) throw new Error(err)
+      if (params.id) {
+        _this.respond(models[0]);
+      } else {
+        _this.respond(models);
+      }
     });
   };
 

@@ -44,8 +44,8 @@
       };
 
       PadsView.prototype.createPads = function() {
-        var i, options, z, _i, _results;
-        this.padEls = [];
+        var i, options, padView, z, _i, _results;
+        this.pads = [];
         z = 0;
         _results = [];
         for (i = _i = 1; _i <= 128; i = ++_i) {
@@ -54,7 +54,8 @@
             parent: this,
             number: i - z * 16
           };
-          this.padEls.push(new PadView(options));
+          this.pads.push((padView = new PadView(options)));
+          padView.groupNumber = z + 1;
           if (i % 16 === 0) {
             _results.push(z++);
           } else {
@@ -67,7 +68,7 @@
       PadsView.prototype.bootstrapGroupPads = function(group) {
         var i, pad, pads, pos, _i, _len, _results;
         pos = group.get('position') - 1 > -1 ? group.get('position') - 1 : 0;
-        pads = this.padEls.slice(pos * 16, pos * 16 + 16);
+        pads = this.pads.slice(pos * 16, pos * 16 + 16);
         if (group.sounds.at(i) != null) {
           _results = [];
           for (i = _i = 0, _len = pads.length; _i < _len; i = ++_i) {
@@ -104,7 +105,7 @@
         }
         this.app.$('.patterns .grid').hide();
         this.app.pattern._selectPattern(((_ref = this.app.current.group.lastActivePattern) != null ? _ref.get('position') : void 0) || 1);
-        this.app.current.pads = this.padEls.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
+        this.app.current.pads = this.pads.slice(zeroedIndex * 16, zeroedIndex * 16 + 16);
         this.app.display.model.set('right', "Group " + groupNumber);
         return this.$el.append(_.pluck(this.app.current.pads, 'el'));
       };

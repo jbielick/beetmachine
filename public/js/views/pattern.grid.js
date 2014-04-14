@@ -145,7 +145,7 @@
 
       PatternGridView.prototype.getTotalTicks = function() {
         var totalTicks;
-        return totalTicks = this.model.get('len') * this.app.transport.model.get('step');
+        return totalTicks = this.model.get('len') * this.model.get('step');
       };
 
       PatternGridView.prototype.getNormalizedTick = function(tick, asPercentage) {
@@ -192,19 +192,19 @@
       PatternGridView.prototype.tickToOffset = function() {};
 
       PatternGridView.prototype.drawGrid = function() {
-        var $patternWindow, bar, bars, currentTick, h, i, len, path, slotHeight, step, totalTicks, w, x, xInterval, y, zoom, _i, _j, _ref, _ref1, _ref2;
+        var $patternWindow, bar, bars, currentTick, h, i, len, path, slotHeight, step, totalTicks, w, x, xInterval, y, zoom, _i, _j, _ref;
         zoom = this.model.get('zoom') || 2;
         $patternWindow = this.ui.$('.patterns');
-        w = this.w = $patternWindow.width() * this.model.get('zoom');
+        w = this.w = $patternWindow.width() * this.model.get('zoom') * 0.9;
         h = 310;
         this.$el.width(w);
         this.$el.height(h);
         len = parseInt(this.model.get('len'), 10);
-        step = parseInt(this.app.transport.model.get('step'), 10);
+        step = parseInt(this.model.get('step'), 10);
         totalTicks = step * len;
         xInterval = w / totalTicks;
         currentTick = 0;
-        bar = Math.floor(w / len);
+        bar = Math.ceil(totalTicks / len);
         for (i = _i = 0, _ref = len + 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           (bars || (bars = [])).push(i * bar || 0);
         }
@@ -214,10 +214,10 @@
         while (currentTick <= totalTicks) {
           x = currentTick * xInterval;
           path = new this.paper.Path();
-          path.strokeWidth = 0.5;
-          path.strokeColor = (_ref1 = Math.floor(x), __indexOf.call(bars, _ref1) >= 0) || (_ref2 = Math.ceil(x), __indexOf.call(bars, _ref2) >= 0) ? '#ddd' : '#444';
-          path.moveTo(new this.paper.Point(x, 0));
-          path.lineTo(new this.paper.Point(x, h));
+          path.strokeWidth = 1;
+          path.strokeColor = __indexOf.call(bars, currentTick) >= 0 ? '#ddd' : '#444';
+          path.moveTo(new this.paper.Point(x - 0.5, 0));
+          path.lineTo(new this.paper.Point(x - 0.5, h));
           currentTick++;
         }
         slotHeight = this.ui.$('.slot').eq(0).outerHeight();

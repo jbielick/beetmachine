@@ -23,9 +23,6 @@ define [
 
 			_.bindAll(@, 'listenToModelEvents', 'press')
 
-			if @model
-				bootstrapWithModel @model
-
 			@on 'press', @press
 
 			@render()
@@ -45,7 +42,7 @@ define [
 			@stopListening @model, 'loaded'
 			@listenTo @model, 'loaded', () =>
 				@$('.pad').addClass('mapped')
-				@parent.app.display.log(@name+' loaded')
+				@parent.app.display.log((@model.get('name') || @name) + ' loaded')
 
 
 		bootstrapWithModel: (soundModel) ->
@@ -57,7 +54,7 @@ define [
 			@listenToModelEvents()
 
 			if (keyCode = @model.get('keyCode'))
-				@model.set 'key', String.fromCharCode(keyCode)
+				@model.set 'key', keyCode
 
 			new Backbone.Ligaments(model: @model, view: @)
 
@@ -82,13 +79,14 @@ define [
 			# @$('.pad').removeClass 'active'
 
 		###
-		 # creates a new model
+		 # creates a new model if one doesn't exist for this pad
 		 # Adds itself to the current group's SoundCollection
 		###
-		createModel: (attrs = {}) ->
-			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
-			@parent.app.current.group.sounds.add @model
-			@listenToModelEvents()
+		createOrFindModel: (attrs = {}) ->
+			unless (@model = @parent.app.groups.findWhere(position: @groupNumber).sounds.findWhere(pad: @number))
+				@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
+				@parent.app.current.group.sounds.add @model
+				@bootstrapWithModel(@model)
 			@model
 
 		uploadSample: (e) ->
@@ -96,7 +94,7 @@ define [
 			e.preventDefault()
 			e.stopPropagation()
 
-			@createModel() if not @model
+			@createOrFindModel() if not @model
 
 			objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
@@ -108,7 +106,7 @@ define [
 			e.preventDefault()
 			if not @editor
 				@editor = new SoundEditor(
-					model: @model or @createModel()
+					model: @model or @createOrFindModel()
 					pad: this
 				)
 			@editor.show()

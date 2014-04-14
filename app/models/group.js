@@ -8,7 +8,9 @@ var Group = function () {
     name: {type: 'string'},
     recipeId: {type: 'string'},
     position: {type: 'int'},
-    fx: {type: 'object'}
+    fx: {type: 'object'},
+    mute: {type: 'boolean'},
+    solo: {type: 'boolean'}
   });
 
   /*

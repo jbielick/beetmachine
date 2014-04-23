@@ -30,7 +30,19 @@ var Sounds = function () {
   };
 
   this.show = function (req, resp, params) {
-    this.respond({params: params});
+    var self = this;
+
+    geddy.model.Sound.first(params.id, function(err, sound) {
+      if (err) {
+        throw err;
+      }
+      if (!sound) {
+        throw new geddy.errors.NotFoundError();
+      }
+      else {
+        self.respondWith(sound);
+      }
+    });
   };
 
   this.update = function (req, resp, params) {
@@ -77,10 +89,26 @@ var Sounds = function () {
   };
 
   this.remove = function (req, resp, params) {
-    this.respond({params: params});
+    var self = this;
+
+    geddy.model.Sound.first(params.id, function(err, sound) {
+      if (err) {
+        throw err;
+      }
+      if (!sound) {
+        throw new geddy.errors.BadRequestError();
+      }
+      else {
+        geddy.model.Sound.remove(params.id, function(err) {
+          if (err) {
+            throw err;
+          }
+          self.respondWith(sound);
+        });
+      }
+    });
   };
 
 };
 
 exports.Sounds = Sounds;
-

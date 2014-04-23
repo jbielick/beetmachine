@@ -51,6 +51,11 @@ router.resource('groups').nest(function() {
 
 router.resource('patterns');
 router.resource('templates');
-router.resource('sounds');
+
+router.resource('sounds').nest(function() {
+  this.resource('sample');
+});
+
+router.resource('samples');
 
 exports.router = router;

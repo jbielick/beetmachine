@@ -1,13 +1,17 @@
-var Sound = function () {
-
-  this.belongsTo('Groups');
-  this.hasMany('Sample');
+var Sample = function () {
 
   this.defineProperties({
-    'name': {type: 'string'},
-    'groupId': {type: 'string'},
-    'src': {type: 'string'}
+    'soundId': {type: 'string'},
+    'keyCode': {type: 'int'},
+    'fx': {type: 'object'},
+    'pad': {type: 'int'},
+    'mute': {type: 'boolean'},
+    'solo': {type: 'boolean'},
+    'in': {type: 'number'},
+    'out': {type: 'number'}
   });
+
+  this.belongsTo('Sound');
 
   /*
   this.property('login', 'string', {required: true});
@@ -35,15 +39,14 @@ var Sound = function () {
 
 /*
 // Can also define them on the prototype
-Sound.prototype.someOtherMethod = function () {
+Sample.prototype.someOtherMethod = function () {
   // Do some other stuff
 };
 // Can also define static methods and properties
-Sound.someStaticMethod = function () {
+Sample.someStaticMethod = function () {
   // Do some other stuff
 };
-Sound.someStaticProperty = 'YYZ';
+Sample.someStaticProperty = 'YYZ';
 */
 
-exports.Sound = Sound;
-
+Sample = geddy.model.register('Sample', Sample);

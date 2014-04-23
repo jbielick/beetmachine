@@ -1,0 +1,19 @@
+<div class="hero-unit">
+  <h2>All Samples</h2>
+  <%- linkTo('Create a new Sample', addSamplePath, {class: 'btn pull-right'}); %>
+</div>
+
+<div id="samples-list">
+<% if (samples) { %>
+<% for (var i = 0, ii = samples.length; i < ii; i++) { %>
+  <div class="row list-item" id="sample-<%= samples[i].id; %>">
+    <div class="span8">
+      <h3><%- linkTo(samples[i].id, samplePath(samples[i].id)); %></h3>
+    </div>
+    <div class="span4">
+      <h3><i class="icon-list-alt"></i><%= samples[i].id; %></h3>
+    </div>
+  </div>
+<% } %>
+<% } %>
+</div>

@@ -9,8 +9,8 @@
     "requirejs-text": "~2.0.5",
     "modernizr": "~2.6.2",
     "backbone-deep-model": "~0.10.4",
-    "paper": "~0.9.18",
-    "async": "~0.7.0"
+    "async": "~0.7.0",
+    "backbone-ligaments": "v0.7.0"
   },
   "devDependencies": {}
 }

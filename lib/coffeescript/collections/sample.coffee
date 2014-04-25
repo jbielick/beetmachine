@@ -1,20 +1,20 @@
 define [
 	'underscore'
 	'backbone'
-	'models/sound'
+	'models/sample'
 	'async'
-], (_, Backbone, SoundModel, async) ->
+], (_, Backbone, SampleModel, async) ->
 
-	class SoundCollection extends Backbone.Collection
+	class SampleCollection extends Backbone.Collection
 
 		initialize: (models, options = {}) ->
 			{ @group } = options
 
-		model: SoundModel
+		model: SampleModel
 
 		belongsTo: 'groups'
 
-		url: '/sounds'
+		url: '/sampless'
 
 		fetchRecursive: (@app, @parent, parentCallback) ->
 			@fetch
@@ -24,6 +24,6 @@ define [
 					# fetchTasks = []
 					# @each (model) =>
 					# 	fetchTasks.push (callback) =>
-					# 		model.sounds.fetchRecursive model.id, callback
+					# 		model.sampless.fetchRecursive model.id, callback
 					# async.parallel fetchTasks, parentCallback
 			, group: @parent, app, @app, reset: true

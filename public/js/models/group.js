@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['underscore', 'backbone', 'deepmodel', 'collections/sound', 'collections/pattern'], function(_, Backbone, deepmodel, SoundCollection, PatternCollection) {
+  define(['underscore', 'backbone', 'deepmodel', 'collections/sample', 'collections/pattern'], function(_, Backbone, deepmodel, SampleCollection, PatternCollection) {
     var GroupModel;
     return GroupModel = (function(_super) {
       __extends(GroupModel, _super);
@@ -21,7 +21,7 @@
           options = {};
         }
         _ref = options.collection, this.app = _ref.app, this.pads = _ref.pads;
-        this.sounds = new SoundCollection(attrs.sounds || [
+        this.samples = new SampleCollection(attrs.samples || [
           {
             pad: 1
           }

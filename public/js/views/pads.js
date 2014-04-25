@@ -69,11 +69,11 @@
         var i, pad, pads, pos, _i, _len, _results;
         pos = group.get('position') - 1 > -1 ? group.get('position') - 1 : 0;
         pads = this.pads.slice(pos * 16, pos * 16 + 16);
-        if (group.sounds.at(i) != null) {
+        if (group.samples.at(i) != null) {
           _results = [];
           for (i = _i = 0, _len = pads.length; _i < _len; i = ++_i) {
             pad = pads[i];
-            _results.push(pad.bootstrapWithModel(group.sounds.at(i)));
+            _results.push(pad.bootstrapWithModel(group.samples.at(i)));
           }
           return _results;
         }

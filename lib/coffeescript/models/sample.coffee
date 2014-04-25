@@ -5,16 +5,16 @@ define [
 ], (_, Backbone, deepmodel) ->
 	'use strict';
 
-	class SoundModel extends Backbone.DeepModel
+	class SampleModel extends Backbone.DeepModel
 
 		url: () ->
 			if @isNew() && @get('groupId')
-				return "/groups/#{@get('groupId')}/sounds"
+				return "/groups/#{@get('groupId')}/samples"
 			else
 				if @isNew()
-					return "/sounds"
+					return "/samples"
 				else
-					return "/sounds/#{@get('id')}"
+					return "/samples/#{@get('id')}"
 
 		initialize: (attrs = {}, options = {}) ->
 			_.bindAll this, 'loadSrc'
@@ -27,12 +27,12 @@ define [
 
 		play: () ->
 			if not @rendered
-				sound = @renderEffects()
+				sample = @renderEffects()
 				if not @timbreContextAttached
 					@timbreContextAttached = true
-					$(sound.play()).one('ended', @onEnded)
+					$(sample.play()).one('ended', @onEnded)
 				else
-					sound.bang()
+					sample.bang()
 			else
 				if @T.rendered?.playbackState
 					@T.rendered.currentTime = 0
@@ -48,18 +48,18 @@ define [
 
 		renderEffects: (cb) ->
 
-			sound = null
+			sample = null
 
 			delete @T.rendered if @T
 
 			@T.rendered = @T.raw.clone()
 
 			_.each @get('fx'), (params, fx) =>
-				sound = T(fx, params, sound || @T.rendered)
+				sample = T(fx, params, sample || @T.rendered)
 
 			@rendered = true
 
-			return sound || @T.rendered
+			return sample || @T.rendered
 
 		loadSrc: (model, src, options, cb) ->
 			_this = @

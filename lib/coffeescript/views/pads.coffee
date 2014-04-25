@@ -14,7 +14,7 @@ define [
 
 		template: _.template PadsTemplate
 
-		colorMap: 
+		colorMap:
 			'1': '#ADD5FF'
 			'2': '#FF8D8D'
 			'3': '#BBBBD4'
@@ -28,7 +28,7 @@ define [
 			@render()
 
 			@listenTo @app.groups, 'fetch', (collection) =>
-				collection.each (model) => 
+				collection.each (model) =>
 					@bootstrapGroupPads(model)
 				@render()
 
@@ -39,7 +39,7 @@ define [
 			@pads = []
 			z = 0
 			for i in [1..128]
-				options = 
+				options =
 					name: "#{PADLABEL_PREFIX + (i - z * 16)}"
 					parent: @
 					number: (i - z * 16)
@@ -51,7 +51,7 @@ define [
 			pos = if group.get('position') - 1 > -1 then group.get('position') - 1 else 0
 			pads = @pads.slice(pos * 16, pos * 16 + 16)
 
-			pad.bootstrapWithModel group.sounds.at(i) for pad, i in pads if group.sounds.at(i)?
+			pad.bootstrapWithModel group.samples.at(i) for pad, i in pads if group.samples.at(i)?
 
 		toggleGroupSelectButtons: (group) ->
 			@app.$('[data-behavior="selectGroup"]')

@@ -2,7 +2,7 @@ define [
 	'jquery'
 	'underscore'
 	'backbone'
-	'models/sound'
+	'models/sample'
 	'views/editor'
 	'ligaments'
 	'text!/js/templates/pad.ejs'
@@ -80,12 +80,12 @@ define [
 
 		###
 		 # creates a new model if one doesn't exist for this pad
-		 # Adds itself to the current group's SoundCollection
+		 # Adds itself to the current group's SampleCollection
 		###
 		createOrFindModel: (attrs = {}) ->
-			unless (@model = @parent.app.groups.findWhere(position: @groupNumber).sounds.findWhere(pad: @number))
+			unless (@model = @parent.app.groups.findWhere(position: @groupNumber).samples.findWhere(pad: @number))
 				@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
-				@parent.app.current.group.sounds.add @model
+				@parent.app.current.group.samples.add @model
 				@bootstrapWithModel(@model)
 			@model
 

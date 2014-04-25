@@ -25,7 +25,7 @@ define [
 					fetchTasks = []
 					@each (model) =>
 						fetchTasks.push (callback) =>
-							model.sounds.fetchRecursive @app, model, callback
+							model.samples.fetchRecursive @app, model, callback
 						fetchTasks.push (callback2) =>
 							model.patterns.fetchRecursive @app, model, callback2
 					async.parallel fetchTasks, parentCallback

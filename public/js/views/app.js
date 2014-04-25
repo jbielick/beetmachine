@@ -130,23 +130,23 @@
                       success: (function(_this) {
                         return function(savedGroup) {
                           return async.parallel([
-                            function(cbSound) {
-                              return async.each(group.sounds.models, function(sound, eachSoundSavedCallback) {
-                                return sound.save({
+                            function(cbSample) {
+                              return async.each(group.samples.models, function(sample, eachSampleSavedCallback) {
+                                return sample.save({
                                   groupId: group.id
                                 }, {
-                                  success: function(savedSound) {
-                                    return eachSoundSavedCallback(null, savedSound);
+                                  success: function(savedSample) {
+                                    return eachSampleSavedCallback(null, savedSample);
                                   },
                                   error: function(err) {
-                                    return eachSoundSavedCallback(err);
+                                    return eachSampleSavedCallback(err);
                                   }
                                 });
                               }, function(err) {
                                 if (err) {
-                                  cbSound(err);
+                                  cbSample(err);
                                 }
-                                return cbSound(null);
+                                return cbSample(null);
                               });
                             }, function(cbPattern) {
                               return async.each(group.patterns.models, function(pattern, eachPatternSavedCallback) {
@@ -207,9 +207,9 @@
           return function(group) {
             var groupAttributes;
             groupAttributes = group.toJSON();
-            groupAttributes.sounds = [];
-            group.sounds.each(function(sound) {
-              return groupAttributes.sounds.push(sound.toJSON());
+            groupAttributes.samples = [];
+            group.samples.each(function(sample) {
+              return groupAttributes.samples.push(sample.toJSON());
             });
             groupAttributes.patterns = [];
             group.patterns.each(function(pattern) {

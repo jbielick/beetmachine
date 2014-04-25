@@ -2,7 +2,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'models/sound', 'views/editor', 'ligaments', 'text!/js/templates/pad.ejs'], function($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) {
+  define(['jquery', 'underscore', 'backbone', 'models/sample', 'views/editor', 'ligaments', 'text!/js/templates/pad.ejs'], function($, _, Backbone, SoundModel, SoundEditor, ligaments, PadTemplate) {
     var PAD_CLASSES, PAD_RELEASE_TIMEOUT, PadView;
     PAD_CLASSES = 'small-3 columns pad-container';
     PAD_RELEASE_TIMEOUT = 50;
@@ -95,7 +95,7 @@
 
       /*
       		  * creates a new model if one doesn't exist for this pad
-      		  * Adds itself to the current group's SoundCollection
+      		  * Adds itself to the current group's SampleCollection
        */
 
       PadView.prototype.createOrFindModel = function(attrs) {
@@ -104,13 +104,13 @@
         }
         if (!(this.model = this.parent.app.groups.findWhere({
           position: this.groupNumber
-        }).sounds.findWhere({
+        }).samples.findWhere({
           pad: this.number
         }))) {
           this.model = new SoundModel(_.extend({
             pad: this.$el.index() + 1
           }, attrs));
-          this.parent.app.current.group.sounds.add(this.model);
+          this.parent.app.current.group.samples.add(this.model);
           this.bootstrapWithModel(this.model);
         }
         return this.model;

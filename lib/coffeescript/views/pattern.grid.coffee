@@ -6,7 +6,7 @@ define [
 	'collections/pattern'
 	'ligaments'
 	'paper'
-], (Backbone, _, PatternCollection, ligaments, Paper) -> 
+], (Backbone, _, PatternCollection, ligaments, Paper) ->
 
 	HAS_TRIGGER_CLASS = 'has-trigger'
 	PATTERN_LENGTH 		= '4'
@@ -24,7 +24,7 @@ define [
 
 			# the reference to App should be through parents / hierarchy of the schema. It's otherwise
 			# very difficult to instantiate / manage the reference to app as models / collections are created / reset
-			# elsewhere 
+			# elsewhere
 			@app = @model.collection.group.app
 			@ui = @app.pattern
 
@@ -69,13 +69,13 @@ define [
 			normalizedTick = @getNormalizedTick(tick)
 			if @app.transport._playing && (triggers = @model.get("triggers.#{normalizedTick}"))
 				_.each triggers, (padNumber) =>
-					@model.collection.group.sounds.findWhere(pad: padNumber)?.trigger('press', silent: true)
+					@model.collection.group.samples.findWhere(pad: padNumber)?.trigger('press', silent: true)
 
 		drawTriggers: () ->
 			for own tick, triggers of @model.get('triggers')
 				for padNumber in triggers
 					@drawTrigger padNumber, tick
-				
+
 		drawTrigger: (padNumber, tick) ->
 			totalTicks = @getTotalTicks()
 			left = (100 / @getTotalTicks()) * @getNormalizedTick(tick)
@@ -95,7 +95,7 @@ define [
 				removed = triggers.splice(_.indexOf(triggers, padNumber), 1)
 				@model.set("triggers.#{normalizedTick}", triggers)
 				removed
-			else 
+			else
 				false
 
 		addTrigger: (padNumber, normalizedTick) ->
@@ -132,7 +132,7 @@ define [
 			tick = Math.floor(@getTotalTicks() * offset)
 
 		tickToOffset: () ->
-			# 
+			#
 
 		drawGrid: () ->
 			zoom = @model.get('zoom') || 2

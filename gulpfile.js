@@ -16,7 +16,7 @@ gulp.task('watch', function() {
 	});
 });
 
-gulp.task('coffee:batch', function() {
+gulp.task('build', function() {
 	gulp.src('lib/coffeescript/**/*.coffee')
 			.pipe(coffee()).on('error', function(err) {console.log(err)})
 			// .pipe(uglify({mangle: false}))

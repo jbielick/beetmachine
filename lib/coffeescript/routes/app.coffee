@@ -7,7 +7,7 @@ define [
 	class AppRouter extends Backbone.Router
 		routes: {
 			''						: 'main'
-			'pad/:num'		: 'soundEditor'
+			'pad/:num'		: 'sampleEditor'
 			'beet/:id'		: 'open'
 		}
 
@@ -16,7 +16,7 @@ define [
 
 		main: ->
 
-		soundEditor: (padNumber) ->
-			
+		sampleEditor: (padNumber) ->
+
 		open: (id) ->
 			console.log('open '+id)

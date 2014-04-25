@@ -77,7 +77,7 @@
           return _.each(triggers, (function(_this) {
             return function(padNumber) {
               var _ref;
-              return (_ref = _this.model.collection.group.sounds.findWhere({
+              return (_ref = _this.model.collection.group.samples.findWhere({
                 pad: padNumber
               })) != null ? _ref.trigger('press', {
                 silent: true

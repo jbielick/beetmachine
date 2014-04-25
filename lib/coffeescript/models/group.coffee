@@ -4,15 +4,15 @@ define [
 	'underscore'
 	'backbone'
 	'deepmodel'
-	'collections/sound'
+	'collections/sample'
 	'collections/pattern'
-], (_, Backbone, deepmodel, SoundCollection, PatternCollection) ->
+], (_, Backbone, deepmodel, SampleCollection, PatternCollection) ->
 
 	class GroupModel extends Backbone.DeepModel
 
 		initialize: (attrs = {}, options = {}) ->
 			{ @app, @pads } = options.collection
-			@sounds = new SoundCollection attrs.sounds || [{pad: 1}], group: @
+			@samples = new SampleCollection attrs.samples || [{pad: 1}], group: @
 			@patterns = new PatternCollection attrs.patterns || [{position: 1}], group: @
 
 		url: () ->

@@ -16,7 +16,7 @@ define [
 	'collections/group'
 ], ($, _, Backbone, deepmodel, ligaments, module, async, Router, Pads, Display, Transport, Sequence, PatternUIView, RecipeModel, GroupCollection) ->
 
-	DEFAULT_KEYCODES = [ 
+	DEFAULT_KEYCODES = [
 		54, 55, 56,  57
 		89, 85, 73,  79
 		72, 74, 75,  76
@@ -99,17 +99,17 @@ define [
 								group.save({recipe_id: savedRecipe.id}, {
 									success: (savedGroup) =>
 										async.parallel [
-											(cbSound) ->
-												async.each group.sounds.models, (sound, eachSoundSavedCallback) ->
-													sound.save({groupId: group.id}, {
-														success: (savedSound) ->
-															eachSoundSavedCallback(null, savedSound)
+											(cbSample) ->
+												async.each group.samples.models, (sample, eachSampleSavedCallback) ->
+													sample.save({groupId: group.id}, {
+														success: (savedSample) ->
+															eachSampleSavedCallback(null, savedSample)
 														error: (err) ->
-															eachSoundSavedCallback(err)
+															eachSampleSavedCallback(err)
 													})
 												, (err) ->
-													cbSound(err) if err
-													cbSound(null)
+													cbSample(err) if err
+													cbSample(null)
 											, (cbPattern) ->
 												async.each group.patterns.models, (pattern, eachPatternSavedCallback) ->
 													pattern.save({groupId: group.id}, {
@@ -140,9 +140,9 @@ define [
 			recipe.groups = []
 			@groups.each (group) =>
 				groupAttributes = group.toJSON()
-				groupAttributes.sounds = []
-				group.sounds.each (sound) =>
-					groupAttributes.sounds.push(sound.toJSON())
+				groupAttributes.samples = []
+				group.samples.each (sample) =>
+					groupAttributes.samples.push(sample.toJSON())
 				groupAttributes.patterns = []
 				group.patterns.each (pattern) =>
 					groupAttributes.patterns.push(pattern.toJSON())

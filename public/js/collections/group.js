@@ -40,7 +40,7 @@
               fetchTasks = [];
               _this.each(function(model) {
                 fetchTasks.push(function(callback) {
-                  return model.sounds.fetchRecursive(_this.app, model, callback);
+                  return model.samples.fetchRecursive(_this.app, model, callback);
                 });
                 return fetchTasks.push(function(callback2) {
                   return model.patterns.fetchRecursive(_this.app, model, callback2);

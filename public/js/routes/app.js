@@ -13,7 +13,7 @@
 
       AppRouter.prototype.routes = {
         '': 'main',
-        'pad/:num': 'soundEditor',
+        'pad/:num': 'sampleEditor',
         'beet/:id': 'open'
       };
 
@@ -23,7 +23,7 @@
 
       AppRouter.prototype.main = function() {};
 
-      AppRouter.prototype.soundEditor = function(padNumber) {};
+      AppRouter.prototype.sampleEditor = function(padNumber) {};
 
       AppRouter.prototype.open = function(id) {
         return console.log('open ' + id);

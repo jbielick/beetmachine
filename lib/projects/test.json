@@ -1,0 +1,453 @@
+{
+	"name": "test",
+	"fx": {
+		"eq": {
+			"params": {
+				"hpf": [
+					50,
+					1
+				],
+				"lmf": [
+					828,
+					1.8,
+					18.3
+				],
+				"mf": [
+					2400,
+					2.2,
+					-24,
+					5
+				],
+				"lpf": [
+					5000,
+					1.1
+				]
+			}
+		},
+		"reverb": {
+			"room": 0.1,
+			"damp": 0.4,
+			"mix": 0.55
+		}
+	},
+	"groups": [{
+			"patterns": [{
+				"group_id": 1,
+				"triggers": {
+					"640": [
+						{
+							"vel": 1,
+							"sound": 8,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 10,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						}
+					],
+					"710": [
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 6,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 14,
+							"len": 1
+						}]
+					}
+				},
+				{
+					"group_id": 1,
+					"triggers": {
+						"810": [{
+								"vel": 1,
+								"sound": 8,
+								"len": 1
+							},
+							{
+								"vel": 1,
+								"sound": 10,
+								"len": 1
+							},
+							{
+								"vel": 1,
+								"sound": 2,
+								"len": 1
+							}
+						],
+						"1080": [{
+								"vel": 1,
+								"sound": 2,
+								"len": 1
+							},
+							{
+								"vel": 1,
+								"sound": 6,
+								"len": 1
+							},
+							{
+								"vel": 1,
+								"sound": 14,
+								"len": 1
+							}]
+						}
+				}
+			],
+			"sounds": [
+				{
+					"sound": 1,
+					"src": "/sounds/additiv/1.wav",
+					"keyCode": 54
+				},
+				{
+					"sound": 2,
+					"src": "/sounds/additiv/2.wav",
+					"keyCode": 55
+				},
+				{
+					"sound": 3,
+					"src": "/sounds/additiv/3.wav",
+					"keyCode": 56
+				},
+				{
+					"sound": 4,
+					"src": "/sounds/additiv/4.wav",
+					"keyCode": 57	
+				},
+				{
+					"sound": 5,
+					"src": "/sounds/additiv/5.wav",
+					"keyCode": 89
+				},
+				{
+					"sound": 6,
+					"src": "/sounds/additiv/6.wav",
+					"keyCode": 85
+				},
+				{
+					"sound": 7,
+					"src": "/sounds/additiv/7.wav",
+					"keyCode": 73
+				},
+				{
+					"sound": 8,
+					"src": "/sounds/additiv/8.wav",
+					"keyCode": 79
+				},
+				{
+					"sound": 9,
+					"src": "/sounds/additiv/9.wav",
+					"keyCode": 72
+				},
+				{
+					"sound": 10,
+					"src": "/sounds/additiv/10.wav",
+					"keyCode": 74
+				},
+				{
+					"sound": 11,
+					"src": "/sounds/additiv/11.wav",
+					"keyCode": 75
+				},
+				{
+					"sound": 12,
+					"src": "/sounds/additiv/12.wav",
+					"keyCode": 76
+				},
+				{
+					"sound": 13,
+					"src": "/sounds/additiv/13.wav",
+					"keyCode": 78
+				},
+				{
+					"sound": 14,
+					"src": "/sounds/additiv/14.wav",
+					"keyCode": 77
+				},
+				{
+					"sound": 15,
+					"src": "/sounds/additiv/15.wav",
+					"keyCode": 188,
+					"fx": {
+						"eq": {
+							"params": {
+								"hpf": [
+									50,
+									1
+								],
+								"lmf": [
+									828,
+									1.8,
+									18.3
+								],
+								"mf": [
+									2400,
+									2.2,
+									-24,
+									5
+								],
+								"lpf": [
+									5000,
+									1.1
+								]
+							}
+						},
+						"reverb": {
+							"room": 1,
+							"damp": 0.4,
+							"mix": 0.55
+						}
+					}
+				},
+				{
+					"sound": 16,
+					"src": "/sounds/additiv/16.wav",
+					"keyCode": 190
+				}
+			],
+			"createdAt": "2014-02-19T02:38:49.085Z",
+			"updatedAt": "2014-02-19T04:10:08.361Z",
+			"id": 1,
+			"position": 1,
+			"recipe_id": 1
+		},{
+			"patterns": [
+				{
+					"210": [
+						{
+							"vel": 1,
+							"sound": 8,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 10,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						}
+					],
+					"310": [
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 6,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 14,
+							"len": 1
+						}
+					]
+				},
+				{
+					"560": [
+						{
+							"vel": 1,
+							"sound": 8,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 10,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						}
+					],
+					"120": [
+						{
+							"vel": 1,
+							"sound": 2,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 6,
+							"len": 1
+						},
+						{
+							"vel": 1,
+							"sound": 14,
+							"len": 1
+						}
+					]
+				}
+			],
+			"sounds": [
+				{
+					"sound": 1,
+					"src": "/sounds/additiv/1.wav",
+					"keyCode": 54
+				},
+				{
+					"sound": 2,
+					"src": "/sounds/additiv/2.wav",
+					"keyCode": 55
+				},
+				{
+					"sound": 3,
+					"src": "/sounds/additiv/3.wav",
+					"keyCode": 56
+				},
+				{
+					"sound": 4,
+					"src": "/sounds/additiv/4.wav",
+					"keyCode": 57
+				},
+				{
+					"sound": 5,
+					"src": "/sounds/additiv/5.wav",
+					"keyCode": 89,
+					"fx": {
+						"eq": {
+							"params": {
+								"hpf": [
+									50,
+									1
+								],
+								"lmf": [
+									828,
+									1.8,
+									18.3
+								],
+								"mf": [
+									2400,
+									2.2,
+									-24,
+									5
+								],
+								"lpf": [
+									5000,
+									1.1
+								]
+							}
+						},
+						"reverb": {
+							"room": 1,
+							"damp": 0.4,
+							"mix": 0.55
+						}
+					}
+				},
+				{
+					"sound": 6,
+					"src": "/sounds/additiv/6.wav",
+					"keyCode": 85
+				},
+				{
+					"sound": 7,
+					"src": "/sounds/additiv/7.wav",
+					"keyCode": 73
+				},
+				{
+					"sound": 8,
+					"src": "/sounds/additiv/8.wav",
+					"keyCode": 79
+				},
+				{
+					"sound": 9,
+					"src": "/sounds/additiv/9.wav",
+					"keyCode": 72
+				},
+				{
+					"sound": 10,
+					"src": "/sounds/additiv/10.wav",
+					"keyCode": 74
+				},
+				{
+					"sound": 11,
+					"src": "/sounds/additiv/11.wav",
+					"keyCode": 75
+				},
+				{
+					"sound": 12,
+					"src": "/sounds/additiv/12.wav",
+					"keyCode": 76
+				},
+				{
+					"sound": 13,
+					"src": "/sounds/additiv/13.wav",
+					"keyCode": 78
+				},
+				{
+					"sound": 14,
+					"src": "/sounds/additiv/14.wav",
+					"keyCode": 77
+				},
+				{
+					"sound": 15,
+					"src": "/sounds/additiv/15.wav",
+					"keyCode": 188,
+					"fx": {
+						"eq": {
+							"params": {
+								"hpf": [
+									50,
+									1
+								],
+								"lmf": [
+									828,
+									1.8,
+									18.3
+								],
+								"mf": [
+									2400,
+									2.2,
+									-24,
+									5
+								],
+								"lpf": [
+									5000,
+									1.1
+								]
+							}
+						},
+						"reverb": {
+							"room": 1,
+							"damp": 0.4,
+							"mix": 0.55
+						}
+					}
+				},
+				{
+					"sound": 16,
+					"src": "/sounds/additiv/16.wav",
+					"keyCode": 190
+				}
+			],
+			"createdAt": "2014-02-19T02:38:49.085Z",
+			"updatedAt": "2014-02-19T04:10:08.361Z",
+			"id": 2,
+			"position": 2,
+			"recipe_id": 1
+		}
+	],
+	"createdAt": "2014-02-19T02:44:05.792Z",
+	"updatedAt": "2014-02-19T03:54:37.190Z",
+	"id": 1
+} 

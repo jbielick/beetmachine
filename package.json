@@ -7,13 +7,35 @@
     "async": "~0.2.10",
     "mongodb": "1.3.x",
     "mongodb-wrapper": "~1.0.3",
-    "gulp-uglify": "^0.2.1"
+    "backbone": "~1.1.2",
+    "underscore": "~1.6.0",
+    "jquery": "~2.1.0",
+    "backbone-nested": "~2.0.0",
+    "backbone-ligaments": "~0.7.1"
   },
   "devDependencies": {
     "gulp": "~3.5.6",
-    "gulp-coffee": "^1.4.2"
+    "gulp-uglify": "^0.2.1",
+    "coffeeify": "~0.6.0",
+    "browserify": "~3.44.2",
+    "coffee-script": "~1.7.1",
+    "underscore": "~1.6.0",
+    "jstify": "git://github.com/jbielick/jstify.git#patch-1",
+    "vinyl-source-stream": "~0.1.1"
   },
   "engines": {
     "node": "0.8.x"
+  },
+  "browserify": {
+    "main": "./lib/main",
+    "transform": [
+      "coffeeify",
+      [
+        "jstify",
+        {
+          "noMinify": true
+        }
+      ]
+    ]
   }
 }

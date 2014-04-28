@@ -13,7 +13,7 @@ gulp.task('browserify', function() {
 					.on('error', function(err) {
 						throw new Error(err);
 					})
-					.bundle({debug: true})
+					.bundle({debug: false})
 					.pipe(source('application.js'))
 					.pipe(gulp.dest(APPLICATION_JS_PATH));
 });

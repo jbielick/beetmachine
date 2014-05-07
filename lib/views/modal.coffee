@@ -1,9 +1,10 @@
 Backbone 				= require('backbone')
-Backbone.$			= require('jquery')
+Backbone.$			= require('jquery-bootstrap')
 Ligament 				= require('backbone-ligaments')
 _								= require('underscore')
 ModalModel 			= require('../models/modal')
 ModalTemplate 	= require('../templates/modal')
+
 
 class ModalView extends Backbone.View
 

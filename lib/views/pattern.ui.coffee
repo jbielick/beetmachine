@@ -19,15 +19,15 @@ class PatternUIView extends Backbone.View
 
 		@UIModel = new (Backbone.NestedModel.extend({}))
 
-		@ligament = new Ligament(
+		@ligament = new Ligament
 			model: @UIModel,
 			view: @,
-			bindings: {
+			bindings:
 				'pattern.zoom': {cast: [parseFloat, 10]}
 				'pattern.len': {cast: [parseInt, 10]}
-				'pattern.step': {cast: [parseInt, 10]}})
+				'pattern.step': {cast: [parseInt, 10]}
 
-		@listenTo @UIModel, 'change:pattern.*', (model, changed) =>
+		@listenTo @UIModel, 'change:pattern', (model, changed) =>
 			@app.current.pattern.set(changed)
 
 		@app.transport.on('tick', @updatePlayHead)

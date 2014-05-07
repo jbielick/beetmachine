@@ -1,5 +1,5 @@
 Backbone 				= require('backbone')
-Backbone.$ 			= require('jquery')
+Backbone.$      = require('../vendor/jquery-bootstrap.js')
 Ligament 				= require('backbone-ligaments')
 _								= require('underscore')
 Display 				= require('./display')

@@ -11,7 +11,8 @@
     "underscore": "~1.6.0",
     "jquery": "~2.1.0",
     "backbone-nested": "~2.0.0",
-    "backbone-ligaments": "~0.7.1"
+    "backbone-ligaments": "~0.7.1",
+    "twitter-bootstrap": "^2.1.1"
   },
   "devDependencies": {
     "gulp": "~3.5.6",

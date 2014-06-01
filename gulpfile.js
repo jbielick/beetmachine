@@ -1,9 +1,9 @@
-var gulp 								= require('gulp'),
-		uglify 							= require('gulp-uglify'),
-		path 								= require('path'),
-		browserify 					= require('browserify'),
-		source 							= require('vinyl-source-stream'),
-		APPLICATION_JS_PATH = './public/js/';
+var gulp 									= require('gulp'),
+		uglify 								= require('gulp-uglify'),
+		path 									= require('path'),
+		browserify 						= require('browserify'),
+		source 								= require('vinyl-source-stream'),
+		APPLICATION_JS_PATH 	= './public/js/';
 
 gulp.task('browserify', function() {
 	return browserify('./main', {
@@ -13,7 +13,7 @@ gulp.task('browserify', function() {
 					.on('error', function(err) {
 						throw new Error(err);
 					})
-					.bundle({debug: false})
+					.bundle({debug: !process.env.production})
 					.pipe(source('application.js'))
 					.pipe(gulp.dest(APPLICATION_JS_PATH));
 });

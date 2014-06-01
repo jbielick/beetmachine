@@ -1,12 +1,11 @@
-Backbone 							= require('backbone')
-Backbone.$ 						= require('jquery')
-Backbone.NestedModel 	= require('backbone-nested').NestedModel
-Ligament 							= require('backbone-ligaments')
-_											= require('underscore')
-PatternCollection 		= require('../collections/pattern')
-Transport 						= require('./transport')
-
-TRIGGER_CLASS = 'trigger'
+Backbone              = require('backbone')
+Backbone.$            = $ = require('jquery')
+Backbone.NestedModel  = require('backbone-nested').NestedModel
+Ligament              = require('backbone-ligaments')
+_                     = require('underscore')
+PatternCollection     = require('../collections/pattern')
+Transport             = require('./transport')
+TRIGGER_CLASS         = 'trigger'
 
 class PatternUIView extends Backbone.View
 

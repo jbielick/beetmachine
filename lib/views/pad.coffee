@@ -1,115 +1,114 @@
-Backbone 			= require('backbone')
-Backbone.$ 		= require('jquery')
-Ligament 			= require('backbone-ligaments')
-_							= require('underscore')
-SoundModel 		= require('../models/sound')
-SoundEditor 	= require('./editor')
-padTemplate 	= require('../templates/pad.tpl')
-
-PAD_CLASSES 						= 'small-3 columns pad-container'
-PAD_RELEASE_TIMEOUT			= 50
+Backbone                = require('backbone')
+Backbone.$              = require('jquery')
+Ligament                = require('backbone-ligaments')
+_                       = require('underscore')
+SoundModel              = require('../models/sound')
+SoundEditor             = require('./editor')
+padTemplate             = require('../templates/pad.tpl')
+PAD_CLASSES             = 'small-3 columns pad-container'
+PAD_RELEASE_TIMEOUT_MS  = 50
 
 class PadView extends Backbone.View
 
-	attributes:
-		class: PAD_CLASSES
+  attributes:
+    class: PAD_CLASSES
 
-	template: padTemplate
+  template: padTemplate
 
-	initialize: (options) ->
-		{ @parent, @name, @number } = options
+  initialize: (options) ->
+    { @parent, @name, @number } = options
 
-		_.bindAll(@, 'listenToModelEvents', 'press')
+    _.bindAll(@, 'listenToModelEvents', 'press')
 
-		@on 'press', @press
+    @on 'press', @press
 
-		@render()
+    @render()
 
-	events:
-		'contextmenu .pad'		: 'edit'
-		'mousedown .pad'			: 'press'
-		'mouseup .pad'				: 'release'
-		'dragover'						: 'prevent'
-		'dragenter'						: 'prevent'
-		'drop'								: 'uploadSample'
+  events:
+    'contextmenu .pad'    : 'edit'
+    'mousedown .pad'      : 'press'
+    'mouseup .pad'        : 'release'
+    'dragover'            : 'prevent'
+    'dragenter'           : 'prevent'
+    'drop'                : 'uploadSample'
 
-	listenToModelEvents: () ->
-		@stopListening @model, 'press'
-		@listenTo @model, 'press', @press
+  listenToModelEvents: () ->
+    @stopListening @model, 'press'
+    @listenTo @model, 'press', @press
 
-		@stopListening @model, 'loaded'
-		@listenTo @model, 'loaded', () =>
-			@$('.pad').addClass('mapped')
-			@parent.app.display.log((@model.get('name') || @name) + ' loaded')
+    @stopListening @model, 'loaded'
+    @listenTo @model, 'loaded', () =>
+      @$('.pad').addClass('mapped')
+      @parent.app.display.log((@model.get('name') || @name) + ' loaded')
 
 
-	bootstrapWithModel: (soundModel) ->
-		if not soundModel and not soundModel instanceof SoundModel
-			throw new Error 'Must provide a SoundModel instance when mapping a pad.'
+  bootstrapWithModel: (soundModel) ->
+    if not soundModel and not soundModel instanceof SoundModel
+      throw new Error 'Must provide a SoundModel instance when mapping a pad.'
 
-		(@model = soundModel).pad = @
+    (@model = soundModel).pad = @
 
-		@listenToModelEvents()
+    @listenToModelEvents()
 
-		if (keyCode = @model.get('keyCode'))
-			@model.set 'key', keyCode
+    if (keyCode = @model.get('keyCode'))
+      @model.set 'key', keyCode
 
-		new Ligament(model: @model, view: @)
+    @ligament = new Ligament(model: @model, view: @)
 
-	prevent: (e) ->
-		e.preventDefault()
-		e.stopPropagation()
+  prevent: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
 
-	press: (e = {}) ->
-		return true if e? and e.button is 2
-		@$('.pad').addClass 'active'
+  press: (e = {}) ->
+    return true if e? and e.button is 2
+    @$('.pad').addClass 'active'
 
-		# if e.originalEvent and e.originalEvent not instanceof MouseEvent
-		setTimeout =>
-			@$('.pad').removeClass 'active'
-		, PAD_RELEASE_TIMEOUT
+    # if e.originalEvent and e.originalEvent not instanceof MouseEvent
+    setTimeout =>
+      @$('.pad').removeClass 'active'
+    , PAD_RELEASE_TIMEOUT_MS
 
-		if @model?.loaded
-			@parent.trigger('press', @) if not e.silent
-			@model.play()
+    if @model?.loaded
+      @parent.trigger('press', @) if not e.silent
+      @model.play()
 
-	release: (e) ->
-		# @$('.pad').removeClass 'active'
+  release: (e) ->
+    # @$('.pad').removeClass 'active'
 
-	###
-	 # creates a new model if one doesn't exist for this pad
-	 # Adds itself to the current group's SoundCollection
-	###
-	createOrFindModel: (attrs = {}) ->
-		unless (@model = @parent.app.groups.findWhere(position: @groupNumber).sounds.findWhere(pad: @number))
-			@model = new SoundModel _.extend pad: @$el.index() + 1, attrs
-			@parent.app.current.group.sounds.add @model
-			@bootstrapWithModel(@model)
-		@model
+  ###
+   # creates a new model if one doesn't exist for this pad
+   # Adds itself to the current group's SoundCollection
+  ###
+  createOrFindModel: (attrs = {}) ->
+    unless (@model = @parent.app.groups.findWhere(position: @groupNumber).sounds.findWhere(pad: @number))
+      @model = new SoundModel _.extend pad: @$el.index() + 1, attrs
+      @parent.app.current.group.sounds.add @model
+      @bootstrapWithModel(@model)
+    @model
 
-	uploadSample: (e) ->
-		e = e.originalEvent
-		e.preventDefault()
-		e.stopPropagation()
+  uploadSample: (e) ->
+    e = e.originalEvent
+    e.preventDefault()
+    e.stopPropagation()
 
-		@createOrFindModel() if not @model
+    @createOrFindModel() unless @model
 
-		objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
+    objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
-		@model.set('src', objectUrl)
+    @model.set('src', objectUrl)
 
-		@parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
+    @parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
 
-	edit: (e) ->
-		e.preventDefault()
-		if not @editor
-			@editor = new SoundEditor(
-				model: @model or @createOrFindModel()
-				pad: this
-			)
-		@editor.show()
+  edit: (e) ->
+    e.preventDefault()
+    if not @editor
+      @editor = new SoundEditor(
+        model: @model or @createOrFindModel()
+        pad: this
+      )
+    @editor.show()
 
-	render: () ->
-		@el.innerHTML = @template(name: @name)
+  render: () ->
+    @el.innerHTML = @template(name: @name)
 
 module.exports = PadView

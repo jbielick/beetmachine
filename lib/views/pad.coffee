@@ -95,9 +95,22 @@ class PadView extends Backbone.View
 
     objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
+    @sendFile(e.dataTransfer.files[0])
+
     @model.set('src', objectUrl)
 
     @parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
+
+  sendFile: (file) ->
+    @formData = new FormData()
+    @xhr = new XMLHttpRequest()
+    @xhr.open('POST', '/samples', true)
+    @formData.append('sample', file)
+    @xhr.upload.onprogress = (e) =>
+      if e.lengthComputable
+        completed = (e.loaded / e.total) * 100
+        console.log(completed)
+    @xhr.send(@formData)
 
   edit: (e) ->
     e.preventDefault()

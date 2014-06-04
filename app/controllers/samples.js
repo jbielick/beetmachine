@@ -1,8 +1,26 @@
+var multiparty = require('multiparty');
+var Grid = require('gridfs-stream');
+var gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
+
 var Samples = function () {
-  this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
+  this.respondsWith = ['json'];
 
   this.index = function (req, resp, params) {
     var self = this;
+
+
+
+
+    // var text = new Buffer('Hello World!');
+
+    // this.grid.put(text, 'test', 'w', function(err){
+    //     if(err) throw new Error(err);
+    // });
+
+    // this.grid.get('test', function(err,data){
+    //   if (err) throw new Error(err);
+    //   self.respond(data.toString(), {format: 'json'});
+    // });
 
     geddy.model.Sample.all(function(err, samples) {
       if (err) {
@@ -12,25 +30,46 @@ var Samples = function () {
     });
   };
 
-  this.add = function (req, resp, params) {
+  this.add = function (req, res, params) {
     this.respond({params: params});
   };
 
-  this.create = function (req, resp, params) {
-    var self = this
-      , sample = geddy.model.Sample.create(params);
+  this.create = function (req, res, params) {
+    console.log('create');
+    var self = this;
+    //   , sample = geddy.model.Sample.create(params);
 
-    if (!sample.isValid()) {
-      this.respondWith(sample);
-    }
-    else {
-      sample.save(function(err, data) {
-        if (err) {
-          throw err;
-        }
-        self.respondWith(sample, {status: err});
+    // if (!sample.isValid()) {
+    //   this.respondWith(sample);
+    // }
+    // else {
+    //   sample.save(function(err, data) {
+    //     if (err) {
+    //       throw err;
+    //     }
+    //     self.respondWith(sample, {status: err});
+    //   });
+    // }
+    var form = new multiparty.Form();
+
+    form.on('part', function(part) {
+      var writestream = gfs.createWriteStream({
+        filename: part.filename
       });
-    }
+      writestream.on('close', function (file) {
+        console.log('writestream close');
+        self.respond(file, {format: 'json'});
+      });
+      part.pipe(writestream);
+    });
+    form.on('error', function(err) {
+      // self.respond({error: err}, {format: 'json'});
+    });
+    form.on('close', function(err) {
+      // self.respond({error: err}, {format: 'json'});
+    });
+
+    form.parse(req);
   };
 
   this.show = function (req, resp, params) {

@@ -1,22 +1,15 @@
-Backbone              = require('backbone')
-Backbone.$            = $ = require('../vendor/jquery-bootstrap')
-Backbone.NestedModel  = require('backbone-nested').NestedModel
-_                     = require('underscore')
-T                     = require('../vendor/timbre.dev')
-# peaks                 = require('peaks.js')
+$          = require('../vendor/jquery-bootstrap')
+_          = require('underscore')
+T          = require('../vendor/timbre.dev')
+BaseModel  = require('./base')
 
-class SoundModel extends Backbone.NestedModel
-
-  idAttribute: '_id'
+class SoundModel extends BaseModel
 
   url: () ->
     if @isNew() && @get('groupId')
       return "/groups/#{@get('groupId')}/sounds"
     else
-      if @isNew()
-        return "/sounds"
-      else
-        return "/sounds/#{@get('id')}"
+      if @isNew() then "/sounds" else "/sounds/#{@get('_id')}"
 
   initialize: (attrs = {}, options = {}) ->
     _.bindAll this, 'loadSrc'

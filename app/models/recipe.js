@@ -1,6 +1,7 @@
 var Recipe = function () {
 
   this.hasMany('Groups');
+  this.hasMany('Sounds');
 
   this.defineProperties({
     name: {type: 'string', required: true},

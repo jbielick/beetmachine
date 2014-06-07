@@ -2,7 +2,7 @@ var Group = function () {
 
   this.belongsTo('Recipes');
   this.hasMany('Patterns');
-  this.hasMany('Sounds');
+  this.hasMany('Samples');
 
   this.defineProperties({
     name: {type: 'string'},

@@ -9,7 +9,7 @@ class SoundCollection extends Backbone.Collection
 
 	model: SoundModel
 
-	belongsTo: 'groups'
+	belongsTo: 'recipes'
 
 	url: '/sounds'
 

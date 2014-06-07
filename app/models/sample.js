@@ -1,5 +1,8 @@
 var Sample = function () {
 
+  this.belongsTo('Groups');
+  this.belongsTo('Sounds');
+
   this.defineProperties({
     'soundId': {type: 'string'},
     'keyCode': {type: 'int'},
@@ -10,8 +13,6 @@ var Sample = function () {
     'in': {type: 'number'},
     'out': {type: 'number'}
   });
-
-  this.belongsTo('Sound');
 
   /*
   this.property('login', 'string', {required: true});

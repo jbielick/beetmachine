@@ -1,7 +1,3 @@
-var multiparty = require('multiparty');
-var Grid = require('gridfs-stream');
-var gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
-
 var Samples = function () {
   this.respondsWith = ['json'];
 
@@ -36,40 +32,20 @@ var Samples = function () {
 
   this.create = function (req, res, params) {
     console.log('create');
-    var self = this;
-    //   , sample = geddy.model.Sample.create(params);
+    var self = this,
+        sample = geddy.model.Sample.create(params);
 
-    // if (!sample.isValid()) {
-    //   this.respondWith(sample);
-    // }
-    // else {
-    //   sample.save(function(err, data) {
-    //     if (err) {
-    //       throw err;
-    //     }
-    //     self.respondWith(sample, {status: err});
-    //   });
-    // }
-    var form = new multiparty.Form();
-
-    form.on('part', function(part) {
-      var writestream = gfs.createWriteStream({
-        filename: part.filename
+    if (!sample.isValid()) {
+      this.respondWith(sample);
+    } else {
+      sample.save(function(err, data) {
+        if (err) {
+          throw err;
+        }
+        self.respondWith(sample, {status: err});
       });
-      writestream.on('close', function (file) {
-        console.log('writestream close');
-        self.respond(file, {format: 'json'});
-      });
-      part.pipe(writestream);
-    });
-    form.on('error', function(err) {
-      // self.respond({error: err}, {format: 'json'});
-    });
-    form.on('close', function(err) {
-      // self.respond({error: err}, {format: 'json'});
-    });
+    }
 
-    form.parse(req);
   };
 
   this.show = function (req, resp, params) {
@@ -81,8 +57,7 @@ var Samples = function () {
       }
       if (!sample) {
         throw new geddy.errors.NotFoundError();
-      }
-      else {
+      } else {
         self.respondWith(sample);
       }
     });

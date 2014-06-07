@@ -1,4 +1,8 @@
 var async = require('async');
+var multiparty = require('multiparty');
+var Grid = require('gridfs-stream');
+var gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
+var ObjectID = require('mongodb').ObjectID;
 
 var Sounds = function () {
   this.respondsWith = ['json'];
@@ -21,26 +25,50 @@ var Sounds = function () {
   };
 
   this.create = function (req, resp, params) {
-    var _this = this,
-        sound = geddy.model.Sound.create(params);
-    sound.save(function(err, data) {
-      if (err) throw err;
-      _this.respond(data);
+    var self = this,
+        form = new multiparty.Form();
+    // var _this = this,
+    //     sound = geddy.model.Sound.create(params);
+    // sound.save(function(err, data) {
+    //   if (err) throw err;
+    //   _this.respond(data);
+    // });
+
+    form.on('part', function(part) {
+      var writestream = gfs.createWriteStream({
+        filename: part.filename
+      });
+      writestream.on('close', function (file) {
+        console.log('writestream close');
+        self.respond(file, {format: 'json'});
+      });
+      part.pipe(writestream);
     });
+    form.on('error', function(err) {
+      // self.respond({error: err}, {format: 'json'});
+    });
+    form.on('close', function(err) {
+      // self.respond({error: err}, {format: 'json'});
+    });
+
+    form.parse(req);
   };
 
-  this.show = function (req, resp, params) {
-    var self = this;
-
-    geddy.model.Sound.first(params.id, function(err, sound) {
-      if (err) {
-        throw err;
-      }
-      if (!sound) {
+  this.show = function (req, res, params) {
+    var self = this,
+        criteria = {_id: new ObjectID(params.id)};
+    gfs.exist(criteria, function(err, found) {
+      if (err) throw new Error(err);
+      if (found) {
+        gfs.files.find(criteria).toArray(function (err, files) {
+          if (err) throw new Error(err);
+          var meta = files[0];
+          var readstream = gfs.createReadStream(criteria);
+          res.resp.setHeader('Content-Disposition', 'inline; filename="'+meta.filename+'"');
+          readstream.pipe(res.resp);
+        });
+      } else {
         throw new geddy.errors.NotFoundError();
-      }
-      else {
-        self.respondWith(sound);
       }
     });
   };

@@ -1,7 +1,7 @@
 var Sound = function () {
 
-  this.belongsTo('Groups');
-  this.hasMany('Sample');
+  this.belongsTo('Recipes');
+  this.hasMany('Samples');
 
   this.defineProperties({
     'name': {type: 'string'},

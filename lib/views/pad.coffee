@@ -1,17 +1,18 @@
-Backbone                = require('backbone')
-Backbone.$              = require('jquery')
-Ligament                = require('backbone-ligaments')
-_                       = require('underscore')
-SoundModel              = require('../models/sound')
-SoundEditor             = require('./editor')
-padTemplate             = require('../templates/pad.tpl')
-PAD_CLASSES             = 'small-3 columns pad-container'
-PAD_RELEASE_TIMEOUT_MS  = 50
+Backbone     = require('backbone')
+Backbone.$   = require('jquery')
+Ligament     = require('backbone-ligaments')
+_            = require('underscore')
+SoundModel   = require('../models/sound')
+SoundEditor  = require('./editor')
+padTemplate  = require('../templates/pad.tpl')
 
 class PadView extends Backbone.View
 
+  @PAD_CLASSES  = 'small-3 columns pad-container'
+  @PAD_RELEASE_TIMEOUT_MS  = 50
+
   attributes:
-    class: PAD_CLASSES
+    class: @PAD_CLASSES
 
   template: padTemplate
 
@@ -30,7 +31,7 @@ class PadView extends Backbone.View
     'mouseup .pad'        : 'release'
     'dragover'            : 'prevent'
     'dragenter'           : 'prevent'
-    'drop'                : 'uploadSample'
+    'drop'                : 'uploadSound'
 
   listenToModelEvents: () ->
     @stopListening @model, 'press'
@@ -66,7 +67,7 @@ class PadView extends Backbone.View
     # if e.originalEvent and e.originalEvent not instanceof MouseEvent
     setTimeout =>
       @$('.pad').removeClass 'active'
-    , PAD_RELEASE_TIMEOUT_MS
+    , @PAD_RELEASE_TIMEOUT_MS
 
     if @model?.loaded
       @parent.trigger('press', @) if not e.silent
@@ -86,7 +87,7 @@ class PadView extends Backbone.View
       @bootstrapWithModel(@model)
     @model
 
-  uploadSample: (e) ->
+  uploadSound: (e) ->
     e = e.originalEvent
     e.preventDefault()
     e.stopPropagation()
@@ -95,22 +96,41 @@ class PadView extends Backbone.View
 
     objectUrl = window.URL?.createObjectURL?(e.dataTransfer?.files?[0])
 
-    @sendFile(e.dataTransfer.files[0])
+    @sendFile e.dataTransfer.files[0], (model, attrs) =>
+      debugger
+      unless objectUrl
+        model.set('src', model.url())
 
-    @model.set('src', objectUrl)
+    if objectUrl
+      @model.set('src', objectUrl)
+      @parent.app.display.log("File: #{e.dataTransfer.files[0].name} set on pad #{@name}")
+    else
+      @parent.app.display.log("Uploading: #{e.dataTransfer.files[0].name}")
 
-    @parent.app.display.log("File: #{e.dataTransfer.files[0].name} uploaded on pad #{@name}")
-
-  sendFile: (file) ->
+  sendFile: (file, cb) ->
     @formData = new FormData()
     @xhr = new XMLHttpRequest()
-    @xhr.open('POST', '/samples', true)
-    @formData.append('sample', file)
+    @xhr.open 'POST', '/sounds', true
+    @formData.append 'sound', file
     @xhr.upload.onprogress = (e) =>
       if e.lengthComputable
         completed = (e.loaded / e.total) * 100
-        console.log(completed)
+        @$('.progress-bar').css(width: "#{completed.toFixed(0)}%")
+    @xhr.onerror = (e) =>
+      @parent.app.display.log("Upload failed")
+    @xhr.onload = (e) =>
+      data = JSON.parse(e.target.responseText)
+      @model.set(data)
+      @parent.app.display.log("Upload Completed: #{data.filename}")
+      cb and cb(@model, data)
+      try
+        
+      catch e
+        @parent.app.display.log("Upload failed")
+        alert("An error occurred #{e.message} with response #{e.responseText}")
     @xhr.send(@formData)
+    delete @xhr
+    delete @formData
 
   edit: (e) ->
     e.preventDefault()

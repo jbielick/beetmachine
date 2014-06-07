@@ -28,7 +28,8 @@
     "jstify": "git://github.com/jbielick/jstify.git#patch-1",
     "vinyl-source-stream": "~0.1.1",
     "gulp-coffee": "~2.0.0",
-    "gulp-watch": "~0.6.5"
+    "gulp-watch": "~0.6.5",
+    "backbone-ligaments": "~0.7.5"
   },
   "engines": {
     "node": "0.8.x"

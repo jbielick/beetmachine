@@ -1,0 +1,240 @@
+<div class="row">
+        <div class="small-12 columns">
+          <div class="sequence-headers text-center row collapse">
+            <div class="small-1 columns">
+              &nbsp;
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 1</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 2</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 3</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 4</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 5</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 6</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 7</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 8</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene 9</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene&nbsp;10</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene&nbsp;11</small>
+            </div>
+            <div class="small-1 columns">
+              <small>Scene&nbsp;12</small>
+            </div>
+          </div>
+          <div class="sequence radius">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="medium-12 columns">
+          <div class="row">
+            <div class="medium-4 columns small-12 columns">
+              <div class="row">
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block">F1</a>
+                </div>
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block">F2</a>
+                </div>
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block">F3</a>
+                </div>
+              </div>
+              <br>
+              <div class="alert-box warning radius display">
+              
+              </div>
+              <div class="row">
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block">NAV</a>
+                </div>
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                </div>
+                <div class="small-4 columns text-center">
+                  <a href="javascript:void(0)" class="button tiny secondary btn-block"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                </div>
+              </div>
+              <br>
+              <div class="transport">
+
+              </div>
+            </div>
+            <div class="medium-2 columns">
+              <ul class="text-center">
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+                <li><a class="button tiny secondary" href="javascript:void(0)" data-behavior="">Inactive</a><br></li>
+              </ul>
+            </div>
+            <div class="medium-6 columns">
+              <ul class="button-group group-buttons">
+    <%
+                count = 1;
+                while (count <= 8) {
+    %>
+                  <li><a 
+                    class="button secondary tiny" 
+                    title="CTRL+<%= count %>"
+                    href="javascript:void(0)"
+                    data-behavior="selectGroup"
+                    data-meta="<%= count %>">
+                      <small>GRP <%= count %></small>
+                  </a></li>
+    <%
+                  count++;
+                }
+    %>
+              </ul>
+              <hr>
+              <div class="row pads">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pattern">
+        <div class="small-12 columns">
+          <div class="patterns-headers">
+            <div class="button-group">
+    <%
+              count = 1;
+              while (count <= 16) {
+    %>
+                <a class="button tiny secondary" href="javascript:void(0)" data-behavior="selectPattern" data-meta="<%= count %>"><%= count %></a>
+    <%
+                count++;
+              }
+    %>
+            </div>
+          </div>
+          <div class="pattern-inner">
+            <div class="row">
+              <div class="small-1 columns" data-model="Group">
+                <div class="slots">
+                  <div lg-bind="Sound.1.name"   class="slot slot-label">Sound 1</div>
+                  <div lg-bind="Sound.2.name"   class="slot slot-label">Sound 2</div>
+                  <div lg-bind="Sound.3.name"   class="slot slot-label">Sound 3</div>
+                  <div lg-bind="Sound.4.name"   class="slot slot-label">Sound 4</div>
+                  <div lg-bind="Sound.5.name"   class="slot slot-label">Sound 5</div>
+                  <div lg-bind="Sound.6.name"   class="slot slot-label">Sound 6</div>
+                  <div lg-bind="Sound.7.name"   class="slot slot-label">Sound 7</div>
+                  <div lg-bind="Sound.8.name"   class="slot slot-label">Sound 8</div>
+                  <div lg-bind="Sound.9.name"   class="slot slot-label">Sound 9</div>
+                  <div lg-bind="Sound.10.name"  class="slot slot-label">Sound 10</div>
+                  <div lg-bind="Sound.11.name"  class="slot slot-label">Sound 11</div>
+                  <div lg-bind="Sound.12.name"  class="slot slot-label">Sound 12</div>
+                  <div lg-bind="Sound.13.name"  class="slot slot-label">Sound 13</div>
+                  <div lg-bind="Sound.14.name"  class="slot slot-label">Sound 14</div>
+                  <div lg-bind="Sound.15.name"  class="slot slot-label">Sound 15</div>
+                  <div lg-bind="Sound.16.name"  class="slot slot-label">Sound 16</div>
+                </div>
+              </div>
+              <div class="small-11 columns">
+                <div class="patterns">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="alert">
+            <div class="row">
+              <div class="small-3 columns">
+                <label class="text-center">
+                  Zoom
+                </label>
+                <div class="row">
+                  <div class="small-2 columns text-right">
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </div>
+                  <div class="small-8 columns">
+                    <div class="">
+                      <input type="range" lg-bind="pattern.zoom" value="2" min="1" max="7" step="0.25">
+                    </div>
+                  </div>
+                  <div class="small-2 columns text-left">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="small-3 columns">
+                <label class="text-center">
+                  Length: <span lg-bind="pattern.len"></span> Bars
+                </label>
+                <div class="row">
+                  <div class="small-2 columns text-right">
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </div>
+                  <div class="small-8 columns">
+                    <div class="">
+                      <input type="range" lg-bind="pattern.len" value="4" min="1" max="8" step="1">
+                    </div>
+                  </div>
+                  <div class="small-2 columns text-left">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="small-3 columns">
+                <label class="text-center">
+                  Step
+                </label>
+                <div class="row">
+                  <div class="small-2 columns text-right help-block">
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </div>
+                  <div class="small-6 columns">
+                    <div class="input-group">
+                      <select lg-bind="pattern.step" class="form-control">
+                        <option value="16">1/16</option>
+                        <option value="32">1/32</option>
+                        <option value="48">1/48</option>
+                        <option SELECTED value="64">1/64</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="small-2 columns text-left help-block">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <br>
+          <br>
+        </div>
+      </div>

@@ -2,8 +2,19 @@
   "name": "beetmachine",
   "version": "0.0.0",
   "dependencies": {
-    "modernizr": "~2.6.2",
-    "paper": "latest"
+    "angular": ">=1.2.*",
+    "json3": "~3.2.6",
+    "es5-shim": "~2.1.0",
+    "angular-resource": ">=1.2.*",
+    "angular-cookies": ">=1.2.*",
+    "angular-sanitize": ">=1.2.*",
+    "angular-route": ">=1.2.*",
+    "paper": "~0.9.18",
+    "foundation": "~5.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "angular-mocks": ">=1.2.*",
+    "angular-scenario": ">=1.2.*"
+  },
+  "testPath": "test/client/spec"
 }

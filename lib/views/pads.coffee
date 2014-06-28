@@ -25,12 +25,12 @@ class PadsView extends Backbone.View
     # @bootstrapGroupPads(@app.current.group)
     @render()
 
-    @listenTo @app.groups, 'fetch', (collection) =>
+    @listenTo @app.model.groups, 'fetch', (collection) =>
       collection.each (model) => 
         @bootstrapGroupPads(model)
       @render()
 
-    @listenTo @app.groups, 'add', (model) =>
+    @listenTo @app.model.groups, 'add', (model) =>
       @bootstrapGroupPads(model)
 
   createPads: () ->
@@ -72,12 +72,12 @@ class PadsView extends Backbone.View
     zeroedIndex = groupNumber - 1
 
     # set the currentGroup to the one selected
-    @app.current.group = @app.groups.findWhere(position: groupNumber)
+    @app.current.group = @app.model.groups.findWhere(position: groupNumber)
 
     # if there wasn't a group at this position, create one real quick.
     if not @app.current.group
-      @app.groups.add position: groupNumber
-      @app.current.group = @app.groups.findWhere(position: groupNumber)
+      @app.model.groups.add position: groupNumber
+      @app.current.group = @app.model.groups.findWhere(position: groupNumber)
 
     @app.$('.patterns .grid').hide()
 

@@ -15,4 +15,6 @@
 	# 	client_id: '0dee6e7b428540e10373263de1cbf711'
 	# )
 
-window.Beet	= window.Beet || require('./views/app')
+App = require('./views/app')
+
+window.Beet	|| window.Beet = new App

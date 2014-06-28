@@ -1,3 +1,6 @@
+<%
+	data.fx || (data.fx = {});
+%>
 <div class="modal-dialog">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -68,114 +71,98 @@
 								</div>
 							</div>
 							<div class="tab-pane reverb" <%= view.show === 'reverb' ? '' : 'hidden' %>>
-								<% if (data.fx && data.fx.reverb) { %>
-									<div class="form-group">
-										<div class="col-xs-12 text-right">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="reverb">Disable Reverb</a>
-										</div>
+							<%
+								data.fx.reverb || (data.fx.reverb = {})
+							%>
+								<div class="form-group">
+									<div class="col-xs-12">
+											<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="reverb">Enable Reverb</a>
+											<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="reverb">Disable Reverb</a>
 									</div>
-									<div class="form-group">
-										<div class="col-xs-4">
-											<label>Room <span class="label label-default" lg-bind="fx.reverb.room"><%= data.fx.reverb.room %></span></label>
-											<input type="range" lg-bind="fx.reverb.room" min="0" max="2" step="0.1">
-										</div>
-										<div class="col-xs-4">
-											<label>Wet/Dry <span class="label label-default" lg-bind="fx.reverb.damp"><%= data.fx.reverb.damp %></span></label>
-											<input type="range" lg-bind="fx.reverb.damp" min="0" max="1" step="0.1">
-										</div>
-										<div class="col-xs-4">
-											<label>Mix <span class="label label-default" lg-bind="fx.reverb.mix"><%= data.fx.reverb.mix %></span></label>
-											<input type="range" lg-bind="fx.reverb.mix" min="0" max="1" step="0.01">
-										</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-4">
+										<label>Room <span class="label label-default" lg-bind="fx.reverb.room"><%= data.fx.reverb.room %></span></label>
+										<input type="range" lg-bind="fx.reverb.room" min="0" max="2" step="0.1" value="<%= data.fx.reverb.room %>">
 									</div>
-								<% } else { %>
-									<div class="form-group">
-										<div class="col-xs-12">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="reverb">Enable Reverb</a>
-										</div>
+									<div class="col-xs-4">
+										<label>Wet/Dry <span class="label label-default" lg-bind="fx.reverb.damp"><%= data.fx.reverb.damp %></span></label>
+										<input type="range" lg-bind="fx.reverb.damp" min="0" max="1" step="0.1" value="<%= data.fx.reverb.damp %>">
 									</div>
-								<% } %>
+									<div class="col-xs-4">
+										<label>Mix <span class="label label-default" lg-bind="fx.reverb.mix"><%= data.fx.reverb.mix %></span></label>
+										<input type="range" lg-bind="fx.reverb.mix" min="0" max="1" step="0.01" value="<%= data.fx.reverb.mix %>">
+									</div>
+								</div>
 							</div>
 							<div class="tab-pane delay" <%= view.show === 'delay' ? '' : 'hidden' %>>
-								<% if (data.fx && data.fx.delay) { %>
-									<div class="form-group">
-										<div class="col-xs-12 text-right">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="delay">Disable Delay</a>
-										</div>
+								<% data.fx.reverb || (data.fx.delay = {}) %>
+								<div class="form-group">
+									<div class="col-xs-12 text-right">
+										<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="delay">Enable Delay</a>
+											<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="delay">Disable Delay</a>
 									</div>
-									<div class="form-group">
-										<div class="col-xs-4">
-											<label>Time <span class="label label-default" lg-bind="fx.delay.time"><%= data.fx.delay.time %></span></label>
-											<input type="range" lg-bind="fx.delay.time" min="10" max="1250" step="10">
-										</div>
-										<div class="col-xs-4">
-											<label>Feedback <span class="label label-default" lg-bind="fx.delay.fb"><%= data.fx.delay.fb %></span></label>
-											<input type="range" lg-bind="fx.delay.fb" min="-1" max="1" step="0.1">
-										</div>
-										<div class="col-xs-1">
-											<label>Cross Delay <span class="label label-default" lg-bind="fx.delay.cross"><%= data.fx.delay.cross %></span></label>
-											<input type="range" lg-bind="fx.delay.cross" min="0" max="1" step="0.01">
-										</div>
-										<div class="col-xs-3">
-											<label>Mix <span class="label label-default" lg-bind="fx.delay.mix"><%= data.fx.delay.mix %></span></label>
-											<input type="range" lg-bind="fx.delay.mix" min="0" max="1" step="0.01">
-										</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-4">
+										<label>Time <span class="label label-default" lg-bind="fx.delay.time"><%= data.fx.delay.time %></span></label>
+										<input type="range" lg-bind="fx.delay.time" min="10" max="1250" step="10">
 									</div>
-									<% } else { %>
-									<div class="form-group">
-										<div class="col-xs-12">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="delay">Enable Delay</a>
-										</div>
+									<div class="col-xs-4">
+										<label>Feedback <span class="label label-default" lg-bind="fx.delay.fb"><%= data.fx.delay.fb %></span></label>
+										<input type="range" lg-bind="fx.delay.fb" min="-1" max="1" step="0.1">
 									</div>
-									<% } %>
+									<div class="col-xs-1">
+										<label>Cross Delay <span class="label label-default" lg-bind="fx.delay.cross"><%= data.fx.delay.cross %></span></label>
+										<input type="range" lg-bind="fx.delay.cross" min="0" max="1" step="0.01">
+									</div>
+									<div class="col-xs-3">
+										<label>Mix <span class="label label-default" lg-bind="fx.delay.mix"><%= data.fx.delay.mix %></span></label>
+										<input type="range" lg-bind="fx.delay.mix" min="0" max="1" step="0.01">
+									</div>
+								</div>
 							</div>
 							<div class="tab-pane chorus" <%= view.show === 'chorus' ? '' : 'hidden' %>>
-							<% if (data.fx && data.fx.chorus) { %>
-									<div class="form-group">
-										<div class="col-xs-12 text-right">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="chorus">Disable Chorus</a>
-										</div>
+							<% data.fx.chorus || (data.fx.chorus = {}) %>
+								<div class="form-group">
+									<div class="col-xs-12 text-right">
+										<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="chorus">Enable Chorus</a>
+										<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="chorus">Disable Chorus</a>
 									</div>
-									<label>Type <span class="label label-default" lg-bind="fx.chorus.type"><%= data.fx.chorus.type %></span></label>
-											<select lg-bind="fx.chorus.type" class="form-control">
-												<option value="sin">Sin</option>
-												<option value="tri">Tri</option>
-											</select>
-									<div class="form-group">
-										<div class="col-xs-4">
-											<label>Delay <span class="label label-default" lg-bind="fx.chorus.delay"><%= data.fx.chorus.delay %></span></label>
-											<input type="range" lg-bind="fx.chorus.delay" min="0.5" max="80" step="0.5">
-										</div>
-										<div class="col-xs-4">
-											<label>Rate <span class="label label-default" lg-bind="fx.chorus.rate"><%= data.fx.chorus.rate %></span></label>
-											<input type="range" lg-bind="fx.chorus.rate" min="0" max="10" step="0.5">
-										</div>
-										<div class="col-xs-4">
-											<label>Depth <span class="label label-default" lg-bind="fx.chorus.depth"><%= data.fx.chorus.depth %></span></label>
-											<input type="range" lg-bind="fx.chorus.depth" min="0" max="100" step="1">
-										</div>
+								</div>
+								<label>Type <span class="label label-default" lg-bind="fx.chorus.type"><%= data.fx.chorus.type %></span></label>
+										<select lg-bind="fx.chorus.type" class="form-control">
+											<option value="sin">Sin</option>
+											<option value="tri">Tri</option>
+										</select>
+								<div class="form-group">
+									<div class="col-xs-4">
+										<label>Delay <span class="label label-default" lg-bind="fx.chorus.delay"><%= data.fx.chorus.delay %></span></label>
+										<input type="range" lg-bind="fx.chorus.delay" min="0.5" max="80" step="0.5">
 									</div>
-									<div class="form-group">
-										<div class="col-xs-4">
-											<label>Feedback <span class="label label-default" lg-bind="fx.chorus.fb"><%= data.fx.chorus.fb %></span></label>
-											<input type="range" lg-bind="fx.chorus.fb" min="-1" max="1" step="0.1">
-										</div>
-										<div class="col-xs-4">
-											<label>Wet <span class="label label-default" lg-bind="fx.chorus.wet"><%= data.fx.chorus.wet %></span></label>
-											<input type="range" lg-bind="fx.chorus.wet" min="0" max="1" step="0.01">
-										</div>
-										<div class="col-xs-4">
-											<label>Mix <span class="label label-default" lg-bind="fx.chorus.mix"><%= data.fx.chorus.mix %></span></label>
-											<input type="range" lg-bind="fx.chorus.mix" min="0" max="1" step="0.01">
-										</div>
+									<div class="col-xs-4">
+										<label>Rate <span class="label label-default" lg-bind="fx.chorus.rate"><%= data.fx.chorus.rate %></span></label>
+										<input type="range" lg-bind="fx.chorus.rate" min="0" max="10" step="0.5">
 									</div>
-									<% } else { %>
-									<div class="form-group">
-										<div class="col-xs-12">
-												<a class="btn btn-squishy btn-sm" data-behavior="toggleEffect" data-effect="chorus">Enable Chorus</a>
-										</div>
+									<div class="col-xs-4">
+										<label>Depth <span class="label label-default" lg-bind="fx.chorus.depth"><%= data.fx.chorus.depth %></span></label>
+										<input type="range" lg-bind="fx.chorus.depth" min="0" max="100" step="1">
 									</div>
-									<% } %>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-4">
+										<label>Feedback <span class="label label-default" lg-bind="fx.chorus.fb"><%= data.fx.chorus.fb %></span></label>
+										<input type="range" lg-bind="fx.chorus.fb" min="-1" max="1" step="0.1">
+									</div>
+									<div class="col-xs-4">
+										<label>Wet <span class="label label-default" lg-bind="fx.chorus.wet"><%= data.fx.chorus.wet %></span></label>
+										<input type="range" lg-bind="fx.chorus.wet" min="0" max="1" step="0.01">
+									</div>
+									<div class="col-xs-4">
+										<label>Mix <span class="label label-default" lg-bind="fx.chorus.mix"><%= data.fx.chorus.mix %></span></label>
+										<input type="range" lg-bind="fx.chorus.mix" min="0" max="1" step="0.01">
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

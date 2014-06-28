@@ -12,7 +12,7 @@
     "underscore": "~1.6.0",
     "jquery": "~2.1.0",
     "backbone-nested": "~2.0.0",
-    "backbone-ligaments": "~0.7.3",
+    "backbone-ligaments": "~0.7.55",
     "peaks.js": "~0.2.1",
     "gridfs-stream": "~0.5.1",
     "GridFS": "~0.3.0",
@@ -28,8 +28,7 @@
     "jstify": "git://github.com/jbielick/jstify.git#patch-1",
     "vinyl-source-stream": "~0.1.1",
     "gulp-coffee": "~2.0.0",
-    "gulp-watch": "~0.6.5",
-    "backbone-ligaments": "~0.7.5"
+    "gulp-watch": "~0.6.5"
   },
   "engines": {
     "node": "0.8.x"

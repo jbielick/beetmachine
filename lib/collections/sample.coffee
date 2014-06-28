@@ -1,23 +1,17 @@
-Backbone    = require('backbone')
-_           = require('underscore')
-SoundModel  = require('../models/sound')
+Backbone     = require('backbone')
+_            = require('underscore')
+SampleModel  = require('../models/sample')
 
-
-class SoundCollection extends Backbone.Collection
-
+class SampleCollection extends Backbone.Collection
 
   initialize: (models, options = {}) ->
-    { @group, @app } = options
+    { @group } = options
 
+  model: SampleModel
 
-  model: SoundModel
+  belongsTo: 'groups'
 
-
-  belongsTo: 'recipes'
-
-
-  url: '/sounds'
-
+  url: '/samples'
 
   fetchRecursive: (@app, @parent, parentCallback) ->
     @fetch
@@ -31,5 +25,4 @@ class SoundCollection extends Backbone.Collection
         # async.parallel fetchTasks, parentCallback
     , group: @parent, app, @app, reset: true
 
-
-module.exports = SoundCollection
+module.exports = SampleCollection

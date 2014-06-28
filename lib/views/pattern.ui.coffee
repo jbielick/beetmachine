@@ -16,7 +16,7 @@ class PatternUIView extends Backbone.View
 
 		_.bindAll this, 'updatePlayHead', 'recordTrigger'
 
-		@UIModel = new (Backbone.NestedModel.extend({}))
+		@UIModel = new Backbone.NestedModel
 
 		@ligament = new Ligament
 			model: @UIModel,

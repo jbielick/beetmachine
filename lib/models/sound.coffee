@@ -1,24 +1,31 @@
-$          = require('../vendor/jquery-bootstrap')
-_          = require('underscore')
-T          = require('../vendor/timbre.dev')
-BaseModel  = require('./base')
+$                = require('../vendor/jquery-bootstrap')
+_                = require('underscore')
+T                = require('../vendor/timbre.dev')
+BaseModel        = require('./base')
+SampleCollection = require('../collections/sample')
+
 
 class SoundModel extends BaseModel
+
+
+  initialize: (attrs = {}, options = {}) ->
+    @samples = new SampleCollection
+
 
   url: () ->
     if @isNew() && @get('groupId')
       return "/groups/#{@get('groupId')}/sounds"
     else
+
       if @isNew() then "/sounds" else "/sounds/#{@get('_id')}"
 
+
+  fileUrl: () ->
+    @url() + '/file'
+
+
   initialize: (attrs = {}, options = {}) ->
-    _.bindAll this, 'loadSrc'
-    if @collection?.group.app.pads?
-      @collection.group.app.pads.pads[@get('pad') - 1 % 16]?.bootstrapWithModel(@)
-    @on 'change:src', @loadSrc
-    @on 'change:fx', () =>
-      @timbreContextAttached = false
-      @rendered = false
+
 
   play: () ->
     if not @rendered
@@ -35,48 +42,44 @@ class SoundModel extends BaseModel
         $(@T.rendered.bang()).one('ended', @onEnded)
     return @
 
+
   onEnded: ->
     # timbre api http://mohayonao.github.io/timbre.js/audio.html
     @pause()
 
-  renderEffects: (cb) ->
 
-    sound = null
+  upload: (file, cb) ->
+    err = null
+    @formData = new FormData()
+    @xhr = new XMLHttpRequest()
+    @xhr.open 'POST', '/sounds', true
+    @formData.append 'sound', file
+    @xhr.onerror = (e) =>
+      err = e
+      @parent.app.display.log("Upload failed")
+      cb and cb(err, @)
+    @xhr.onload = (e) =>
+      try
+        data = JSON.parse(e.target.responseText)
+        @set(data)
+      catch e
+        err = e
+      cb and cb(err, @, data)
+      delete @xhr
+      delete @formData
 
-    delete @T.rendered if @T
+    @xhr.send(@formData)
+    @xhr
 
-    @T.rendered = @T.raw.clone()
 
-    _.each @get('fx'), (params, fx) =>
-      sound = T(fx, params, sound || @T.rendered)
-
-    @rendered = true
-
-    return sound || @T.rendered
-
-  loadSrc: (model, src, options, cb) ->
+  load: (model, src, options, cb) ->
     _this = @
-    if src || @get('src')
-      @loaded = false
-      T('audio').load (src || @get('src')), ->
-        _this.T = raw: this
-        _this.loaded = true
-        _this.trigger('loaded')
-        cb.call _this, this if cb
-  # defaults:
-  #   fx: {}
-      # eq:
-      #   params:
-      #     lpf:  [20,    1, 20]
-      #     lf:   [100,   1, 20]
-      #     lmf:  [300,   1, 20]
-      #     mf:   [750,   1, 20]
-      #     hmf:  [2000,  1, 20]
-      #     hf:   [7000,  1, 20]
-      #     hpf:  [20000, 1, 20]
-    # key: ''
-    # name: ''
-    # keyCode: ''
-    # src: ''
+    @loaded = false
+    T('audio').load fileUrl, ->
+      _this.T = raw: this
+      _this.loaded = true
+      _this.trigger('loaded')
+      cb.call _this, this if cb
+
 
 module.exports = SoundModel

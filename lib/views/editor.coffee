@@ -18,14 +18,14 @@ class EditorView extends Backbone.View
 
   initialize: (options) ->
     @viewVars = {}
-    { @model, @pad } = options
+    { @sample, @sample, @pad } = options
 
     _.bindAll @, 'drawCanvas'
     
     @render()
 
-    @ligament = new Ligament(model: @model, view: @)
-    @listenTo @model, 'change', @drawCanvas
+    @ligament = new Ligament(model: @sample, view: @)
+    @listenTo @sample, 'change', @drawCanvas
 
   events:
     'click [data-behavior]'       : 'delegateBehavior'
@@ -42,9 +42,9 @@ class EditorView extends Backbone.View
 
   eq: (e) ->
     param = e.currentTarget.getAttribute('data-param')
-    freq = @model.get('fx.eq.params.'+param)
+    freq = @sample.get('fx.eq.params.'+param)
     freq[2] = parseInt($(e.currentTarget).val(), 10)
-    @model.set('fx.eq.params.'+param, freq)
+    @sample.set('fx.eq.params.'+param, freq)
     console.log(freq)
 
   tab: (e) ->
@@ -55,7 +55,7 @@ class EditorView extends Backbone.View
 
   toggleEffect: (e) ->
     effect = $(e.currentTarget).data('effect')
-    if not @model.get "fx.#{effect}"
+    if not @sample.get "fx.#{effect}"
       @viewVars.show = effect
       @addEffect effect
     else
@@ -83,12 +83,12 @@ class EditorView extends Backbone.View
           fb        : 0.2     # -1 ... 1
           wet       : 0.33    # 0 ... 1
 
-    @model.set "fx.#{effect}", fx
+    @sample.set "fx.#{effect}", fx
 
     @drawCanvas()
 
   removeEffect: (effect) ->
-    @model.unset "fx.#{effect}"
+    @sample.unset "fx.#{effect}"
     @drawCanvas()
 
   play: (e) ->
@@ -104,7 +104,7 @@ class EditorView extends Backbone.View
 
   render: () ->
     @el.innerHTML = @template(
-      data: @model.toJSON()
+      data: @sample.toJSON()
       view: @viewVars
     )
     @drawCanvas()
@@ -119,9 +119,9 @@ class EditorView extends Backbone.View
       background: '#222'
       foreground: ORANGE
     }
-    if @pad.model?.T?.rendered?
-      @pad.model.T.rendered.plot(renderOptions)
-    else if @pad.model?.T?.raw?
-      @pad.model.T.raw.plot(renderOptions)
+    if @pad.sample?.T?.rendered?
+      @pad.sample.T.rendered.plot(renderOptions)
+    else if @pad.sample?.T?.raw?
+      @pad.sample.T.raw.plot(renderOptions)
 
 module.exports = EditorView

@@ -49,6 +49,8 @@ router.resource('groups').nest(function() {
 	this.resource('sounds');
 });
 
+router.get('/sounds/:id/file').to('sounds.file');
+
 router.resource('patterns');
 router.resource('templates');
 

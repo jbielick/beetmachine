@@ -1,7 +1,6 @@
 var async = require('async');
 var multiparty = require('multiparty');
 var Grid = require('gridfs-stream');
-var gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
 var ObjectID = require('mongodb').ObjectID;
 
 var Sounds = function () {
@@ -26,7 +25,8 @@ var Sounds = function () {
 
   this.create = function (req, resp, params) {
     var self = this,
-        form = new multiparty.Form();
+        form = new multiparty.Form(),
+        gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
     // var _this = this,
     //     sound = geddy.model.Sound.create(params);
     // sound.save(function(err, data) {
@@ -39,7 +39,6 @@ var Sounds = function () {
         filename: part.filename
       });
       writestream.on('close', function (file) {
-        console.log('writestream close');
         self.respond(file, {format: 'json'});
       });
       part.pipe(writestream);
@@ -56,7 +55,21 @@ var Sounds = function () {
 
   this.show = function (req, res, params) {
     var self = this,
-        criteria = {_id: new ObjectID(params.id)};
+        criteria = {_id: new ObjectID(params.id)},
+        gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
+
+    gfs.files.find(criteria).toArray(function (err, files) {
+      if (err) throw new Error(err);
+      if (files.length === 0) throw new geddy.errors.NotFoundError();
+      self.respond(files[0], {format: 'json'});
+    });
+  };
+
+  this.file = function(req, res, params) {
+    var self = this,
+        criteria = {_id: new ObjectID(params.id)},
+        gfs = Grid(geddy.model.Sample.adapter.client._db, require('mongodb'));
+
     gfs.exist(criteria, function(err, found) {
       if (err) throw new Error(err);
       if (found) {
@@ -64,7 +77,7 @@ var Sounds = function () {
           if (err) throw new Error(err);
           var meta = files[0];
           var readstream = gfs.createReadStream(criteria);
-          res.resp.setHeader('Content-Disposition', 'inline; filename="'+meta.filename+'"');
+          res.resp.setHeader('Content-Disposition', 'inline; filename="' + meta.filename + '"');
           readstream.pipe(res.resp);
         });
       } else {

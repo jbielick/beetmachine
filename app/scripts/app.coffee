@@ -11,7 +11,6 @@ angular.module('beetmachineApp', [
       .when '/',
         templateUrl: 'partials/main'
         controller: 'MainCtrl'
-      
       .when '/login',
         templateUrl: 'partials/login'
         controller: 'LoginCtrl'

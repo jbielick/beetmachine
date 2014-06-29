@@ -1,0 +1,17 @@
+<div class="alert-box warning radius display" ng-controller="DisplayCtrl">
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="" ng-repeat="message in messages">
+        {{ message }}
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="small-6 columns">
+      <span ng-bind="tick | tickstamp" class="" style="font-family:Courier"></span>
+    </div>
+    <div class="small-6 columns">
+    </div>
+  </div>
+</div>

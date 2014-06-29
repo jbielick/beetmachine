@@ -63,9 +63,10 @@
                   <a href="javascript:void(0)" class="button tiny secondary btn-block">F3</a>
                 </div>
               </div>
-              <br>
-              <div class="alert-box warning radius display">
+              <div class="row">
+                <div ng-include="'partials/display'">
               
+                </div>
               </div>
               <div class="row">
                 <div class="small-4 columns text-center">
@@ -79,7 +80,7 @@
                 </div>
               </div>
               <br>
-              <div class="transport">
+              <div class="transport" ng-include"'partials/transport'">
 
               </div>
             </div>
@@ -101,10 +102,10 @@
             </div>
             <div class="medium-6 columns">
               <ul class="button-group group-buttons">
-    <%
+<%
                 count = 1;
                 while (count <= 8) {
-    %>
+%>
                   <li><a 
                     class="button secondary tiny" 
                     title="CTRL+<%= count %>"
@@ -113,10 +114,10 @@
                     data-meta="<%= count %>">
                       <small>GRP <%= count %></small>
                   </a></li>
-    <%
+<%
                   count++;
                 }
-    %>
+%>
               </ul>
               <hr>
               <div class="row pads">
@@ -130,15 +131,15 @@
         <div class="small-12 columns">
           <div class="patterns-headers">
             <div class="button-group">
-    <%
+<%
               count = 1;
               while (count <= 16) {
-    %>
+%>
                 <a class="button tiny secondary" href="javascript:void(0)" data-behavior="selectPattern" data-meta="<%= count %>"><%= count %></a>
-    <%
+<%
                 count++;
               }
-    %>
+%>
             </div>
           </div>
           <div class="pattern-inner">

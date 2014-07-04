@@ -5,5 +5,5 @@ angular.module('beetmachineApp')
     {
       stack: []
       log: (message, level) ->
-        this.stack.push(message: message, level: level, at: +new Date())
+        @stack.push(message: message, level: level, at: +new Date())
     }

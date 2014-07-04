@@ -1,235 +1,144 @@
 <div class="row">
-        <div class="small-12 columns">
-          <div class="sequence-headers text-center row collapse">
-            <div class="small-1 columns">
-              <small>Scene 1</small>
+    <div class="small-12 columns">
+      <div class="sequence-headers text-center row collapse">
+        <div class="small-1 columns" ng-repeat="n in range(12) track by $index">
+          <small>Scene&nbsp;{{$index}}</small>
+        </div>
+      </div>
+      <div class="sequence radius" ng-include="'partials/sequence'"></div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="medium-12 columns">
+      <div class="row">
+        <div class="medium-4 columns small-12 columns">
+          <div class="row">
+            <div class="small-4 columns text-center">
+              <a href="javascript:void(0)" ng-click="f1()" class="button radius tiny primary btn-block">F1</a>
             </div>
-            <div class="small-1 columns">
-              <small>Scene 2</small>
+            <div class="small-4 columns text-center">
+              <a href="javascript:void(0)" ng-click="f2()" class="button radius tiny primary btn-block">F2</a>
             </div>
-            <div class="small-1 columns">
-              <small>Scene 3</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 4</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 5</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 6</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 7</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 8</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene 9</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene&nbsp;10</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene&nbsp;11</small>
-            </div>
-            <div class="small-1 columns">
-              <small>Scene&nbsp;12</small>
+            <div class="small-4 columns text-center">
+              <a href="javascript:void(0)" ng-click="f3()" class="button radius tiny primary btn-block">F3</a>
             </div>
           </div>
-          <div class="sequence radius" ng-include="'partials/sequence'">
-            
+          <div ng-include="'partials/display'" ng-controller="DisplayCtrl"></div>
+          <div ng-include="'partials/transport'" ng-controller="TransportCtrl"></div>
+        </div>
+        <div class="medium-2 columns">
+          <div class="text-center">
+            <a ng-repeat="n in range(12) track by $index" class="button radius tiny primary" href="javascript:void(0)">Inactive</a><br>
+          </div>
+        </div>
+        <div class="medium-6 columns">
+          <ul class="button-group group-buttons button-group-justified">
+            <li ng-repeat="n in range(8) track by $index">
+              <a 
+                class="button radius primary tiny" title="CTRL+{{$index + 1}}"
+                href="javascript:void(0)" ng-click="selectGroup($index + 1)">
+                  <small>GRP&nbsp;{{$index + 1}}</small>
+              </a>
+            </li>
+          </ul>
+          <hr>
+          <div class="row pads" ng-controller="PadsCtrl">
+            <pad ng-repeat="pad in pads"></pad>
           </div>
         </div>
       </div>
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="medium-12 columns">
-          <div class="row">
-            <div class="medium-4 columns small-12 columns">
-              <div class="row">
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block">F1</a>
-                </div>
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block">F2</a>
-                </div>
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block">F3</a>
+  </div>
+  <div class="row pattern" ng-controller="PatternCtrl">
+    <div class="small-12 columns">
+      <div class="patterns-headers">
+        <ul class="button-group button-group-justified">
+          <li ng-repeat="n in range(12) track by $index">
+            <a class="button radius tiny primary" href="javascript:void(0)" ng-click="selectPattern($index)">{{$index + 1}}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="pattern-inner">
+        <div class="row">
+          <div class="small-1 columns">
+            <div class="slots">
+              <div ng-repeat="pad in pads" pad="pad" class="slot slot-label">{{pad.name || "Sound " + ($index + 1)}}</div>
+            </div>
+          </div>
+          <div class="small-11 columns">
+            <div class="patterns">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alert">
+        <div class="row">
+          <div class="small-3 columns">
+            <label class="text-center">
+              Zoom
+            </label>
+            <div class="row">
+              <div class="small-2 columns text-right">
+                <span class="glyphicon glyphicon-minus"></span>
+              </div>
+              <div class="small-8 columns">
+                <div class="">
+                  <input type="range" ng-bind="pattern.zoom" value="2" min="1" max="7" step="0.25">
                 </div>
               </div>
-              <div ng-include="'partials/display'">
-            
-              </div>
-              <div class="row">
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block">NAV</a>
-                </div>
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                </div>
-                <div class="small-4 columns text-center">
-                  <a href="javascript:void(0)" class="button radius tiny primary btn-block"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                </div>
-              </div>
-              <br>
-              <div ng-include="'partials/transport'">
-
+              <div class="small-2 columns text-left">
+                <span class="glyphicon glyphicon-plus"></span>
               </div>
             </div>
-            <div class="medium-2 columns">
-              <div class="text-center">
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
-                <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="">Inactive</a><br>
+          </div>
+          <div class="small-3 columns">
+            <label class="text-center">
+              Length: <span ng-bind="pattern.len"></span> Bars
+            </label>
+            <div class="row">
+              <div class="small-2 columns text-right">
+                <span class="glyphicon glyphicon-minus"></span>
+              </div>
+              <div class="small-8 columns">
+                <div class="">
+                  <input type="range" ng-bind="pattern.len" value="4" min="1" max="8" step="1">
+                </div>
+              </div>
+              <div class="small-2 columns text-left">
+                <span class="glyphicon glyphicon-plus"></span>
               </div>
             </div>
-            <div class="medium-6 columns">
-              <ul class="button-group group-buttons button-group-justified">
-<%
-                count = 1;
-                while (count <= 8) {
-%>
-                  <li><a 
-                    class="button radius primary tiny" title="CTRL+<%= count %>"
-                    href="javascript:void(0)" data-behavior="selectGroup(<%= count %>)">
-                      <small>GRP&nbsp;<%= count %></small>
-                  </a></li>
-<%
-                  count++;
-                }
-%>
-              </ul>
-              <hr>
-              <div class="row pads">
-
+          </div>
+          <div class="small-3 columns">
+            <label class="text-center">
+              Step
+            </label>
+            <div class="row">
+              <div class="small-2 columns text-right help-block">
+                <span class="glyphicon glyphicon-minus"></span>
+              </div>
+              <div class="small-6 columns">
+                <div class="input-group">
+                  <select ng-bind="transport.step" class="form-control">
+                    <option value="16">1/16</option>
+                    <option value="32">1/32</option>
+                    <option value="48">1/48</option>
+                    <option SELECTED value="64">1/64</option>
+                  </select>
+                </div>
+              </div>
+              <div class="small-2 columns text-left help-block">
+                <span class="glyphicon glyphicon-plus"></span>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row pattern">
-        <div class="small-12 columns">
-          <div class="patterns-headers">
-            <div class="button-group button-group-justified">
-<%
-              count = 1;
-              while (count <= 16) {
-%>
-                <li>
-                  <a class="button radius tiny primary" href="javascript:void(0)" data-behavior="selectPattern" data-meta="<%= count %>"><%= count %></a>
-                </li>
-<%
-                count++;
-              }
-%>
-            </div>
-          </div>
-          <div class="pattern-inner">
-            <div class="row">
-              <div class="small-1 columns" data-model="Group">
-                <div class="slots">
-                  <div lg-bind="Sound.1.name"   class="slot slot-label">Sound 1</div>
-                  <div lg-bind="Sound.2.name"   class="slot slot-label">Sound 2</div>
-                  <div lg-bind="Sound.3.name"   class="slot slot-label">Sound 3</div>
-                  <div lg-bind="Sound.4.name"   class="slot slot-label">Sound 4</div>
-                  <div lg-bind="Sound.5.name"   class="slot slot-label">Sound 5</div>
-                  <div lg-bind="Sound.6.name"   class="slot slot-label">Sound 6</div>
-                  <div lg-bind="Sound.7.name"   class="slot slot-label">Sound 7</div>
-                  <div lg-bind="Sound.8.name"   class="slot slot-label">Sound 8</div>
-                  <div lg-bind="Sound.9.name"   class="slot slot-label">Sound 9</div>
-                  <div lg-bind="Sound.10.name"  class="slot slot-label">Sound 10</div>
-                  <div lg-bind="Sound.11.name"  class="slot slot-label">Sound 11</div>
-                  <div lg-bind="Sound.12.name"  class="slot slot-label">Sound 12</div>
-                  <div lg-bind="Sound.13.name"  class="slot slot-label">Sound 13</div>
-                  <div lg-bind="Sound.14.name"  class="slot slot-label">Sound 14</div>
-                  <div lg-bind="Sound.15.name"  class="slot slot-label">Sound 15</div>
-                  <div lg-bind="Sound.16.name"  class="slot slot-label">Sound 16</div>
-                </div>
-              </div>
-              <div class="small-11 columns">
-                <div class="patterns">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="alert">
-            <div class="row">
-              <div class="small-3 columns">
-                <label class="text-center">
-                  Zoom
-                </label>
-                <div class="row">
-                  <div class="small-2 columns text-right">
-                    <span class="glyphicon glyphicon-minus"></span>
-                  </div>
-                  <div class="small-8 columns">
-                    <div class="">
-                      <input type="range" lg-bind="pattern.zoom" value="2" min="1" max="7" step="0.25">
-                    </div>
-                  </div>
-                  <div class="small-2 columns text-left">
-                    <span class="glyphicon glyphicon-plus"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="small-3 columns">
-                <label class="text-center">
-                  Length: <span lg-bind="pattern.len"></span> Bars
-                </label>
-                <div class="row">
-                  <div class="small-2 columns text-right">
-                    <span class="glyphicon glyphicon-minus"></span>
-                  </div>
-                  <div class="small-8 columns">
-                    <div class="">
-                      <input type="range" lg-bind="pattern.len" value="4" min="1" max="8" step="1">
-                    </div>
-                  </div>
-                  <div class="small-2 columns text-left">
-                    <span class="glyphicon glyphicon-plus"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="small-3 columns">
-                <label class="text-center">
-                  Step
-                </label>
-                <div class="row">
-                  <div class="small-2 columns text-right help-block">
-                    <span class="glyphicon glyphicon-minus"></span>
-                  </div>
-                  <div class="small-6 columns">
-                    <div class="input-group">
-                      <select lg-bind="pattern.step" class="form-control">
-                        <option value="16">1/16</option>
-                        <option value="32">1/32</option>
-                        <option value="48">1/48</option>
-                        <option SELECTED value="64">1/64</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="small-2 columns text-left help-block">
-                    <span class="glyphicon glyphicon-plus"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <br>
-          <br>
-          <br>
-          <br>
-        </div>
-      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+  </div>

@@ -2,6 +2,8 @@
 
 angular.module('beetmachineApp')
   .controller 'MainCtrl', ($scope, $http) ->
+    $scope.range = (n) ->
+      Array(n)
     console.log """
        _               _                        _     _            
       | |__   ___  ___| |_ _ __ ___   __ _  ___| |__ (_)_ __   ___
@@ -11,7 +13,4 @@ angular.module('beetmachineApp')
 
       |  First rule in roadside beet sales, 
       |  put the most attractive beets on top. 
-      |  The ones that make you pull the car 
-      |  over and go, "Wow, I need this beet 
-      |  right now." Those are the money beets.
     """

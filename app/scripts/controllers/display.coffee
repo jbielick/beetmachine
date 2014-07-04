@@ -1,7 +1,9 @@
 'use strict'
 
 angular.module('beetmachineApp')
-  .controller 'DisplayCtrl', ($scope, $timeout, AppLog) ->
-    $scope.tick = 0
-    $scope.logs = AppLog.stack
-    AppLog.log('Display Module has loaded.')
+  .controller 'DisplayCtrl', [
+    '$scope', '$timeout', 'AppLog', 'Transport', ($scope, $timeout, AppLog, Transport) ->
+      $scope.transport = Transport
+      $scope.logs = AppLog.stack
+      AppLog.log('Display Module loaded.')
+]

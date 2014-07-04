@@ -1,4 +1,4 @@
-<div class="alert-box warning radius display" ng-controller="DisplayCtrl">
+<div class="alert-box warning radius display">
   <div class="row">
     <div class="small-12 columns">
       <div class="" ng-repeat="log in logs">
@@ -9,9 +9,36 @@
   <br>
   <div class="row">
     <div class="small-6 columns">
-      <span ng-bind="tick | tickstamp" class="" style="font-family:Courier"></span>
+      <span ng-bind="transport.tick | tickstamp" class="" style="font-family:Courier"></span>
     </div>
     <div class="small-6 columns">
+      {{ transport.playing ? 'Playing' : 'Stopped' }}
     </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="small-6 columns">
+      <span>BPM</span>
+      <span>{{transport.bpm}}</span>
+    </div>
+    <div class="small-6 columns">
+      <span>Step</span>
+      <span>1/{{transport.step}}</span>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="small-4 columns text-center">
+    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="nav()">NAV</a>
+  </div>
+  <div class="small-4 columns text-center">
+    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="back()">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+  </div>
+  <div class="small-4 columns text-center">
+    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="next()">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
   </div>
 </div>

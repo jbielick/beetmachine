@@ -1,6 +1,7 @@
 'use strict'
 
 angular.module('beetmachineApp', [
+  'mm.foundation',
   'ngCookies',
   'ngResource',
   'ngSanitize',

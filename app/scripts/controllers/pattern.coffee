@@ -1,6 +1,9 @@
 'use strict'
 
 angular.module('beetmachineApp')
-  .controller 'PatternCtrl', ['$scope', '$http', 'Pads', ($scope, $http, Pads) ->
-    $scope.pads = Pads.current
+  .controller 'PatternCtrl', ['$scope', 'Pads', 'Transport', 'Patterns', ($scope, Pads, Transport, Patterns) ->
+    $scope.pads = Pads
+    $scope.transport = Transport
+    $scope.patterns = Patterns
+    $scope.current = Patterns.current
 ]

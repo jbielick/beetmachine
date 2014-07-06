@@ -30,22 +30,24 @@
         </div>
         <div class="medium-2 columns">
           <div class="text-center">
-            <a ng-repeat="n in range(12) track by $index" class="button radius tiny primary" href="javascript:void(0)">Inactive</a><br>
+            <a ng-repeat="n in range(12) track by $index" class="button radius tiny primary" 
+                href="javascript:void(0)">Inactive</a><br>
           </div>
         </div>
         <div class="medium-6 columns">
-          <ul class="button-group group-buttons button-group-justified">
-            <li ng-repeat="n in range(8) track by $index">
-              <a 
-                class="button radius primary tiny" title="CTRL+{{$index + 1}}"
-                href="javascript:void(0)" ng-click="selectGroup($index + 1)">
-                  <small>GRP&nbsp;{{$index + 1}}</small>
-              </a>
-            </li>
-          </ul>
-          <hr>
-          <div class="row pads" ng-controller="PadsCtrl">
-            <pad ng-repeat="pad in pads"></pad>
+          <div ng-controller="PadsCtrl">
+            <ul class="button-group group-buttons button-group-justified">
+              <li ng-repeat="n in range(8) track by $index">
+                <a class="button radius primary tiny" title="CTRL+{{$index + 1}}"
+                  href="" ng-click="selectGroup($index)" ng-class="{active:$index == currentGroup}">
+                    <small>GRP&nbsp;{{$index + 1}}</small>
+                </a>
+              </li>
+            </ul>
+            <hr>
+            <div class="row pads">
+              <pad ng-repeat="pad in pads.current" pad="pad"></pad>
+            </div>
           </div>
         </div>
       </div>
@@ -56,7 +58,8 @@
       <div class="patterns-headers">
         <ul class="button-group button-group-justified">
           <li ng-repeat="n in range(12) track by $index">
-            <a class="button radius tiny primary" href="javascript:void(0)" ng-click="selectPattern($index)">{{$index + 1}}</a>
+            <a class="button radius tiny primary" href=""
+                ng-click="patterns.select($index)">{{$index + 1}}</a>
           </li>
         </ul>
       </div>
@@ -64,28 +67,25 @@
         <div class="row">
           <div class="small-1 columns">
             <div class="slots">
-              <div ng-repeat="pad in pads" pad="pad" class="slot slot-label">{{pad.name || "Sound " + ($index + 1)}}</div>
+              <div ng-repeat="pad in pads.current" class="slot slot-label">{{pad.name || "Sound " + ($index + 1)}}</div>
             </div>
           </div>
           <div class="small-11 columns">
-            <div class="patterns">
-            </div>
+            <pattern></pattern>
           </div>
         </div>
       </div>
       <div class="alert">
         <div class="row">
           <div class="small-3 columns">
-            <label class="text-center">
-              Zoom
-            </label>
+            <label>Zoom: {{current.zoom}}</label>
             <div class="row">
               <div class="small-2 columns text-right">
                 <span class="glyphicon glyphicon-minus"></span>
               </div>
               <div class="small-8 columns">
                 <div class="">
-                  <input type="range" ng-bind="pattern.zoom" value="2" min="1" max="7" step="0.25">
+                  <input type="range" ng-model="current.zoom" value="2" min="1" max="7" step="0.25">
                 </div>
               </div>
               <div class="small-2 columns text-left">
@@ -94,43 +94,33 @@
             </div>
           </div>
           <div class="small-3 columns">
-            <label class="text-center">
-              Length: <span ng-bind="pattern.len"></span> Bars
-            </label>
+            <label>Length: {{current.len}} Bars</label>
             <div class="row">
-              <div class="small-2 columns text-right">
-                <span class="glyphicon glyphicon-minus"></span>
-              </div>
-              <div class="small-8 columns">
+              <div class="small-12 columns">
                 <div class="">
-                  <input type="range" ng-bind="pattern.len" value="4" min="1" max="8" step="1">
+                  <input type="range" ng-model="current.len" value="4" min="1" max="8" step="1">
                 </div>
-              </div>
-              <div class="small-2 columns text-left">
-                <span class="glyphicon glyphicon-plus"></span>
               </div>
             </div>
           </div>
           <div class="small-3 columns">
-            <label class="text-center">
-              Step
-            </label>
+            <label>BPM: {{transport.bpm}}</label>
             <div class="row">
-              <div class="small-2 columns text-right help-block">
-                <span class="glyphicon glyphicon-minus"></span>
+              <div class="small-12 columns">
+                <input type="number" ng-model="transport.bpm" min="60" max="200" step="0.1">
               </div>
-              <div class="small-6 columns">
-                <div class="input-group">
-                  <select ng-bind="transport.step" class="form-control">
-                    <option value="16">1/16</option>
-                    <option value="32">1/32</option>
-                    <option value="48">1/48</option>
-                    <option SELECTED value="64">1/64</option>
-                  </select>
-                </div>
-              </div>
-              <div class="small-2 columns text-left help-block">
-                <span class="glyphicon glyphicon-plus"></span>
+            </div>
+          </div>
+          <div class="small-3 columns">
+            <label>Step</label>
+            <div class="row">
+              <div class="small-12 columns">
+                <select ng-model="current.step">
+                  <option value="16">1/16</option>
+                  <option value="32">1/32</option>
+                  <option value="48">1/48</option>
+                  <option value="64">1/64</option>
+                </select>
               </div>
             </div>
           </div>

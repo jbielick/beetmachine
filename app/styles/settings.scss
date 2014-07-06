@@ -20,7 +20,7 @@
 // Since the typical default browser font-size is 16px, that makes the calculation for grid size.
 // If you want your base font-size to be different and not have it affect the grid breakpoints,
 // set $rem-base to $base-font-size and make sure $base-font-size is a px value.
-// $base-font-size: 100%;
+$base-font-size: 88%;
 
 // The $base-font-size is 100% while $base-line-height is 150%
 // $base-line-height: 150%;
@@ -41,17 +41,17 @@
 // Global
 
 // We use these to define default font weights
-// $font-weight-normal: normal !default
+$font-weight-normal: normal !default;
 // $font-weight-bold: bold !default
 
 // We use these to control various global styles
 $body-bg: #222;
 $body-font-color: #aaa;
-// $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 // $body-font-weight: $font-weight-normal;
 // $body-font-style: normal;
 
-$font-smoothing: antialiased;
+// $font-smoothing: antialiased;
 
 // We use these to control text direction settings
 // $text-direction: ltr;
@@ -59,15 +59,15 @@ $font-smoothing: antialiased;
 // $default-float: left;
 
 // We use these as default colors throughout
-$primary-color: #222;
-// $secondary-color: #e7e7e7;
-// $alert-color: #;
-// $success-color: #43AC6A;
-$warning-color: #f08a24;
-// $info-color: #a0d3e8;
+$primary-color: #f08a24;
+$secondary-color: #e7e7e7;
+$alert-color: #FF0000;
+$success-color: #43AC6A;
+$warning-color: #f04124;
+$info-color: #a0d3e8;
 
 // We use these to make sure border radius matches unless we want it different.
-// $global-radius: 3px;
+$global-radius: 3px;
 // $global-rounded: 1000px;
 
 // We use these to control inset shadow shiny edges and depressions.
@@ -126,7 +126,7 @@ $warning-color: #f08a24;
 // $header-font-family: $body-font-family;
 // $header-font-weight: $font-weight-normal;
 // $header-font-style: normal;
-// $header-font-color: #222;
+$header-font-color: $body-font-color;
 // $header-line-height: 1.4;
 // $header-top-margin: .2rem;
 // $header-bottom-margin: .5rem;
@@ -354,7 +354,7 @@ $button-tny: rem-calc(7);
 // We use these to control button text styles.
 // $button-font-family: $body-font-family;
 $button-font-color: #fff;
-$button-font-color-alt: #333;
+$button-font-color-alt: #fff;
 // $button-font-tny: rem-calc(11);
 // $button-font-sml: rem-calc(13);
 // $button-font-med: rem-calc(16);
@@ -515,23 +515,23 @@ $button-border-color: #aaa;
 // $include-html-form-classes: $include-html-classes;
 
 // We use this to set the base for lots of form spacing and positioning styles
-// $form-spacing: rem-calc(16);
+$form-spacing: rem-calc(12);
 
 // We use these to style the labels in different ways
 // $form-label-pointer: pointer;
 // $form-label-font-size: rem-calc(14);
-// $form-label-font-weight: $font-weight-normal;
+$form-label-font-weight: $font-weight-normal;
 // $form-label-line-height: 1.5;
-// $form-label-font-color: scale-color(#000, $lightness: 30%);
+$form-label-font-color: scale-color($body-font-color, $lightness: 30%);
 // $form-label-small-transform: capitalize;
 // $form-label-bottom-margin: 0;
 // $input-font-family: inherit;
-// $input-font-color: rgba(0,0,0,0.75);
+$input-font-color: rgba(#fff,0.75);
 // $input-font-size: rem-calc(14);
-// $input-bg-color: #fff;
-// $input-focus-bg-color: scale-color(#fff, $lightness: -2%);
-// $input-border-color: scale-color(#fff, $lightness: -20%);
-// $input-focus-border-color: scale-color(#fff, $lightness: -40%);
+$input-bg-color: $body-bg;
+$input-focus-bg-color: scale-color($body-bg, $lightness: 2%);
+$input-border-color: scale-color($body-bg, $lightness: 20%);
+$input-focus-border-color: scale-color($primary-color, $lightness: -40%);
 // $input-border-style: solid;
 // $input-border-width: 1px;
 // $input-border-radius: $global-radius;
@@ -574,8 +574,8 @@ $button-border-color: #aaa;
 // $glowing-effect-color: $input-focus-border-color;
 
 // Select variables
-// $select-bg-color: #fafafa;
-// $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%);
+$select-bg-color: $body-bg;
+$select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%);
 
 // Inline Lists
 
@@ -893,7 +893,7 @@ $button-border-color: #aaa;
 // $include-html-media-classes: $include-html-classes;
 
 // We use this to set the progress bar height
-// $progress-bar-height: rem-calc(25);
+$progress-bar-height: rem-calc(4);
 // $progress-bar-color: #f6f6f6  ;
 
 // We use these to control the border styles
@@ -921,10 +921,10 @@ $button-border-color: #aaa;
 // $reveal-overlay-bg-old: #000;
 
 // We use these to control the style of the modal itself.
-// $reveal-modal-bg: #fff;
+$reveal-modal-bg: $body-bg;
 // $reveal-position-top: rem-calc(100);
-// $reveal-default-width: 80%;
-// $reveal-modal-padding: rem-calc(20);
+$reveal-default-width: 90%;
+$reveal-modal-padding: rem-calc(10);
 // $reveal-box-shadow: 0 0 10px rgba(#000,.4);
 
 // We use these to style the reveal close button

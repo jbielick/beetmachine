@@ -42,32 +42,35 @@
  * Pads
  * =========*/
 .pads {margin-top:4px;}
+.pad {margin-bottom:rem-calc(4);}
 .pad-container {margin:6px 0 6px;}
 .pad-label {margin-bottom:2px;}
-.pad-container .progress {height:2px;overflow:hidden;background:none;border:none;margin-top:2px;margin-bottom:2px;}
-.pad-container .progress-bar {height:2px;float:left;background-color:rgba(201,229,255,0.5);}
+.pad-container .progress {
+  height:rem-calc(1);background:$body-bg;border:none;padding-top:0;padding-bottom:0;margin-top:2px;margin-bottom:2px;
+  .meter {box-shadow: 0 0 3px 0px rgba($primary-color, 0.4);}
+}
 
 /*===========
  * Pattern
  * =========*/
 .patterns {overflow-x: scroll;overflow-y:hidden;max-height:300px;position:relative;}
 
-.btn.primary:active, .btn.primary.active {
+.btn:active, .btn.active {
   opacity:0.9;
   box-shadow: 0 0 7px rgba(237,237,237,0.9);
 }
-.pad .btn.primary:active, .pad .btn.primary.active {
+.pad .btn:active, .pad .btn.active {
   box-shadow: 0 0 12px #fff;
 }
-.btn.primary.mapped {
+.pad.mapped {
   background-color:#C9E5FF;
-    box-shadow: 0 0 8px rgba(201,229,255,0.7);
+  box-shadow: 0 0 8px rgba(201,229,255,0.7);
 }
-.btn.primary.mapped:active, .btn.primary.mapped.active {
+.pad.mapped:active, .pad.mapped.active {
   background-color:#A0D1FF;
   box-shadow: 0 0 12px rgba(201,229,255,0.9);
 }
-.pad.btn {
+.pad {
   border-radius:2px;
   padding-bottom:75%;height:0;width:100%;display:block;
 }

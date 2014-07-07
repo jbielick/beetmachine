@@ -20,9 +20,15 @@ angular.module('beetmachineApp')
       _tick: ->
         @tick += 1
         normalizedTick = @getNormalizedTick()
-        if patterns.current.vinyl[normalizedTick]
-          angular.forEach patterns.current.vinyl[normalizedTick], (trigger, idx) ->
-            Pads.pads[idx]?.sample?.play(trigger)
+        needles = []
+        angular.forEach patterns._patterns, (pattern, idx) ->
+          needle = _.bind (idx, cb) ->
+            if @vinyl[normalizedTick]
+              angular.forEach @vinyl[normalizedTick], (trigger, idx) ->
+                cb null, Pads.pads[idx]?.sample?.play(trigger)
+          , pattern, idx
+          needles.push needle
+        async.parallel needles, (err, results) ->
       _start: ->
         @playing = true
         @tickInterval = $interval(angular.bind(@, @_tick), @interval)

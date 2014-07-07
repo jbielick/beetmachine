@@ -2,7 +2,7 @@
   <li><a href="javascript:void(0)" ng-click="transport.playPause()" ng-class="{active:transport.playing}" class="button radius tiny primary expand">
     <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span> Play
   </a></li>
-  <li><a href="javascript:void(0)" ng-click="transport.record()" ng-class="{active:transport.recording}" class="button radius tiny primary expand">
+  <li><a href="javascript:void(0)" ng-click="transport.record()" ng-class="{active:transport.recording,warning:transport.recording,primary:!transport.recording}" class="button radius tiny primary expand">
     <span class="glyphicon glyphicon-record"></span> Record
   </a></li>
   <li><a href="javascript:void(0)" ng-click="transport.stop()" class="button radius tiny primary expand">

@@ -6,7 +6,7 @@ angular.module('beetmachineApp')
     # need to bootstrap data
     patterns['0'] = new Pattern
     {
-      patterns: patterns
+      _patterns: patterns
       current: patterns['0']
       load: (data) ->
         # stubby stub

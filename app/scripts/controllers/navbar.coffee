@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'NavbarCtrl', ($scope, $location, Auth) ->
     $scope.menu = [
       title: 'Home'

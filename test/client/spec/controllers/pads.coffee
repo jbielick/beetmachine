@@ -3,7 +3,7 @@
 describe 'Controller: PadsCtrl', () ->
 
   # load the controller's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   PadsCtrl = {}
   scope = {}

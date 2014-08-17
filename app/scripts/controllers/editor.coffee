@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'EditorCtrl', ($scope) ->
     $scope.cache = {}
     $scope.toggleFx = (fxName) ->

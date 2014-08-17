@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'PadsCtrl', ['$scope', 'Pads', 'Transport', 'AppLog', ($scope, Pads, Transport, AppLog) ->
     AppLog.log('PadsCtrl loaded.')
     $scope.pads = Pads

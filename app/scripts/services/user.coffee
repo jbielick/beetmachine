@@ -1,10 +1,12 @@
 "use strict"
 
-angular.module("beetmachineApp")
-  .factory "User", ($resource) ->
+angular.module("beetmachine").factory "User", [
+  '$resource', ($resource) ->
     $resource "/api/users/:id",
       id: "@id"
     ,
+      special:
+        method: 'DELETE'
       update:
         method: "PUT"
         params: {}
@@ -13,4 +15,4 @@ angular.module("beetmachineApp")
         method: "GET"
         params:
           id: "me"
-
+]

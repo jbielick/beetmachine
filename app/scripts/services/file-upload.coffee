@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .service 'Uploadfile', ['$q', ($q) ->
+angular.module('beetmachine').service 'FileUpload', [
+  '$q',
+  ($q) ->
     @sendFile = (file, url, deferred) ->
       formData = new FormData()
       formData.append 'sound', file

@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'SignupCtrl', ($scope, Auth, $location) ->
     $scope.user = {}
     $scope.errors = {}

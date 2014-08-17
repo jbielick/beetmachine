@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .directive('dropUploadable', ['Uploadfile', 'AppLog', (Uploadfile, AppLog) ->
+angular.module('beetmachine').directive 'dropUploadable', [
+  'FileUpload', 'AppLog', 
+  (FileUpload, AppLog) ->
     restrict: 'A'
     link: (scope, element, attrs) ->
       element.on 'dragover dragenter', ($event) =>
@@ -10,6 +11,6 @@ angular.module('beetmachineApp')
         $event.preventDefault()
         $event.stopPropagation()
         e = $event.originalEvent
-        promise = Uploadfile.upload(file: e.dataTransfer.files[0], url: '/sounds')
+        promise = FileUpload.upload(file: e.dataTransfer.files[0], url: '/sounds')
         scope.$emit 'upload', e, promise
-  ])
+]

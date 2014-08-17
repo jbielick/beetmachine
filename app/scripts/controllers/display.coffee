@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'DisplayCtrl', [
     '$scope', '$timeout', 'AppLog', 'Transport', 'Patterns', ($scope, $timeout, AppLog, Transport, Patterns) ->
       $scope.transport = Transport

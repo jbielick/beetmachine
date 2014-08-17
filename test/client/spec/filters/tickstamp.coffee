@@ -3,7 +3,7 @@
 describe 'Filter: tickstamp', () ->
 
   # load the filter's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   # initialize a new instance of the filter before each test
   tickstamp = {}

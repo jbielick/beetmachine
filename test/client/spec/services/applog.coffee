@@ -3,7 +3,7 @@
 describe 'Service: AppLog', () ->
 
   # load the service's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   # instantiate service
   AppLog = {}

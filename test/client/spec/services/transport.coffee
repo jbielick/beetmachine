@@ -3,7 +3,7 @@
 describe 'Service: transport', () ->
 
   # load the service's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   # instantiate service
   transport = {}

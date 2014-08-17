@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .factory 'Pattern', () ->
     Pattern = () ->
       @len = 4

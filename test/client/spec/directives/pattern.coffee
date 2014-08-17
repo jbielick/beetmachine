@@ -3,7 +3,7 @@
 describe 'Directive: pattern', () ->
 
   # load the directive's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   scope = {}
 

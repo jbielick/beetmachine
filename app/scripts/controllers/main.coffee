@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .controller 'MainCtrl', ($scope, $http) ->
     $scope.range = (n) ->
       Array(n)

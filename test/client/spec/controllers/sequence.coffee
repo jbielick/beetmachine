@@ -3,7 +3,7 @@
 describe 'Controller: SequenceCtrl', () ->
 
   # load the controller's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   SequenceCtrl = {}
   scope = {}

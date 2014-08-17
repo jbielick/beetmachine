@@ -1,13 +1,16 @@
 'use strict'
 
-angular.module('beetmachineApp', [
+angular.module('beetmachine', [
   'mm.foundation',
   'ngCookies',
   'ngResource',
   'ngSanitize',
   'ngRoute'
 ])
-  .config ($routeProvider, $locationProvider, $httpProvider) ->
+.config [
+  '$routeProvider', '$locationProvider', '$httpProvider',
+  ($routeProvider, $locationProvider, $httpProvider) ->
+
     $routeProvider
       .when '/',
         templateUrl: 'partials/main'
@@ -26,18 +29,32 @@ angular.module('beetmachineApp', [
         redirectTo: '/'
 
     $locationProvider.html5Mode true
-  
-    # Intercept 401s and redirect you to login
-    $httpProvider.interceptors.push ['$q', '$location', ($q, $location) ->
-      responseError: (response) ->
-        if response.status is 401
-          $location.path '/login'
-          $q.reject response
-        else
-          $q.reject response
+
+    $httpProvider.defaults.headers['Content-Type'] =
+      $httpProvider.defaults.headers['Accept'] = 
+      'application/json'
+
+    $httpProvider.interceptors.push [
+      '$q', '$location', '$log', 
+      ($q, $location, $log) ->
+        responseError: (response) ->
+          if response.status is 401
+            $location.path '/login'
+            $q.reject response
+          else if response.status is 0
+            $log.error('Check Internet Connection')
+          else
+            $q.reject response
     ]
-  .run ($rootScope, $location, Auth) ->
-    
+  ]
+.run [
+  '$rootScope', '$location', 'Auth', '$window',
+  ($rootScope, $location, Auth, $window) ->
+    $window.on 'offLine', (e) ->
+      $rootScope.online = false
+    $window.on 'onLine', (e) ->
+      $rootScope.online = true
     # Redirect to login if route requires auth and you're not logged in
     $rootScope.$on '$routeChangeStart', (event, next) ->
       $location.path '/login'  if next.authenticate and not Auth.isLoggedIn()
+  ]

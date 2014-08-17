@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .service 'Transport', ['Patterns', 'Pads', '$interval', (Patterns, Pads, $interval) ->
+angular.module('beetmachine').service 'Transport', [
+  'Patterns', 'Pads', '$interval',
+  (Patterns, Pads, $interval) ->
     patterns = Patterns
     {
       playing: false

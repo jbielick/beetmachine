@@ -3,7 +3,7 @@
 describe 'Controller: TransportCtrl', () ->
 
   # load the controller's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   TransportCtrl = {}
   scope = {}

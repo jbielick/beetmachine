@@ -1,5 +1,7 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .factory 'Session', ($resource) ->
+angular.module('beetmachine').factory 'Session', [
+  '$resource',
+  ($resource) ->
     $resource '/api/session/'
+]

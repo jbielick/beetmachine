@@ -3,7 +3,7 @@
 describe 'Controller: EditorCtrl', () ->
 
   # load the controller's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   EditorCtrl = {}
   scope = {}

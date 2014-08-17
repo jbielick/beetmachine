@@ -3,7 +3,7 @@
 ###
 Removes server error when user updates input
 ###
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .directive 'mongooseError', ->
     restrict: 'A'
     require: 'ngModel'

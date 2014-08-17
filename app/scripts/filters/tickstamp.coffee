@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachineApp')
+angular.module('beetmachine')
   .filter 'tickstamp', () ->
     (input) ->
       ticks = (''+(input / 1000 * 100)).split('.')[0]

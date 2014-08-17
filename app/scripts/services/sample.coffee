@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .factory 'sample', ['$q', ($q) ->
+angular.module('beetmachine').factory 'sample', [
+  '$q',
+  ($q) ->
 
     Sample = (src) ->
       @load(src) if src?

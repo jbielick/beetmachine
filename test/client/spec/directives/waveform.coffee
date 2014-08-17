@@ -3,7 +3,7 @@
 describe 'Directive: waveform', () ->
 
   # load the directive's module
-  beforeEach module 'beetmachineApp'
+  beforeEach module 'beetmachine'
 
   scope = {}
 

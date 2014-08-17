@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .directive('pad', ['AppLog', '$modal', 'sample', (AppLog, $modal, sample) ->
+angular.module('beetmachine').directive 'pad', [
+  'AppLog', '$modal', 'sample', 
+  (AppLog, $modal, sample) ->
     restrict: 'E'
     replace: true
     controller: ($scope) ->
@@ -46,4 +47,4 @@ angular.module('beetmachineApp')
         </div>
       </div>
     '''
-  ])
+]

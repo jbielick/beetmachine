@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('beetmachineApp')
-  .service 'Patterns', (Pattern) ->
+angular.module('beetmachine').service 'Patterns', [
+  'Pattern',
+  (Pattern) ->
     patterns = {}
     # need to bootstrap data
     patterns['0'] = new Pattern
@@ -15,3 +16,4 @@ angular.module('beetmachineApp')
         patterns[idx] = new Pattern unless patterns[idx]
         @current = patterns[idx]
     }
+]

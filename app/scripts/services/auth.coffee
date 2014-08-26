@@ -7,7 +7,6 @@ angular.module('beetmachine').factory 'Auth', [
     # Get currentUser from cookie
     $rootScope.currentUser = $cookieStore.get('user') or null
     $cookieStore.remove 'user'
-    debugger
     
     ###
     Authenticate user
@@ -28,7 +27,6 @@ angular.module('beetmachine').factory 'Auth', [
         cb err
       ).$promise
 
-    
     ###
     Unauthenticate user
     
@@ -44,7 +42,6 @@ angular.module('beetmachine').factory 'Auth', [
         cb err
       ).$promise
 
-    
     ###
     Create a new user
     
@@ -61,7 +58,6 @@ angular.module('beetmachine').factory 'Auth', [
         cb err
       ).$promise
 
-    
     ###
     Change password
     
@@ -81,7 +77,6 @@ angular.module('beetmachine').factory 'Auth', [
         cb err
       ).$promise
 
-    
     ###
     Gets all available info on authenticated user
     

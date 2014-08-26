@@ -37,9 +37,12 @@
         <div class="medium-6 columns">
           <div ng-controller="PadsCtrl">
             <ul class="button-group group-buttons button-group-justified">
-              <li ng-repeat="n in range(8) track by $index">
-                <a class="button radius primary tiny" title="CTRL+{{$index + 1}}"
-                  href="" ng-click="selectGroup($index)" ng-class="{active:$index == currentGroup}">
+              <li ng-repeat="group in groups">
+                <a 
+                  class="button radius primary tiny" 
+                  title="CTRL+{{$index + 1}}"
+                  ng-click="selectGroup($index)" 
+                  ng-class="{active: $index == currentGroup}">
                     <small>GRP&nbsp;{{$index + 1}}</small>
                 </a>
               </li>

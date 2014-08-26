@@ -7,7 +7,7 @@ angular.module('beetmachine', [
   'ngSanitize',
   'ngRoute'
 ])
-.config [
+.config([
   '$routeProvider', '$locationProvider', '$httpProvider',
   ($routeProvider, $locationProvider, $httpProvider) ->
 
@@ -46,15 +46,19 @@ angular.module('beetmachine', [
           else
             $q.reject response
     ]
-  ]
-.run [
+])
+.run([
   '$rootScope', '$location', 'Auth', '$window',
   ($rootScope, $location, Auth, $window) ->
-    $window.on 'offLine', (e) ->
-      $rootScope.online = false
-    $window.on 'onLine', (e) ->
-      $rootScope.online = true
+    connectivityModal = null
+    angular.element($window)
+      .on 'offLine', (e) ->
+        $rootScope.online = false
+        connectivityModal.close
+      .on 'onLine', (e) ->
+        $rootScope.online = true
+        connectivityModal = {}
     # Redirect to login if route requires auth and you're not logged in
     $rootScope.$on '$routeChangeStart', (event, next) ->
       $location.path '/login'  if next.authenticate and not Auth.isLoggedIn()
-  ]
+])

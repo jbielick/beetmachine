@@ -3,14 +3,14 @@
 angular.module('beetmachine').service 'Transport', [
   'Patterns', 'Pads', '$interval',
   (Patterns, Pads, $interval) ->
-    patterns = Patterns
-    {
-      playing: false
-      recording: false
-      tick: 0
-      bpm: 100
-      patterns: patterns
-      interval: (60 * 1000) / @bpm / parseInt(patterns.current.step, 10)
+    class Transport
+      constructor: ->
+        @playing = false
+        @recording = false
+        @tick = 0
+        @bpm = 100
+        @patterns = Patterns
+        @interval = (60 * 1000) / @bpm / parseInt(@patterns.current.step, 10)
       playPause: ->
         if @playing then @_stop() else @_start()
       stop: ->
@@ -22,7 +22,7 @@ angular.module('beetmachine').service 'Transport', [
         @tick += 1
         normalizedTick = @getNormalizedTick()
         needles = []
-        angular.forEach patterns._patterns, (pattern, idx) ->
+        angular.forEach @patterns._patterns, (pattern, idx) ->
           needle = _.bind (idx, cb) ->
             if @vinyl[normalizedTick]
               angular.forEach @vinyl[normalizedTick], (trigger, idx) ->
@@ -40,13 +40,14 @@ angular.module('beetmachine').service 'Transport', [
         @tick = 0
       recordPress: (pad, idx) ->
         if @recording
-          (patterns.current.vinyl[@getNormalizedTick()] ||=  {})[idx] = {velocity: 1, len: 1}
+          vinyl = @patterns.current.vinyl[@getNormalizedTick()] ||= {}
+          vinyl[idx] = velocity: 1, len: 1
       getNormalizedTick: (asPercentage = false) ->
-        totalTicks = parseInt(patterns.current.len, 10) * parseInt(patterns.current.step, 10)
+        totalTicks = parseInt(@patterns.current.len, 10) * parseInt(@patterns.current.step, 10)
         normal = if @tick <= totalTicks then @tick else @tick % totalTicks
         if asPercentage
           (100 / totalTicks) * normal
         else
           normal
-    }
+    new Transport
 ]

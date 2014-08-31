@@ -3,58 +3,98 @@
 angular.module('beetmachine').directive 'pattern', () ->
   replace: true
   template: '''
-    <canvas></canvas>
+    <div style="position:relative;">
+      <canvas id="pattern" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;"></canvas>
+      <canvas id="playHead" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;"></canvas>
+    </div>
   '''
   restrict: 'E'
+  controller: ['$scope', 'Transport', ($scope, Transport) ->
+  ]
   link: (scope, element, attrs) ->
-    w = element.parent().width() * scope.current.zoom * 0.95
-    h = 310
-    drawGrid = () =>
-      element.empty()
-      zoom = parseInt(scope.current.zoom, 10) || 2
+    patternCanvas = element[0].querySelector('#pattern')
+    playHeadCanvas = element[0].querySelector('#playHead')
+    pattern = patternCanvas.getContext('2d')
+    playHead = playHeadCanvas.getContext('2d')
+    zoom = w = h = len = step = totalTicks = currentTick = bar = xInterval = playHeadX = 0
+
+    computedStyles = window.getComputedStyle(element[0]) # computed styles for the current element
+    paddingLeft = parseFloat(computedStyles.paddingLeft, 10) # left computed padding
+    paddingRight = parseFloat(computedStyles.paddingRight, 10) # right computed padding
+    availableWidth = element[0].clientWidth - (paddingRight + paddingLeft) # possible width to consume
+
+    devicePixelRatio = window.devicePixelRatio || 1
+    backingStoreRatio = pattern.webkitBackingStorePixelRatio ||
+      pattern.mozBackingStorePixelRatio ||
+      pattern.msBackingStorePixelRatio ||
+      pattern.oBackingStorePixelRatio ||
+      pattern.backingStorePixelRatio || 1
+    renderRatio = devicePixelRatio / backingStoreRatio
+
+    recalculate = () =>
+      zoom = 2
       w = element.parent().width() * scope.current.zoom * 0.95
-      element.width(w)
-      element.height(h)
+      h = 310
       len = parseInt(scope.current.len, 10)
       step = parseInt(scope.current.step, 10)
       totalTicks = step * len
-      xInterval = w / totalTicks
       currentTick = 0
-      bar = Math.ceil(totalTicks / len)
-      (bars || bars = []).push( i * bar || 0 ) for i in [0..len + 1]
-      scope._paper = paper.setup(element[0])
-      scope._paper.view.viewSize = new scope._paper.Size(w, h)
-      path = new scope._paper.Path()
+      xInterval = w / totalTicks
+      bar = Math.ceil totalTicks / len
+      patternCanvas.height = playHeadCanvas.height = h * renderRatio
+      patternCanvas.width = playHeadCanvas.width = w * renderRatio
+      patternCanvas.style.height = playHeadCanvas.style.height = "#{h}px"
+      patternCanvas.style.width = playHeadCanvas.style.width = "#{w}px"
+      pattern.scale(renderRatio, renderRatio)
+      playHead.scale(renderRatio, renderRatio)
+
+    drawGrid = () =>
+      recalculate()
+      bars = []
+      bars.push( i * bar || 0 ) for i in [0..len + 1]
+      # scope._paper.view.viewSize = new scope._paper.Size w, h
+      # path = new scope._paper.Path()
+      path = pattern.beginPath()
       while currentTick <= totalTicks
         x = currentTick * xInterval
-        path = new scope._paper.Path()
-        path.strokeWidth = 1
-        path.strokeColor = if currentTick in bars then '#ddd' else '#444'
-        path.moveTo(new scope._paper.Point(x - 0.5, 0))
-        path.lineTo(new scope._paper.Point(x - 0.5, h))
+        pattern.save()
+        pattern.beginPath()
+        pattern.lineWidth = 1
+        pattern.strokeStyle = if currentTick in bars then '#ddd' else '#444'
+        pattern.moveTo(x - 0.5, 0)
+        pattern.lineTo(x - 0.5, h)
+        pattern.stroke()
+        pattern.restore()
         currentTick++
       slotHeight = 19
       for i in [0..16]
         x = w
         y = i * slotHeight
-        path = new scope._paper.Path()
-        path.strokeWidth = 0.2
-        path.strokeColor = "#aaa"
-        path.moveTo(0, y)
-        path.lineTo(x, y)
-      scope.playHead = new scope._paper.Path()
-      scope.playHead.strokeWidth = 1
-      scope.playHead.strokeColor = '#f08a24'
-      scope.playHead.moveTo(new scope._paper.Point(0, 0))
-      scope.playHead.lineTo(new scope._paper.Point(0, h))
-      scope._paper.view.draw()
+        pattern.save()
+        pattern.beginPath()
+        pattern.lineWidth = 0.2
+        pattern.strokeStyle = "#aaa"
+        pattern.moveTo(0, y)
+        pattern.lineTo(x, y)
+        pattern.stroke()
+        pattern.restore()
       # @drawTriggers()
-    scope.$watch 'transport.tick', () ->
-      if scope._paper
-        scope.playHead.removeSegment(0)
-        x = scope.transport.getNormalizedTick(true) / 100 * w
-        scope.playHead.moveTo(new scope._paper.Point(x, 0))
-        scope.playHead.lineTo(new scope._paper.Point(x, h))
-        scope._paper.view.draw()
-    scope.$watchCollection '[current, current.zoom, current.len, current.step]', () ->
-      drawGrid()
+    
+    drawPlayHead = () =>
+      x = scope.transport.getNormalizedTick(true) * w
+      playHead.clearRect(0, 0, w, h)
+      playHead.beginPath()
+      playHead.lineWidth = 1
+      playHead.strokeStyle = '#f08a24'
+      playHead.moveTo(x, 0)
+      playHead.lineTo(x, h)
+      playHead.stroke()
+      requestAnimationFrame () ->
+        drawPlayHead()
+
+    drawGrid()
+    drawPlayHead()
+    
+    # scope.$watch 'transport.tick', updatePlayHead()
+    scope.$watchCollection '[current.zoom, current.len, current.step]', () ->
+      requestAnimationFrame drawGrid

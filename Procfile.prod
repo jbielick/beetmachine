@@ -1,2 +1,2 @@
-app: grunt serve:dist
+app: grunt serve:dist --force
 mongo: mongod

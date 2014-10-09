@@ -12,7 +12,7 @@
       <span ng-bind="transport.tick | tickstamp" class="" style="font-family:Courier"></span>
     </div>
     <div class="small-6 columns">
-      {{ transport.playing ? 'Playing' : 'Stopped' }}
+      {{ transport.playing ? (transport.recording ? 'Recording' : 'Playing') : 'Stopped' }}
     </div>
   </div>
   <br />
@@ -29,16 +29,16 @@
 </div>
 <div class="row">
   <div class="small-4 columns text-center">
-    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="nav()">NAV</a>
+    <a href="javascript:void(0)" class="button radius tiny primary expand" ng-click="nav()">NAV</a>
   </div>
   <div class="small-4 columns text-center">
-    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="back()">
-      <span class="glyphicon glyphicon-chevron-left"></span>
+    <a href="javascript:void(0)" class="button radius tiny primary expand" ng-click="back()">
+      <span class="glyphicon glyphicon-chevron-left"></span>&lt;
     </a>
   </div>
   <div class="small-4 columns text-center">
-    <a href="javascript:void(0)" class="button radius tiny primary btn-block" ng-click="next()">
-      <span class="glyphicon glyphicon-chevron-right"></span>
+    <a href="javascript:void(0)" class="button radius tiny primary expand" ng-click="next()">
+      <span class="glyphicon glyphicon-chevron-right"></span>&gt;
     </a>
   </div>
 </div>

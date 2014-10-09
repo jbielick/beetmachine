@@ -14,7 +14,6 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(app) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/foundation/css/foundation.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -150,7 +149,7 @@
             </div>
           </div>
         </aside>
-        <div class="container main-section" ng-view="">
+        <div class="container main-section" ng-view>
       
         </div>
         <a class="exit-off-canvas"></a>
@@ -214,7 +213,7 @@
     <script src="scripts/controllers/pads.js"></script>
     <script src="scripts/services/pads.js"></script>
     <script src="scripts/directives/pad.js"></script>
-    <script src="scripts/directives/drop-uploadable.js"></script>
+    <script src="scripts/directives/file-drop.js"></script>
     <script src="scripts/services/file-upload.js"></script>
     <script src="scripts/controllers/editor.js"></script>
     <script src="scripts/directives/waveform.js"></script>
@@ -223,8 +222,10 @@
     <script src="scripts/services/pattern.js"></script>
     <script src="scripts/services/sample.js"></script>
     <script src="scripts/services/patterns.js"></script>
-    <script src="scripts/services/submix.js"></script>
     <script src="scripts/services/mixer.js"></script>
+    <script src="scripts/services/groove.js"></script>
+    <script src="scripts/services/api-url.js"></script>
+    <script src="scripts/vendor/groove.js"></script>
     <!-- endbuild -->
   </body>
 </html>

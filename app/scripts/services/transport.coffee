@@ -4,8 +4,11 @@
 # http://www.html5rocks.com/en/tutorials/audio/scheduling/
 
 angular.module('beetmachine').service 'Transport', [
-  'Patterns', 'Pads', '$interval',
-  (Patterns, Pads, $interval) ->
+  'Patterns', 'Pads', '$interval', '$rootScope',
+  (Patterns, Pads, $interval, $rootScope) ->
+    # responsible for the app's clock and scheulder of audio events
+    # 
+    # 
     class Transport
       constructor: ->
         @playing = false      # internal flag for playback status
@@ -23,6 +26,14 @@ angular.module('beetmachine').service 'Transport', [
       # sets the playing/recording flags to false
       stop: ->
         @playing = @recording = false
+
+      # move playhead to tick
+      goto: (tick, asPercentage) ->
+        if asPercentage
+          totalTicks = parseInt(@patterns.current.len, 10) * parseInt(@patterns.current.step, 10)
+          tick = totalTicks * tick
+        $rootScope.$apply () =>
+          @tick = tick
 
       # starts if stopped, toggles recording flag
       record: ->
@@ -65,19 +76,26 @@ angular.module('beetmachine').service 'Transport', [
         #   needle()
           # needles.push needle
         # async.parallel needles, (err, results) ->
+
       _start: ->
         @playing = true
-        @activeScheduler = setInterval(angular.bind(@, @_tick), @interval)
+        @activeInterval = $interval () =>
+          @_tick()
+        , @interval
+
+      # private function to stop the clock / scheduler
       _stop: ->
+        $interval.cancel @activeInterval
         @playing = false
-        clearInterval(@activeScheduler)
-        # $interval.cancel @activeScheduler
+
       restart: ->
         @tick = 0
+
       recordPress: (pad, idx) ->
         if @recording
           vinyl = @patterns.current.vinyl[@getNormalizedTick()] ||= {}
           vinyl[idx] = velocity: 1, len: 1
+
       getNormalizedTick: (asPercentage = false) ->
         totalTicks = parseInt(@patterns.current.len, 10) * parseInt(@patterns.current.step, 10)
         normal = if @tick <= totalTicks then @tick else @tick % totalTicks
@@ -85,5 +103,6 @@ angular.module('beetmachine').service 'Transport', [
           (100 / totalTicks) * normal / 100
         else
           normal
+
     new Transport
 ]

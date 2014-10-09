@@ -1,4 +1,5 @@
-<div class="row">
+<br>
+<div class="row hide">
     <div class="small-12 columns">
       <div class="sequence-headers text-center row collapse">
         <div class="small-1 columns" ng-repeat="n in range(12) track by $index">
@@ -16,13 +17,13 @@
         <div class="medium-4 columns small-12 columns">
           <div class="row">
             <div class="small-4 columns text-center">
-              <a href="javascript:void(0)" ng-click="f1()" class="button radius tiny primary button-block">F1</a>
+              <a href="javascript:void(0)" ng-click="f1()" class="button radius tiny primary expand">F1</a>
             </div>
             <div class="small-4 columns text-center">
-              <a href="javascript:void(0)" ng-click="f2()" class="button radius tiny primary button-block">F2</a>
+              <a href="javascript:void(0)" ng-click="f2()" class="button radius tiny primary expand">F2</a>
             </div>
             <div class="small-4 columns text-center">
-              <a href="javascript:void(0)" ng-click="f3()" class="button radius tiny primary button-block">F3</a>
+              <a href="javascript:void(0)" ng-click="f3()" class="button radius tiny primary expand">F3</a>
             </div>
           </div>
           <div ng-include="'partials/display'" ng-controller="DisplayCtrl"></div>
@@ -30,24 +31,33 @@
         </div>
         <div class="medium-2 columns">
           <div class="text-center">
-            <a ng-repeat="n in range(12) track by $index" class="button radius tiny primary" 
-                href="javascript:void(0)">Inactive</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
+            <a class="button radius tiny primary">function</a><br>
           </div>
         </div>
         <div class="medium-6 columns">
           <div ng-controller="PadsCtrl">
-            <ul class="button-group group-buttons button-group-justified">
+            <ul class="button-group group-buttons radius button-group-justified">
               <li ng-repeat="group in groups">
                 <a 
-                  class="button radius primary tiny" 
+                  class="button primary tiny" 
                   title="CTRL+{{$index + 1}}"
                   ng-click="selectGroup($index)" 
                   ng-class="{active: $index == currentGroup}">
-                    <small>GRP&nbsp;{{$index + 1}}</small>
+                    <small>{{$index + 1}}</small>
                 </a>
               </li>
             </ul>
-            <hr>
             <div class="row pads">
               <pad ng-repeat="pad in pads.current" pad="pad"></pad>
             </div>

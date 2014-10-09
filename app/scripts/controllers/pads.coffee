@@ -1,11 +1,11 @@
 'use strict'
 
 angular.module('beetmachine').controller 'PadsCtrl', [
-  '$scope', 'Pads', 'Transport', 'AppLog', 'Mixer',
-  ($scope, Pads, Transport, AppLog, Mixer) ->
+  '$scope', 'Pads', 'Transport', 'AppLog', 'mixer',
+  ($scope, Pads, Transport, AppLog, mixer) ->
     AppLog.log('PadsCtrl loaded.')
     $scope.pads = Pads
-    $scope.groups = Mixer.groups
+    $scope.groups = mixer.groups
     $scope.press = (pad, idx) ->
       pad.sample.play()
       Transport.recordPress(pad, idx)

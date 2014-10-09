@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('beetmachine').directive 'pattern', () ->
+angular.module('beetmachine').directive 'pattern', ['Transport', (Transport) ->
   replace: true
   template: '''
     <div style="position:relative;">
@@ -10,6 +10,7 @@ angular.module('beetmachine').directive 'pattern', () ->
   '''
   restrict: 'E'
   controller: ['$scope', 'Transport', ($scope, Transport) ->
+    $scope.Transport = Transport
   ]
   link: (scope, element, attrs) ->
     patternCanvas = element[0].querySelector('#pattern')
@@ -94,7 +95,30 @@ angular.module('beetmachine').directive 'pattern', () ->
 
     drawGrid()
     drawPlayHead()
+
+    onDoubleClick = (e) ->
+
+    onDragStart = (e) ->
+      element.on 'dragend', onDragEnd
+
+    onMouseMove = (e) ->
+      
+
+    onDragEnd = (e) ->
+      element.off 'drag', onMouseMove
+
+    element.on 'dblclick', (e) ->
+      pos = e.offsetX / e.target.clientWidth
+      Transport.goto(pos, true)
+
+    element.on 'dragstart', (e) ->
+      pos = e.offsetX / e.target.clientWidth
+      Transport.goto(pos, true)
     
     # scope.$watch 'transport.tick', updatePlayHead()
-    scope.$watchCollection '[current.zoom, current.len, current.step]', () ->
+    scope.$watch () ->
+      JSON.stringify scope.current
+    , () ->
       requestAnimationFrame drawGrid
+
+]

@@ -1,2 +1,0 @@
-app: grunt serve:dist
-mongo: mongod

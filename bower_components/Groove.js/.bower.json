@@ -1,0 +1,14 @@
+{
+  "name": "Groove.js",
+  "homepage": "https://github.com/jbielick/Groove.js",
+  "_release": "e123348e52",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e123348e52adf8a55d0a0ea9d67cc9128b8dd5a2"
+  },
+  "_source": "git://github.com/jbielick/Groove.js.git",
+  "_target": "*",
+  "_originalSource": "jbielick/Groove.js",
+  "_direct": true
+}

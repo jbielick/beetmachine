@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <h1>sandbox</h1>
+  <a id="play" style="padding: 20px 20px;background-color:grey;">Play</a>
+  <script src="../src/legato.js"></script>
+  <script type="text/javascript">
+    var groove = new Groove(),
+        sound;
+    groove.createNode('../src/hat.wav').then(function(node) {
+      sound = node.addEffect('compressor').addEffect('pan');
+      // sound = node;
+    });
+    document.getElementById('play').addEventListener('click', function() {
+      console.log('play');
+      sound.play();
+    }, true);
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+
+body {
+  background: #222222;
+  color: #aaaaaa;
+  padding: 0;
+  margin: 0;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 150%;
+  position: relative;
+  cursor: default;
+}
+
+#display {
+  margin: 0 0 20px;
+  height: 200px;
+  font-family: monospace;
+  color: black !important;
+  font-size: 12px;
+  overflow: auto;
+  height: 200px;
+  padding: 8px;
+  background-color: #f08a24;
+  box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.6);
+}
+
+.row.pads {
+  margin-top: 20px;
+}
+
+.pad {
+  font-weight: 500;
+  margin-bottom: 20px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  background-color: #292929;
+  -webkit-transition: background-color 1s ease-out, opacity .22s linear, margin .03s linear, box-shadow .03s linear;
+  transition: background-color 0.2s ease-out, opacity .22s linear, margin .03s linear, box-shadow .03s linear;
+  box-shadow: 0 0 9px rgba(237, 237, 237, 0.5);
+  box-shadow: inset 0 4px 2px -1px inset rgba(237, 237, 237, 0.2);
+}
+
+.pad:active, .active .pad {
+  box-shadow: 0 0 12px #fff;
+}
+.pad.mapped {
+  background-color: #A1B7CC;
+  box-shadow: 0 0 8px rgba(201,229,255,0.7);
+}
+.pad.mapped:active, .active .pad.mapped {
+  background-color: #C9E5FF;
+  box-shadow: 0 0 12px rgba(201,229,255,0.9);
+}
+.pad {
+  border-radius:2px;
+  padding-bottom:75%;height:0;width:100%;display:block;
+}

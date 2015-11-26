@@ -7,7 +7,11 @@
 ```
 ===========
 
-A JavaScript &amp; HTML5 Sampler/Sequencer
+an angular.js, coffeescript, WebAudio Sampler/Sequencer
+
+backbone.js implementation on the [`backbone`](https://github.com/jbielick/beetmachine/tree/backbone) branch
+
+The Iron Yard teaching material simplified implementation on the [`tiy`](https://github.com/jbielick/beetmachine/tree/tiy) branch
 
 ![beetmachine](http://i.imgur.com/YWZ8IwW.png)
 

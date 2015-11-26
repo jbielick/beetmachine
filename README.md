@@ -9,6 +9,8 @@
 
 A JavaScript &amp; HTML5 Sampler/Sequencer
 
+[beetmachine](http://i.imgur.com/YWZ8IwW.png)
+
 Drag and drop samples onto any of the 16 pads, hit ctrl+r to record a pattern, organize your samples into 8 groups of pads playable
 by using `6`-`9`, `y`-`o`, `h`-`l`, and `n`-`.` on the keyboard, and 
 record / map a pattern to sequences to build a song.
